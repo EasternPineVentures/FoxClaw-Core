@@ -2,6 +2,11 @@
 
 **Status:** planning · **Started:** 2026-06-17 · **Owner:** founder (Eastern Pine / FoxClaw)
 
+> **Before applying any external "professionalization plan":** read
+> `docs/professionalization_plan.md`. Most such plans target the v1 repo's sprawl —
+> `foxclaw-core` is the curated rebuild and carries none of it; that archival belongs to
+> `v1-legacy`, not here.
+
 ## North star
 Rebuild FoxClaw as a clean, professional, investor/buyer-ready system — **without losing
 the asset that makes it valuable** (the auditable paper track record) and **without ever
