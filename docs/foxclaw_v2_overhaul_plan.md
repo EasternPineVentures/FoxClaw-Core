@@ -86,9 +86,17 @@ foxclaw-core/
 - *Exit:* `foxclaw-core` runs the decision pipeline green on ported tests.
 
 ### Phase 3 — Carry the DB + shadow-validate on A2
+- **Relocate the DB off any cloud-sync path first (invariant #9).** The live track record
+  must live on a **local, non-synced** path — never OneDrive/Google-synced. v2 locates it
+  vendor-neutrally via `$FOXCLAW_DB` (else `--db`, else repo-local `./data/grove_core.db`),
+  so the move is config, not code. *Dev/A1 done 2026-06-17:* copied
+  `OneDrive/Desktop/FoxClaw/data/grove_core.db` → `C:\Users\brend\foxclaw\data\grove_core.db`,
+  `FOXCLAW_DB` set, schema guard green against the local copy. *A2 does the same at cutover:*
+  copy to a local path, set `FOXCLAW_DB`, leave the OneDrive copy as a read-only fallback
+  until parity is signed off, then retire it.
 - Point v2 at the **same `grove_core.db`** (read-only first); run v2 in shadow beside v1.
 - Prove parity: same inputs -> same edge/decision within tolerance (invariant #2).
-- *Exit:* documented shadow parity report — the proof v2 is safe to lead.
+- *Exit:* documented shadow parity report — the proof v2 is safe to lead; DB is off OneDrive.
 
 ### Phase 4 — CoinFox split
 - Move CoinFox into its own repo; it consumes only the published contract.

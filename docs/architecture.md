@@ -104,4 +104,6 @@ does A2 cut over to v2. Nothing live is touched until then.
 ## What "done with Phase 1" means (earns v0.2.0)
 - [ ] This architecture reviewed/approved.
 - [ ] `foxclaw.contract` surface agreed.
-- [ ] `grove_core.db` schema frozen as the carried-forward asset boundary.
+- [x] `grove_core.db` schema frozen as the carried-forward asset boundary.
+      *(v0.1.1 — `config/db_schema.frozen.json` + `docs/db_schema.md`, guarded by
+      `tests/regression/test_db_schema_frozen.py`; DB located vendor-neutrally.)*

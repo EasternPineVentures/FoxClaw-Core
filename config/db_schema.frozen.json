@@ -1,0 +1,2607 @@
+{
+  "fingerprint": "b1a6bb9b3ecb3da0c9faa0b16fbda0ab5c080249c56d5e852f42d29a983e9c72",
+  "generated": "2026-06-17T02:50:45Z",
+  "index_count": 54,
+  "schema": {
+    "indexes": [
+      {
+        "name": "idx_accepted_candidates_attempt_id",
+        "sql": "CREATE INDEX idx_accepted_candidates_attempt_id ON accepted_candidates(attempt_id)",
+        "table": "accepted_candidates"
+      },
+      {
+        "name": "idx_accepted_candidates_event_id",
+        "sql": "CREATE INDEX idx_accepted_candidates_event_id ON accepted_candidates(event_id)",
+        "table": "accepted_candidates"
+      },
+      {
+        "name": "idx_accepted_candidates_evidence_hash",
+        "sql": "CREATE INDEX idx_accepted_candidates_evidence_hash ON accepted_candidates(evidence_hash)",
+        "table": "accepted_candidates"
+      },
+      {
+        "name": "idx_accepted_candidates_source_created",
+        "sql": "CREATE INDEX idx_accepted_candidates_source_created ON accepted_candidates(source_id, created_at)",
+        "table": "accepted_candidates"
+      },
+      {
+        "name": "idx_accepted_candidates_type_confidence",
+        "sql": "CREATE INDEX idx_accepted_candidates_type_confidence ON accepted_candidates(candidate_type, confidence)",
+        "table": "accepted_candidates"
+      },
+      {
+        "name": "idx_advisory_receipts_model_time",
+        "sql": "CREATE INDEX idx_advisory_receipts_model_time ON advisory_receipts(model_used, created_at)",
+        "table": "advisory_receipts"
+      },
+      {
+        "name": "idx_advisory_receipts_packet",
+        "sql": "CREATE INDEX idx_advisory_receipts_packet ON advisory_receipts(attention_packet_id)",
+        "table": "advisory_receipts"
+      },
+      {
+        "name": "idx_advisory_receipts_source_time",
+        "sql": "CREATE INDEX idx_advisory_receipts_source_time ON advisory_receipts(source_id, created_at)",
+        "table": "advisory_receipts"
+      },
+      {
+        "name": "idx_artifact_quarantine_source",
+        "sql": "CREATE INDEX idx_artifact_quarantine_source ON artifact_quarantine_receipts(source_id, source_type, created_at)",
+        "table": "artifact_quarantine_receipts"
+      },
+      {
+        "name": "idx_artifact_quarantine_unique_artifact",
+        "sql": "CREATE UNIQUE INDEX idx_artifact_quarantine_unique_artifact ON artifact_quarantine_receipts(artifact_table, artifact_id, reason)",
+        "table": "artifact_quarantine_receipts"
+      },
+      {
+        "name": "idx_attention_packets_budget",
+        "sql": "CREATE INDEX idx_attention_packets_budget ON attention_packets(llm_candidate_count, estimated_input_tokens)",
+        "table": "attention_packets"
+      },
+      {
+        "name": "idx_attention_packets_window",
+        "sql": "CREATE INDEX idx_attention_packets_window ON attention_packets(window_end)",
+        "table": "attention_packets"
+      },
+      {
+        "name": "idx_control_receipts_pair_time",
+        "sql": "CREATE INDEX idx_control_receipts_pair_time ON control_receipts(normalized_pair, created_at)",
+        "table": "control_receipts"
+      },
+      {
+        "name": "idx_control_receipts_result_time",
+        "sql": "CREATE INDEX idx_control_receipts_result_time ON control_receipts(result, created_at)",
+        "table": "control_receipts"
+      },
+      {
+        "name": "idx_control_receipts_source_time",
+        "sql": "CREATE INDEX idx_control_receipts_source_time ON control_receipts(source_id, created_at)",
+        "table": "control_receipts"
+      },
+      {
+        "name": "idx_control_usage_day_mode",
+        "sql": "CREATE INDEX idx_control_usage_day_mode ON control_usage_ledger(utc_day, mode)",
+        "table": "control_usage_ledger"
+      },
+      {
+        "name": "idx_control_usage_day_source",
+        "sql": "CREATE INDEX idx_control_usage_day_source ON control_usage_ledger(utc_day, source_id)",
+        "table": "control_usage_ledger"
+      },
+      {
+        "name": "idx_decision_receipts_attempt",
+        "sql": "CREATE INDEX idx_decision_receipts_attempt ON decision_receipts(attempt_id)",
+        "table": "decision_receipts"
+      },
+      {
+        "name": "idx_decision_receipts_candidate",
+        "sql": "CREATE INDEX idx_decision_receipts_candidate ON decision_receipts(candidate_id)",
+        "table": "decision_receipts"
+      },
+      {
+        "name": "idx_decision_receipts_candidate_unique",
+        "sql": "CREATE UNIQUE INDEX idx_decision_receipts_candidate_unique ON decision_receipts(candidate_id)",
+        "table": "decision_receipts"
+      },
+      {
+        "name": "idx_decision_receipts_event",
+        "sql": "CREATE INDEX idx_decision_receipts_event ON decision_receipts(event_id)",
+        "table": "decision_receipts"
+      },
+      {
+        "name": "idx_decision_receipts_policy",
+        "sql": "CREATE INDEX idx_decision_receipts_policy ON decision_receipts(policy_result, authority_level)",
+        "table": "decision_receipts"
+      },
+      {
+        "name": "idx_decision_receipts_source_time",
+        "sql": "CREATE INDEX idx_decision_receipts_source_time ON decision_receipts(source_id, created_at)",
+        "table": "decision_receipts"
+      },
+      {
+        "name": "idx_decision_receipts_type_confidence",
+        "sql": "CREATE INDEX idx_decision_receipts_type_confidence ON decision_receipts(decision_type, confidence)",
+        "table": "decision_receipts"
+      },
+      {
+        "name": "idx_learning_receipts_candidate",
+        "sql": "CREATE INDEX idx_learning_receipts_candidate ON learning_receipts(candidate_id)",
+        "table": "learning_receipts"
+      },
+      {
+        "name": "idx_learning_receipts_result_time",
+        "sql": "CREATE INDEX idx_learning_receipts_result_time ON learning_receipts(result_label, created_at)",
+        "table": "learning_receipts"
+      },
+      {
+        "name": "idx_learning_receipts_source_time",
+        "sql": "CREATE INDEX idx_learning_receipts_source_time ON learning_receipts(source_id, created_at)",
+        "table": "learning_receipts"
+      },
+      {
+        "name": "idx_live_trade_receipts_decision",
+        "sql": "CREATE INDEX idx_live_trade_receipts_decision ON live_trade_receipts(decision_id)",
+        "table": "live_trade_receipts"
+      },
+      {
+        "name": "idx_live_trade_receipts_status_time",
+        "sql": "CREATE INDEX idx_live_trade_receipts_status_time ON live_trade_receipts(status, created_at)",
+        "table": "live_trade_receipts"
+      },
+      {
+        "name": "idx_live_trade_receipts_symbol_time",
+        "sql": "CREATE INDEX idx_live_trade_receipts_symbol_time ON live_trade_receipts(symbol, created_at)",
+        "table": "live_trade_receipts"
+      },
+      {
+        "name": "idx_paper_journal_action_status",
+        "sql": "CREATE INDEX idx_paper_journal_action_status ON paper_journal(action_type, status)",
+        "table": "paper_journal"
+      },
+      {
+        "name": "idx_paper_journal_candidate",
+        "sql": "CREATE INDEX idx_paper_journal_candidate ON paper_journal(candidate_id)",
+        "table": "paper_journal"
+      },
+      {
+        "name": "idx_paper_journal_decision_unique",
+        "sql": "CREATE UNIQUE INDEX idx_paper_journal_decision_unique ON paper_journal(decision_id)",
+        "table": "paper_journal"
+      },
+      {
+        "name": "idx_paper_journal_event",
+        "sql": "CREATE INDEX idx_paper_journal_event ON paper_journal(event_id)",
+        "table": "paper_journal"
+      },
+      {
+        "name": "idx_paper_journal_source_time",
+        "sql": "CREATE INDEX idx_paper_journal_source_time ON paper_journal(source_id, created_at)",
+        "table": "paper_journal"
+      },
+      {
+        "name": "idx_paper_outcomes_exit_reason",
+        "sql": "CREATE INDEX idx_paper_outcomes_exit_reason ON paper_outcomes(exit_reason)",
+        "table": "paper_outcomes"
+      },
+      {
+        "name": "idx_paper_outcomes_journal",
+        "sql": "CREATE INDEX idx_paper_outcomes_journal ON paper_outcomes(journal_id)",
+        "table": "paper_outcomes"
+      },
+      {
+        "name": "idx_paper_outcomes_symbol_exit_time",
+        "sql": "CREATE INDEX idx_paper_outcomes_symbol_exit_time ON paper_outcomes(symbol, exit_time)",
+        "table": "paper_outcomes"
+      },
+      {
+        "name": "idx_paper_positions_journal",
+        "sql": "CREATE INDEX idx_paper_positions_journal ON paper_positions(journal_id)",
+        "table": "paper_positions"
+      },
+      {
+        "name": "idx_paper_positions_symbol_time",
+        "sql": "CREATE INDEX idx_paper_positions_symbol_time ON paper_positions(symbol, open_time)",
+        "table": "paper_positions"
+      },
+      {
+        "name": "idx_parse_attempts_accepted_time",
+        "sql": "CREATE INDEX idx_parse_attempts_accepted_time ON parse_attempts(accepted, attempted_at)",
+        "table": "parse_attempts"
+      },
+      {
+        "name": "idx_parse_attempts_event_parser_version",
+        "sql": "CREATE INDEX idx_parse_attempts_event_parser_version ON parse_attempts(event_id, parser_name, parser_version)",
+        "table": "parse_attempts"
+      },
+      {
+        "name": "idx_parse_attempts_event_time",
+        "sql": "CREATE INDEX idx_parse_attempts_event_time ON parse_attempts(event_id, attempted_at)",
+        "table": "parse_attempts"
+      },
+      {
+        "name": "idx_parse_attempts_parser_version",
+        "sql": "CREATE INDEX idx_parse_attempts_parser_version ON parse_attempts(parser_name, parser_version)",
+        "table": "parse_attempts"
+      },
+      {
+        "name": "idx_position_adjustments_position",
+        "sql": "CREATE INDEX idx_position_adjustments_position ON position_adjustments(position_id)",
+        "table": "position_adjustments"
+      },
+      {
+        "name": "idx_psychology_pair",
+        "sql": "CREATE INDEX idx_psychology_pair ON psychology_receipts(pair)",
+        "table": "psychology_receipts"
+      },
+      {
+        "name": "idx_psychology_source",
+        "sql": "CREATE INDEX idx_psychology_source ON psychology_receipts(source_id)",
+        "table": "psychology_receipts"
+      },
+      {
+        "name": "idx_psychology_timestamp",
+        "sql": "CREATE INDEX idx_psychology_timestamp ON psychology_receipts(timestamp)",
+        "table": "psychology_receipts"
+      },
+      {
+        "name": "idx_raw_events_hash_source",
+        "sql": "CREATE INDEX idx_raw_events_hash_source ON raw_events(content_hash, source_id)",
+        "table": "raw_events"
+      },
+      {
+        "name": "idx_raw_events_ingested_event",
+        "sql": "CREATE INDEX idx_raw_events_ingested_event ON raw_events(ingested_at, event_id)",
+        "table": "raw_events"
+      },
+      {
+        "name": "idx_raw_events_source_time",
+        "sql": "CREATE INDEX idx_raw_events_source_time ON raw_events(source_id, ingested_at)",
+        "table": "raw_events"
+      },
+      {
+        "name": "idx_raw_events_synthetic_time",
+        "sql": "CREATE INDEX idx_raw_events_synthetic_time ON raw_events(is_synthetic, ingested_at)",
+        "table": "raw_events"
+      },
+      {
+        "name": "idx_source_trust_adjustments_evidence_unique",
+        "sql": "CREATE UNIQUE INDEX idx_source_trust_adjustments_evidence_unique ON source_trust_adjustments(evidence_type, evidence_receipt_id)",
+        "table": "source_trust_adjustments"
+      },
+      {
+        "name": "idx_source_trust_adjustments_source_time",
+        "sql": "CREATE INDEX idx_source_trust_adjustments_source_time ON source_trust_adjustments(source_id, created_at)",
+        "table": "source_trust_adjustments"
+      }
+    ],
+    "tables": {
+      "accepted_candidates": {
+        "columns": [
+          {
+            "default": null,
+            "name": "candidate_id",
+            "notnull": false,
+            "pk": 1,
+            "type": "INTEGER"
+          },
+          {
+            "default": null,
+            "name": "candidate_uid",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "receipt_id",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "event_id",
+            "notnull": true,
+            "pk": 0,
+            "type": "INTEGER"
+          },
+          {
+            "default": null,
+            "name": "attempt_id",
+            "notnull": true,
+            "pk": 0,
+            "type": "INTEGER"
+          },
+          {
+            "default": null,
+            "name": "source_id",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "source_type",
+            "notnull": false,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "parser_version",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "candidate_type",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "normalized_payload_json",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "confidence",
+            "notnull": true,
+            "pk": 0,
+            "type": "REAL"
+          },
+          {
+            "default": null,
+            "name": "admission_policy_version",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "admission_reason",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": "'accepted'",
+            "name": "status",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "created_at",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "evidence_hash",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          }
+        ]
+      },
+      "advisory_receipts": {
+        "columns": [
+          {
+            "default": null,
+            "name": "advisory_id",
+            "notnull": false,
+            "pk": 1,
+            "type": "INTEGER"
+          },
+          {
+            "default": null,
+            "name": "receipt_id",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "receipt_uid",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "source_id",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "source_type",
+            "notnull": false,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "attention_packet_id",
+            "notnull": true,
+            "pk": 0,
+            "type": "INTEGER"
+          },
+          {
+            "default": null,
+            "name": "attention_receipt_id",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "model_used",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "provider",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "prompt_tokens",
+            "notnull": true,
+            "pk": 0,
+            "type": "INTEGER"
+          },
+          {
+            "default": null,
+            "name": "completion_tokens",
+            "notnull": true,
+            "pk": 0,
+            "type": "INTEGER"
+          },
+          {
+            "default": "0.0",
+            "name": "cost_estimate",
+            "notnull": true,
+            "pk": 0,
+            "type": "REAL"
+          },
+          {
+            "default": null,
+            "name": "advisory_text",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": "'watchlist'",
+            "name": "classification",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": "'advisory_only'",
+            "name": "authority_level",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": "'allow'",
+            "name": "policy_result",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "prompt_hash",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": "'{}'",
+            "name": "metadata_json",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "created_at",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "evidence_hash",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          }
+        ]
+      },
+      "artifact_quarantine_receipts": {
+        "columns": [
+          {
+            "default": null,
+            "name": "quarantine_id",
+            "notnull": false,
+            "pk": 1,
+            "type": "INTEGER"
+          },
+          {
+            "default": null,
+            "name": "receipt_id",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "artifact_table",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "artifact_id",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "artifact_receipt_id",
+            "notnull": false,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "source_id",
+            "notnull": false,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "source_type",
+            "notnull": false,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "reason",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "created_at",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "evidence_hash",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": "'{}'",
+            "name": "metadata_json",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          }
+        ]
+      },
+      "attention_packets": {
+        "columns": [
+          {
+            "default": null,
+            "name": "packet_id",
+            "notnull": false,
+            "pk": 1,
+            "type": "INTEGER"
+          },
+          {
+            "default": null,
+            "name": "packet_uid",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "receipt_id",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "window_start",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "window_end",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "source_count",
+            "notnull": true,
+            "pk": 0,
+            "type": "INTEGER"
+          },
+          {
+            "default": null,
+            "name": "event_count",
+            "notnull": true,
+            "pk": 0,
+            "type": "INTEGER"
+          },
+          {
+            "default": null,
+            "name": "real_event_count",
+            "notnull": true,
+            "pk": 0,
+            "type": "INTEGER"
+          },
+          {
+            "default": null,
+            "name": "synthetic_event_count",
+            "notnull": true,
+            "pk": 0,
+            "type": "INTEGER"
+          },
+          {
+            "default": null,
+            "name": "duplicate_event_count",
+            "notnull": true,
+            "pk": 0,
+            "type": "INTEGER"
+          },
+          {
+            "default": null,
+            "name": "llm_candidate_count",
+            "notnull": true,
+            "pk": 0,
+            "type": "INTEGER"
+          },
+          {
+            "default": null,
+            "name": "estimated_input_tokens",
+            "notnull": true,
+            "pk": 0,
+            "type": "INTEGER"
+          },
+          {
+            "default": null,
+            "name": "max_input_tokens",
+            "notnull": true,
+            "pk": 0,
+            "type": "INTEGER"
+          },
+          {
+            "default": null,
+            "name": "budget_policy_version",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "packet_json",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "created_at",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "evidence_hash",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          }
+        ]
+      },
+      "control_receipts": {
+        "columns": [
+          {
+            "default": null,
+            "name": "control_id",
+            "notnull": false,
+            "pk": 1,
+            "type": "INTEGER"
+          },
+          {
+            "default": null,
+            "name": "receipt_id",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "action_id",
+            "notnull": false,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "action_type",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "mode",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "source_id",
+            "notnull": false,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "pair",
+            "notnull": false,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "normalized_pair",
+            "notnull": false,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "side",
+            "notnull": false,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "requested_notional_usd",
+            "notnull": false,
+            "pk": 0,
+            "type": "REAL"
+          },
+          {
+            "default": null,
+            "name": "requested_collateral_usd",
+            "notnull": false,
+            "pk": 0,
+            "type": "REAL"
+          },
+          {
+            "default": null,
+            "name": "requested_leverage",
+            "notnull": false,
+            "pk": 0,
+            "type": "REAL"
+          },
+          {
+            "default": null,
+            "name": "final_notional_usd",
+            "notnull": false,
+            "pk": 0,
+            "type": "REAL"
+          },
+          {
+            "default": null,
+            "name": "final_collateral_usd",
+            "notnull": false,
+            "pk": 0,
+            "type": "REAL"
+          },
+          {
+            "default": null,
+            "name": "final_leverage",
+            "notnull": false,
+            "pk": 0,
+            "type": "REAL"
+          },
+          {
+            "default": null,
+            "name": "result",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "reason",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": "'[]'",
+            "name": "triggered_rules_json",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "authority_level",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "policy_version",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "control_mode",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "related_decision_receipt_id",
+            "notnull": false,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "related_paper_journal_id",
+            "notnull": false,
+            "pk": 0,
+            "type": "INTEGER"
+          },
+          {
+            "default": null,
+            "name": "created_at",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "evidence_hash",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          }
+        ]
+      },
+      "control_usage_ledger": {
+        "columns": [
+          {
+            "default": null,
+            "name": "usage_id",
+            "notnull": false,
+            "pk": 1,
+            "type": "INTEGER"
+          },
+          {
+            "default": null,
+            "name": "receipt_id",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "utc_day",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "source_id",
+            "notnull": false,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "pair",
+            "notnull": false,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "mode",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": "0.0",
+            "name": "notional_usd",
+            "notnull": true,
+            "pk": 0,
+            "type": "REAL"
+          },
+          {
+            "default": "0.0",
+            "name": "collateral_usd",
+            "notnull": true,
+            "pk": 0,
+            "type": "REAL"
+          },
+          {
+            "default": null,
+            "name": "leverage",
+            "notnull": false,
+            "pk": 0,
+            "type": "REAL"
+          },
+          {
+            "default": null,
+            "name": "action_type",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "created_at",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "related_control_receipt_id",
+            "notnull": false,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "evidence_hash",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          }
+        ]
+      },
+      "decision_receipts": {
+        "columns": [
+          {
+            "default": null,
+            "name": "decision_id",
+            "notnull": false,
+            "pk": 1,
+            "type": "INTEGER"
+          },
+          {
+            "default": null,
+            "name": "decision_uid",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "receipt_id",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "candidate_id",
+            "notnull": true,
+            "pk": 0,
+            "type": "INTEGER"
+          },
+          {
+            "default": null,
+            "name": "attempt_id",
+            "notnull": true,
+            "pk": 0,
+            "type": "INTEGER"
+          },
+          {
+            "default": null,
+            "name": "event_id",
+            "notnull": true,
+            "pk": 0,
+            "type": "INTEGER"
+          },
+          {
+            "default": null,
+            "name": "source_id",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "source_type",
+            "notnull": false,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "candidate_type",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "decision_type",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "confidence",
+            "notnull": true,
+            "pk": 0,
+            "type": "REAL"
+          },
+          {
+            "default": null,
+            "name": "reason",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": "'[]'",
+            "name": "evidence_links_json",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "policy_version",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "policy_result",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "authority_level",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "created_at",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "evidence_hash",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          }
+        ]
+      },
+      "learning_receipts": {
+        "columns": [
+          {
+            "default": null,
+            "name": "learning_id",
+            "notnull": false,
+            "pk": 1,
+            "type": "INTEGER"
+          },
+          {
+            "default": null,
+            "name": "receipt_id",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "outcome_id",
+            "notnull": true,
+            "pk": 0,
+            "type": "INTEGER"
+          },
+          {
+            "default": null,
+            "name": "outcome_receipt_id",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "journal_id",
+            "notnull": true,
+            "pk": 0,
+            "type": "INTEGER"
+          },
+          {
+            "default": null,
+            "name": "decision_id",
+            "notnull": false,
+            "pk": 0,
+            "type": "INTEGER"
+          },
+          {
+            "default": null,
+            "name": "candidate_id",
+            "notnull": false,
+            "pk": 0,
+            "type": "INTEGER"
+          },
+          {
+            "default": null,
+            "name": "attempt_id",
+            "notnull": false,
+            "pk": 0,
+            "type": "INTEGER"
+          },
+          {
+            "default": null,
+            "name": "event_id",
+            "notnull": false,
+            "pk": 0,
+            "type": "INTEGER"
+          },
+          {
+            "default": null,
+            "name": "source_id",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "source_type",
+            "notnull": false,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "symbol",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "side",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "realized_pnl_usd",
+            "notnull": true,
+            "pk": 0,
+            "type": "REAL"
+          },
+          {
+            "default": null,
+            "name": "result_label",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "lesson_summary",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": "'[]'",
+            "name": "mistake_tags_json",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "source_trust_adjustment_receipt_id",
+            "notnull": false,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": "'advisory_only'",
+            "name": "authority_level",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "created_at",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "evidence_hash",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          }
+        ]
+      },
+      "live_trade_receipts": {
+        "columns": [
+          {
+            "default": null,
+            "name": "live_receipt_id",
+            "notnull": false,
+            "pk": 1,
+            "type": "INTEGER"
+          },
+          {
+            "default": null,
+            "name": "receipt_uid",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "receipt_id",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "decision_id",
+            "notnull": false,
+            "pk": 0,
+            "type": "INTEGER"
+          },
+          {
+            "default": null,
+            "name": "paper_journal_id",
+            "notnull": false,
+            "pk": 0,
+            "type": "INTEGER"
+          },
+          {
+            "default": null,
+            "name": "venue",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "symbol",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "side",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "notional_usd",
+            "notnull": false,
+            "pk": 0,
+            "type": "REAL"
+          },
+          {
+            "default": null,
+            "name": "quantity",
+            "notnull": false,
+            "pk": 0,
+            "type": "REAL"
+          },
+          {
+            "default": null,
+            "name": "entry_price",
+            "notnull": false,
+            "pk": 0,
+            "type": "REAL"
+          },
+          {
+            "default": "1.0",
+            "name": "leverage",
+            "notnull": true,
+            "pk": 0,
+            "type": "REAL"
+          },
+          {
+            "default": null,
+            "name": "status",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "block_reason",
+            "notnull": false,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "opened_at",
+            "notnull": false,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "closed_at",
+            "notnull": false,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "created_at",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": "'operator_manual'",
+            "name": "source",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": "'{}'",
+            "name": "metadata_json",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "policy_version",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "policy_result",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "authority_level",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "evidence_hash",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          }
+        ]
+      },
+      "paper_journal": {
+        "columns": [
+          {
+            "default": null,
+            "name": "journal_id",
+            "notnull": false,
+            "pk": 1,
+            "type": "INTEGER"
+          },
+          {
+            "default": null,
+            "name": "journal_uid",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "receipt_id",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "decision_id",
+            "notnull": true,
+            "pk": 0,
+            "type": "INTEGER"
+          },
+          {
+            "default": null,
+            "name": "candidate_id",
+            "notnull": true,
+            "pk": 0,
+            "type": "INTEGER"
+          },
+          {
+            "default": null,
+            "name": "attempt_id",
+            "notnull": false,
+            "pk": 0,
+            "type": "INTEGER"
+          },
+          {
+            "default": null,
+            "name": "event_id",
+            "notnull": true,
+            "pk": 0,
+            "type": "INTEGER"
+          },
+          {
+            "default": null,
+            "name": "source_id",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "source_type",
+            "notnull": false,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "candidate_type",
+            "notnull": false,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "action_type",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": "'{}'",
+            "name": "action_params_json",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "confidence",
+            "notnull": true,
+            "pk": 0,
+            "type": "REAL"
+          },
+          {
+            "default": null,
+            "name": "reason",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": "'logged'",
+            "name": "status",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "created_at",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "policy_version",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "policy_result",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "authority_level",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "evidence_hash",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          }
+        ]
+      },
+      "paper_outcomes": {
+        "columns": [
+          {
+            "default": null,
+            "name": "outcome_id",
+            "notnull": false,
+            "pk": 1,
+            "type": "INTEGER"
+          },
+          {
+            "default": null,
+            "name": "receipt_id",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "position_id",
+            "notnull": false,
+            "pk": 0,
+            "type": "INTEGER"
+          },
+          {
+            "default": null,
+            "name": "journal_id",
+            "notnull": true,
+            "pk": 0,
+            "type": "INTEGER"
+          },
+          {
+            "default": null,
+            "name": "journal_receipt_id",
+            "notnull": false,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "symbol",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "side",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "entry_price",
+            "notnull": true,
+            "pk": 0,
+            "type": "REAL"
+          },
+          {
+            "default": null,
+            "name": "exit_price",
+            "notnull": true,
+            "pk": 0,
+            "type": "REAL"
+          },
+          {
+            "default": null,
+            "name": "quantity",
+            "notnull": true,
+            "pk": 0,
+            "type": "REAL"
+          },
+          {
+            "default": null,
+            "name": "realized_pnl_usd",
+            "notnull": true,
+            "pk": 0,
+            "type": "REAL"
+          },
+          {
+            "default": null,
+            "name": "pnl_usd",
+            "notnull": true,
+            "pk": 0,
+            "type": "REAL"
+          },
+          {
+            "default": null,
+            "name": "entry_time",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "exit_time",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "exit_reason",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": "0.0",
+            "name": "max_favorable_excursion",
+            "notnull": true,
+            "pk": 0,
+            "type": "REAL"
+          },
+          {
+            "default": "0.0",
+            "name": "max_adverse_excursion",
+            "notnull": true,
+            "pk": 0,
+            "type": "REAL"
+          },
+          {
+            "default": null,
+            "name": "evidence_hash",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          }
+        ]
+      },
+      "paper_positions": {
+        "columns": [
+          {
+            "default": null,
+            "name": "position_id",
+            "notnull": false,
+            "pk": 1,
+            "type": "INTEGER"
+          },
+          {
+            "default": null,
+            "name": "journal_id",
+            "notnull": true,
+            "pk": 0,
+            "type": "INTEGER"
+          },
+          {
+            "default": null,
+            "name": "journal_receipt_id",
+            "notnull": false,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "symbol",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "side",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "entry_price",
+            "notnull": true,
+            "pk": 0,
+            "type": "REAL"
+          },
+          {
+            "default": null,
+            "name": "quantity",
+            "notnull": true,
+            "pk": 0,
+            "type": "REAL"
+          },
+          {
+            "default": null,
+            "name": "open_time",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "current_price",
+            "notnull": true,
+            "pk": 0,
+            "type": "REAL"
+          },
+          {
+            "default": "0.0",
+            "name": "unrealized_pnl_usd",
+            "notnull": true,
+            "pk": 0,
+            "type": "REAL"
+          },
+          {
+            "default": "0.0",
+            "name": "max_favorable_excursion",
+            "notnull": true,
+            "pk": 0,
+            "type": "REAL"
+          },
+          {
+            "default": "0.0",
+            "name": "max_adverse_excursion",
+            "notnull": true,
+            "pk": 0,
+            "type": "REAL"
+          },
+          {
+            "default": null,
+            "name": "last_updated",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "evidence_hash",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "stop_loss",
+            "notnull": false,
+            "pk": 0,
+            "type": "REAL"
+          },
+          {
+            "default": null,
+            "name": "take_profit",
+            "notnull": false,
+            "pk": 0,
+            "type": "REAL"
+          }
+        ]
+      },
+      "parse_attempts": {
+        "columns": [
+          {
+            "default": null,
+            "name": "attempt_id",
+            "notnull": false,
+            "pk": 1,
+            "type": "INTEGER"
+          },
+          {
+            "default": null,
+            "name": "attempt_uid",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "receipt_id",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "event_id",
+            "notnull": true,
+            "pk": 0,
+            "type": "INTEGER"
+          },
+          {
+            "default": "'unknown'",
+            "name": "parser_name",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "parser_version",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "attempted_at",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "completed_at",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": "0",
+            "name": "accepted",
+            "notnull": true,
+            "pk": 0,
+            "type": "INTEGER"
+          },
+          {
+            "default": "0.0",
+            "name": "confidence",
+            "notnull": true,
+            "pk": 0,
+            "type": "REAL"
+          },
+          {
+            "default": null,
+            "name": "rejection_reason",
+            "notnull": false,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": "'{}'",
+            "name": "structured_payload_json",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": "'{}'",
+            "name": "metadata_json",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": "0",
+            "name": "is_synthetic",
+            "notnull": true,
+            "pk": 0,
+            "type": "INTEGER"
+          }
+        ]
+      },
+      "position_adjustments": {
+        "columns": [
+          {
+            "default": null,
+            "name": "adjustment_id",
+            "notnull": false,
+            "pk": 1,
+            "type": "INTEGER"
+          },
+          {
+            "default": null,
+            "name": "position_id",
+            "notnull": true,
+            "pk": 0,
+            "type": "INTEGER"
+          },
+          {
+            "default": null,
+            "name": "journal_id",
+            "notnull": false,
+            "pk": 0,
+            "type": "INTEGER"
+          },
+          {
+            "default": null,
+            "name": "field",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "old_value",
+            "notnull": false,
+            "pk": 0,
+            "type": "REAL"
+          },
+          {
+            "default": null,
+            "name": "new_value",
+            "notnull": false,
+            "pk": 0,
+            "type": "REAL"
+          },
+          {
+            "default": null,
+            "name": "reason",
+            "notnull": false,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "source_id",
+            "notnull": false,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "adjusted_at",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          }
+        ]
+      },
+      "psychology_receipts": {
+        "columns": [
+          {
+            "default": null,
+            "name": "id",
+            "notnull": false,
+            "pk": 1,
+            "type": "INTEGER"
+          },
+          {
+            "default": null,
+            "name": "psychology_receipt_id",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "timestamp",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "source_id",
+            "notnull": false,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "source_family",
+            "notnull": false,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "pair",
+            "notnull": false,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "direction",
+            "notnull": false,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "candidate_id",
+            "notnull": false,
+            "pk": 0,
+            "type": "INTEGER"
+          },
+          {
+            "default": null,
+            "name": "decision_id",
+            "notnull": false,
+            "pk": 0,
+            "type": "INTEGER"
+          },
+          {
+            "default": null,
+            "name": "strategy_receipt_id",
+            "notnull": false,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "paper_journal_id",
+            "notnull": false,
+            "pk": 0,
+            "type": "INTEGER"
+          },
+          {
+            "default": null,
+            "name": "emotion_tags_json",
+            "notnull": false,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "crowd_state",
+            "notnull": false,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "conviction_intensity",
+            "notnull": false,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "language_intensity",
+            "notnull": false,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "source_bias_hint",
+            "notnull": false,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "crowding_risk",
+            "notnull": false,
+            "pk": 0,
+            "type": "REAL"
+          },
+          {
+            "default": null,
+            "name": "trap_risk",
+            "notnull": false,
+            "pk": 0,
+            "type": "REAL"
+          },
+          {
+            "default": null,
+            "name": "confirmation_needed",
+            "notnull": false,
+            "pk": 0,
+            "type": "INTEGER"
+          },
+          {
+            "default": null,
+            "name": "market_context_available",
+            "notnull": false,
+            "pk": 0,
+            "type": "INTEGER"
+          },
+          {
+            "default": null,
+            "name": "authority",
+            "notnull": false,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "can_trade_live",
+            "notnull": false,
+            "pk": 0,
+            "type": "INTEGER"
+          },
+          {
+            "default": null,
+            "name": "redaction_status",
+            "notnull": false,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "raw_excerpt",
+            "notnull": false,
+            "pk": 0,
+            "type": "TEXT"
+          }
+        ]
+      },
+      "raw_events": {
+        "columns": [
+          {
+            "default": null,
+            "name": "event_id",
+            "notnull": false,
+            "pk": 1,
+            "type": "INTEGER"
+          },
+          {
+            "default": null,
+            "name": "ingest_id",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "receipt_id",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "source_id",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "source_type",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "source_event_id",
+            "notnull": false,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "observed_at",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "ingested_at",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "raw_content",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": "'{}'",
+            "name": "metadata_json",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "content_hash",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": "0",
+            "name": "is_synthetic",
+            "notnull": true,
+            "pk": 0,
+            "type": "INTEGER"
+          },
+          {
+            "default": "'unknown'",
+            "name": "capture_method",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "duplicate_of_event_id",
+            "notnull": false,
+            "pk": 0,
+            "type": "INTEGER"
+          }
+        ]
+      },
+      "redshift_relay_events": {
+        "columns": [
+          {
+            "default": null,
+            "name": "event_id",
+            "notnull": false,
+            "pk": 1,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "event_type",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "created_at",
+            "notnull": false,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "imported_at",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "source_path",
+            "notnull": false,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "raw_json",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "signal_id",
+            "notnull": false,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "trade_id",
+            "notnull": false,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "asset",
+            "notnull": false,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "direction",
+            "notnull": false,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "mode",
+            "notnull": false,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "confidence",
+            "notnull": false,
+            "pk": 0,
+            "type": "REAL"
+          },
+          {
+            "default": null,
+            "name": "reason",
+            "notnull": false,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "severity",
+            "notnull": false,
+            "pk": 0,
+            "type": "TEXT"
+          }
+        ]
+      },
+      "redshift_relay_import_cursors": {
+        "columns": [
+          {
+            "default": null,
+            "name": "source_path",
+            "notnull": false,
+            "pk": 1,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "byte_offset",
+            "notnull": true,
+            "pk": 0,
+            "type": "INTEGER"
+          },
+          {
+            "default": null,
+            "name": "last_event_id",
+            "notnull": false,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "last_imported_at",
+            "notnull": false,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": "0",
+            "name": "malformed_lines",
+            "notnull": true,
+            "pk": 0,
+            "type": "INTEGER"
+          },
+          {
+            "default": "0",
+            "name": "imported_count",
+            "notnull": true,
+            "pk": 0,
+            "type": "INTEGER"
+          }
+        ]
+      },
+      "redshift_relay_state": {
+        "columns": [
+          {
+            "default": null,
+            "name": "key",
+            "notnull": false,
+            "pk": 1,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "value_json",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "updated_at",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          }
+        ]
+      },
+      "source_trust_adjustments": {
+        "columns": [
+          {
+            "default": null,
+            "name": "adjustment_id",
+            "notnull": false,
+            "pk": 1,
+            "type": "INTEGER"
+          },
+          {
+            "default": null,
+            "name": "receipt_id",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "source_id",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "prior_trust",
+            "notnull": true,
+            "pk": 0,
+            "type": "REAL"
+          },
+          {
+            "default": null,
+            "name": "new_trust",
+            "notnull": true,
+            "pk": 0,
+            "type": "REAL"
+          },
+          {
+            "default": null,
+            "name": "delta",
+            "notnull": true,
+            "pk": 0,
+            "type": "REAL"
+          },
+          {
+            "default": null,
+            "name": "reason",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "evidence_type",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "evidence_receipt_id",
+            "notnull": false,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": "'advisory_only'",
+            "name": "authority_level",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "created_at",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "evidence_hash",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          }
+        ]
+      },
+      "source_trust_state": {
+        "columns": [
+          {
+            "default": null,
+            "name": "source_id",
+            "notnull": false,
+            "pk": 1,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "source_type",
+            "notnull": false,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "trust_score",
+            "notnull": true,
+            "pk": 0,
+            "type": "REAL"
+          },
+          {
+            "default": null,
+            "name": "last_updated",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": "'advisory_only'",
+            "name": "authority_level",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "evidence_hash",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          }
+        ]
+      }
+    }
+  },
+  "source_db": "grove_core.db",
+  "table_count": 21
+}
