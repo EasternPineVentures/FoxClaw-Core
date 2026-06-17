@@ -152,5 +152,6 @@ business) and stay safe. **Consequences:** the domain-neutral + paper-only invar
 
 ---
 
-See `docs/invariants.md` for the rules these decisions produced, and `AGENTS.md` for
-how to work without losing context.
+See `docs/invariants.md` for the rules these decisions produced, `docs/deferred.md` for
+decisions deliberately *postponed* (the pins), and `AGENTS.md` for how to work without
+losing context.
