@@ -148,6 +148,45 @@ clusters — `profit_*`, `announce_*`, rollout/branding one-offs — live in
 
 ---
 
+## Supplementary survey — gate + scoring (from `tools/`, surveyed 2026-06-17)
+
+These two are NOT in GroveCore (so not in P3); the architecture port map sources them from
+`tools/`. Both are read-only and pure-stdlib, but **neither is a drop-in engine port** — both
+carry market vocabulary and need the same decompose-on-port treatment as `trustworthiness`.
+
+### `tools/pre_decision_gate.py` → **REVIEW→split** → `engine/gate.py` + market adapter
+- **Decision function it owns:** map a setup's `(score, n, trust_tier, freshness)` →
+  a decision tier + commitment multiplier (`block 0 / reduce .5 / observe .75 / allow 1 /
+  allow_boosted 1.2`), with a min-N guard (never boost on thin n) and a stale/missing-
+  scoreboard safe fallback. Reads `config/setup_performance.json` (the scoreboard artifact).
+- **Reads / must-not-write:** read-only; no DB, no orders. Keep that.
+- **Invariant #4:** ⚠️ **leaks** — the setup key `source_id:symbol:side` and `long/short`
+  are market framing; our `check_invariants.py` would (correctly) reject it in `engine/`.
+  **Split:** the neutral tier/multiplier logic → `engine/gate.py` (keyed by an opaque
+  arm/setup id); the `symbol:side` key construction → `adapters/market`.
+- **Minimum tests:** tier→multiplier mapping; min-N suppresses boost→observe; block holds at
+  any n; stale/missing scoreboard → safe `0.75` fallback; unknown setup → `0.75`.
+
+### `tools/setup_performance_summary.py` → **REVIEW→split** → `engine/score.py` + adapter
+- **Decision function it owns:** build the canonical per-setup scoreboard from
+  `paper_outcomes` — win_rate / profit_factor / composite `score` / `trust_tier` / per-setup
+  decision — with **corruption filtering** (`RETURN_SANITY_CAP`, entry-outlier vs symbol
+  median) that *is* invariant #8 in code.
+- **Reads / must-not-write:** read-only DB; writes only the JSON/MD scoreboard artifacts.
+  ⚠️ hardcodes `data/grove_core.db` — on port it must use `store/db.resolve_db` (ties to P5).
+- **Invariant #4:** ⚠️ heavy market vocab (trade, side, symbol, entry/exit, PnL). **Split:**
+  the scoring math (`_score_setup`, `_trust_tier`, shrinkage) is neutral → `engine/score.py`;
+  reading market outcomes + the corruption filters → `adapters/market` (or a store query).
+- **Minimum tests:** score shrinks to 0.5 on small n; trust_tier thresholds; corruption
+  filters drop impossible returns + entry outliers; catastrophe mean-return → block.
+
+### ⚠️ Cross-cutting finding: the decision tier lives in THREE places
+`block/reduce/observe/allow/allow_boosted` is defined independently in
+`bayesian_edge.decision_label()`, in the scoreboard builder's per-setup `decision`, and in the
+gate's mapping. That is three owners for one vocabulary — a latent "edge enters once"
+(invariant #3) hazard at the code level. **One owner must be chosen on port.** Pinned as **P9**
+in `docs/deferred.md`.
+
 ## Recommended Pass 2 scope (the actual port — a SEPARATE, later step)
 
 Port the **pure trio** only, into `foxclaw/engine/`, tests-first, pure stdlib,
@@ -158,11 +197,12 @@ domain-neutral, no market hardwiring:
 3. `engine/trust/trustworthiness.py` ← `trustworthiness.py`, **splitting**
    `market_claim_well_formed` out to a minimal `adapters/market/` stub.
 
-**Gap to close before Pass 2 can include gate + scoring:** the architecture port map sources
-`gate ← tools/pre_decision_gate.py` and `score ← tools/setup_performance_summary.py` — these
-live in `tools/`, **not** in the GroveCore P3 set, so they were **not** surveyed in this pass.
-A short supplementary survey of those two files is required before `engine/gate.py` and
-`engine/score.py` can be planned. Do not assume they're ready.
+**Gate + scoring (now surveyed — see the supplementary section above):** both are read-only
+and stdlib but **not drop-in** — each must be *decomposed* on port (neutral logic →
+`engine/gate.py` / `engine/score.py`; market key/outcome handling → `adapters/market`).
+Sequence them **after** the pure trio, and **resolve P9** (single owner of the decision-tier
+vocabulary) as part of that work so the gate, the scoreboard, and `edge.decision_label` don't
+re-create three competing tier definitions (invariant #3).
 
 **Pass 3 (after Pass 2):** add the engine regression tests proving the chain
 `evidence → edge estimate → gate decision → receipt-compatible output`, then bump to

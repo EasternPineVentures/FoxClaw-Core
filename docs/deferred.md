@@ -103,6 +103,20 @@ schema (`source_id`) is an asset boundary (invariant #8), so a column-level rena
 schema-migration decision, not a find-replace. Default recommendation: rename at the
 **vocabulary/display layer**, keep `source_*` as the stable internal identifier.
 
+## P9 · 🔭 One owner for the decision-tier vocabulary
+**What:** the tier set `block / reduce / observe / allow / allow_boosted` (and its 0 / .5 /
+.75 / 1 / 1.2 multipliers) is defined **independently in three places** in v1:
+`bayesian_edge.decision_label()`, the scoreboard builder (`setup_performance_summary.py`
+per-setup `decision`), and the gate (`pre_decision_gate.py`). Three definitions of one
+vocabulary.
+**Why deferred:** it only needs resolving when the engine port reaches gate + scoring (Pass 2
+tail) — but it must be resolved *then*, not papered over, or v2 re-creates the multi-owner
+edge hazard the gate flip was meant to end.
+**Trigger:** when porting `engine/gate.py` + `engine/score.py`. Decide the single owner of the
+tier mapping (likely one `engine/` module that the gate and scoreboard both call) so the edge
+tier is defined once (invariant #3, "edge enters final exactly once" — at the code level).
+Surfaced by the 2026-06-17 gate/scoring survey in `docs/engine_port_plan.md`.
+
 ---
 
 ## Process note — layering, so things don't step on each other
