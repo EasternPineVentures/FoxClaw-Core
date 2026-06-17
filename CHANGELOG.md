@@ -9,6 +9,29 @@ preserved as the `v1-legacy` archive. Milestone map: `0.x` builds toward launch,
 bump per completed overhaul phase; **`1.0.0`** is earned at Apollo-2 cutover when v2 runs the
 live track record and is demo-ready.
 
+## [0.1.4] — 2026-06-17
+### Added
+- **Pure engine trio ported (v0.2.0 Pass 2)** into `foxclaw/engine/`, the first decision
+  logic in the new repo — all pure stdlib, domain-neutral, no I/O:
+  - `engine/edge.py` ← `bayesian_edge.py` (verbatim-clean): Beta-Binomial edge estimator
+    with conservative Kelly, `BayesianEdge.verdict()`.
+  - `engine/trust/reliability.py` ← `source_reliability.py`: `ρ_source` evidence weight
+    (down-weight only; diagnostic per invariant #5).
+  - `engine/trust/trustworthiness.py` ← `trustworthiness.py`: `ρ_trust` from claim
+    well-formedness + `trust_haircut` (never un-blocks, only reduces).
+- **Market-claim altitude split (resolves part of P1):** `market_claim_well_formed` moved
+  out of the trust module to **`foxclaw/adapters/market/claims.py`**, so `engine/` stays
+  domain-neutral while the market's well-formedness rule lives in the adapter. The neutral
+  `Trustworthiness` consumes its `bool|None` via `ClaimQuality`.
+- **33 engine/trust/adapter unit tests** in `tests/unit/` (Beta CDF/PPF, posterior,
+  commitment + exploration floor, catastrophe veto, decision tiers, recency; ρ down-weight
+  bounds, haircut safety shape, market claim sanity). Full suite green (62 tests).
+### Notes
+- The **invariant guard passes over `engine/` after the port** — proof the split kept the
+  engine clean (#4) and pure-stdlib (#6). Still unported (per `docs/engine_port_plan.md`):
+  gate + score (decompose; resolve pin P9 — one owner of the decision-tier vocabulary).
+  v0.2.0 minor is reserved for engine-phase completion (incl. gate/score), not this patch.
+
 ## [0.1.3] — 2026-06-17
 ### Added
 - **Paper-execution layer ported into `foxclaw/store/`**, completing the store receipt
