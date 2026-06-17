@@ -1,0 +1,6 @@
+# Normalize line endings: LF in the repo, auto on checkout. Keeps diffs clean
+# across machines (no spurious CRLF churn between A1/A2/CI).
+* text=auto eol=lf
+*.png binary
+*.jpg binary
+*.db binary
