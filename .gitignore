@@ -1,0 +1,30 @@
+# Secrets — never commit (invariant #7)
+.env
+.env.*
+!.env.example
+
+# Per-node state — each node owns its own (invariant #9); never shared via git
+*.db
+*.db-shm
+*.db-wal
+data/
+storage/
+runtime_logs/
+runtime/machine_id.txt
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+build/
+dist/
+.pytest_cache/
+.ruff_cache/
+
+# OS / editor
+Thumbs.db
+.DS_Store
+.vscode/
+.idea/

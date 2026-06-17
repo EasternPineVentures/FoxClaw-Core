@@ -1,0 +1,31 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "foxclaw-core"
+description = "FoxClaw — a receipt-driven, domain-neutral decision engine."
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "Proprietary" }
+dynamic = ["version"]
+# The engine is pure standard library by invariant (#6) — node-portable, no heavy deps.
+dependencies = []
+
+[project.optional-dependencies]
+dev = ["pytest", "ruff"]
+
+[tool.hatch.version]
+# Single source of truth: the repo-root VERSION file (also shown in FC titles).
+path = "VERSION"
+pattern = "(?P<version>.+)"
+
+[tool.hatch.build.targets.wheel]
+packages = ["foxclaw"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

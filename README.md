@@ -1,0 +1,55 @@
+# FoxClaw
+
+> A receipt-driven, domain-neutral decision engine.
+
+FoxClaw turns scattered, uncertain inputs — source claims, market context, model
+output — into **auditable, risk-aware, receipt-backed decision support**. It watches
+incoming claims, scores them against a real track record, sizes commitment under
+uncertainty, and records every step. It ships with a market adapter, but the core is
+domain-neutral by design: the same engine generalizes to research, sourcing, and any
+uncertainty-heavy decision.
+
+**Status:** private rebuild in progress · see [`CHANGELOG.md`](CHANGELOG.md) for the
+current version. This repository is the clean v2 engine; the pre-v2 system is preserved
+as the `v1-legacy` archive.
+
+## Architecture
+
+```
+adapters/  ─►  engine/  ─►  store/ + policy/
+```
+
+- **`foxclaw/engine`** — the domain-neutral decision pipeline (ingest → parse → score →
+  gate → decide). Pure standard library, no market vocabulary.
+- **`foxclaw/store`** — per-node persistence (the GroveCore data layer + signed event log).
+  The track record is the asset; it is never rebuilt or discarded.
+- **`foxclaw/policy`** — safety caps, permissions, and the final veto.
+- **`foxclaw/adapters`** — the only place vendor/market specifics live (market, redshift,
+  discord, news, local-first LLM).
+- **`foxclaw/contract`** — the public airlock. The CoinFox surface and any public node may
+  import **only** this; never the internals.
+
+See [`docs/architecture.md`](docs/architecture.md) for the full blueprint and port map.
+
+## Principles (non-negotiable)
+
+1. **Paper-only.** No live execution or fund movement without a separate, hard-gated grant.
+2. **One edge, entered once.** The scoreboard gate is the single per-setup edge authority.
+3. **The track record is sacred.** Decisions are carried as auditable receipts.
+4. **Domain-neutral core.** Market words live only in adapters.
+5. **Local-first, vendor-neutral.** Keys stay local; no participant is forced onto a
+   specific cloud vendor.
+6. **Share-nothing nodes.** Each node owns its store; the shared substrate is a signed,
+   append-only event log.
+
+Full rules: [`docs/invariants.md`](docs/invariants.md).
+
+## Quickstart
+
+```bash
+python -c "import foxclaw; print(foxclaw.__version__)"
+pytest
+```
+
+---
+© FoxClaw / Eastern Pine. Proprietary — all rights reserved.
