@@ -89,6 +89,20 @@ mirrored here so the master pin list is complete.)
 **Trigger:** Phase 3 cutover — copy to a local path, set `FOXCLAW_DB`, keep OneDrive copy
 as read-only fallback until parity is signed off, then retire it.
 
+## P8 · ❓ Rename "the analyst" in the FC vocabulary
+**What:** the ecosystem term **"analyst"** is to be renamed. Today the codebase mostly says
+**"source"** (e.g. `source_id`, `SourceReliability`, whose docstring glosses a source as
+"an analyst, feed, agent, node"); "analyst" appears as an *example* of a source, not a
+first-class identifier. The rename target is **not yet chosen**.
+**Why deferred:** needs the founder's chosen name before any edit; renaming an identifier
+that threads through schema (`source_id`), stores, and the frozen DB schema is a
+cross-cutting change that must be done deliberately, not ad hoc.
+**Trigger:** once the new name is chosen — decide scope first: is this a *display/vocabulary*
+rename (docs, UI, CoinFox surface) only, or does it touch identifiers/columns? The frozen
+schema (`source_id`) is an asset boundary (invariant #8), so a column-level rename is a
+schema-migration decision, not a find-replace. Default recommendation: rename at the
+**vocabulary/display layer**, keep `source_*` as the stable internal identifier.
+
 ---
 
 ## Process note — layering, so things don't step on each other
