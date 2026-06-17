@@ -50,6 +50,10 @@ before their package boundaries are set, is how modules end up stepping on each 
 `engine/trust` (diagnostic-only, invariant #5); `strategy_learning` → decompose, keep only
 the concentration role (invariant #3). The high-level keep/cut/port call already lives in
 `docs/foxclaw_v2_inventory.md`; this pin tracks the per-module execution.
+**Update 2026-06-17:** all 12 modules now classified per-module (KEEP_ENGINE / STORE /
+ADAPTER / REVIEW) with port recipes in **`docs/engine_port_plan.md`** (v0.2.0 Pass 1
+survey). Pass 2 = port the pure trio (`edge`, `reliability`, `trustworthiness`); `gate` +
+`scoring` need a supplementary `tools/` survey first (they aren't in this P3 set).
 
 ## P4 · 🧹 One canonicalizer, three copies
 **What:** lowercase/underscore key normalization exists as `store/db.normalize_key`,
