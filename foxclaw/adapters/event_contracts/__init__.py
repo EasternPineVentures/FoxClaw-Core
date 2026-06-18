@@ -34,6 +34,7 @@ from .pricing import (  # noqa: E402
 )
 from .resolution import assess_resolution_quality, record_resolution  # noqa: E402
 from .scoring import assess_forecast  # noqa: E402
+from .self_funding import evaluate_self_funding  # noqa: E402
 from .venues import VENUES, Venue, get_venue  # noqa: E402
 
 __all__ = [
@@ -59,6 +60,7 @@ __all__ = [
     "record_resolution",
     "assess_event_contract_policy",
     "assess_forecast",
+    "evaluate_self_funding",
     "PaperPosition",
     "PaperOutcome",
     "simulate_paper_entry",

@@ -1,0 +1,14 @@
+{
+  "version": 1,
+  "claim_phrase": "FoxClaw pays for itself",
+  "minimum_consecutive_days": 90,
+  "minimum_resolved_positions": 250,
+  "minimum_self_funding_ratio": "1.25",
+  "require_positive_net_economic_profit": true,
+  "minimum_positive_months_in_last_three": 2,
+  "require_receipt_completeness": true,
+  "require_reconciliation_clean": true,
+  "allowed_modes": ["founder_live"],
+  "paper_may_qualify_for": ["experimental", "self_funding_candidate"],
+  "paper_may_not_qualify_for": ["self_funding_verified", "durability_verified"]
+}

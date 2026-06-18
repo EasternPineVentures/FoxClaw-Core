@@ -106,9 +106,55 @@ def assess_forecast(
 
 
 def build_forecast_scoreboard(event_outcomes: list[Any]) -> dict[str, Any]:
-    """Placeholder aggregate surface for later resolved forecast outcomes."""
+    """Build a resolved forecast scoreboard with market-baseline comparison."""
 
-    return {"resolved_forecasts": len(event_outcomes), "by_category": {}}
+    from .calibration import brier_score
+
+    rows = [_row(item) for item in event_outcomes]
+    resolved = [row for row in rows if row["resolved"]]
+    if not resolved:
+        return {
+            "resolved_forecasts": 0,
+            "brier_score": None,
+            "market_brier_score": None,
+            "net_paper_result": "0",
+            "by_category": {},
+        }
+    probs = [row["forecast_probability"] for row in resolved]
+    market_probs = [row["market_probability"] for row in resolved]
+    outcomes = [row["outcome_yes"] for row in resolved]
+    by_category: dict[str, dict[str, Any]] = {}
+    for row in resolved:
+        cat = row["category"]
+        bucket = by_category.setdefault(cat, {"resolved": 0, "net_paper_result": Decimal("0")})
+        bucket["resolved"] += 1
+        bucket["net_paper_result"] += row["net_result"]
+    return {
+        "resolved_forecasts": len(resolved),
+        "brier_score": format(brier_score(probs, outcomes), "f"),
+        "market_brier_score": format(brier_score(market_probs, outcomes), "f"),
+        "net_paper_result": format(sum((row["net_result"] for row in resolved), Decimal("0")), "f"),
+        "by_category": {
+            key: {
+                "resolved": value["resolved"],
+                "net_paper_result": format(value["net_paper_result"], "f"),
+            }
+            for key, value in sorted(by_category.items())
+        },
+    }
+
+
+def _row(item: Any) -> dict[str, Any]:
+    get = item.get if isinstance(item, dict) else lambda key, default=None: getattr(item, key, default)
+    outcome = get("outcome_yes", get("resolved_outcome") == "yes")
+    return {
+        "resolved": bool(get("resolved", True)),
+        "category": str(get("category", "uncategorized")),
+        "forecast_probability": _decimal(get("forecast_probability", get("independent_probability")), "forecast_probability"),
+        "market_probability": _decimal(get("market_probability"), "market_probability"),
+        "outcome_yes": bool(outcome),
+        "net_result": _decimal(get("net_result", "0"), "net_result"),
+    }
 
 
 def _select_side(

@@ -9,6 +9,22 @@ preserved as the `v1-legacy` archive. Milestone map: `0.x` builds toward launch,
 bump per completed overhaul phase; **`1.0.0`** is earned at Apollo-2 cutover when v2 runs the
 live track record and is demo-ready.
 
+## [0.3.1] - 2026-06-18
+### Added
+- **Forecast Desk Phase F: scoreboard, calibration, and self-funding gate.** Added resolved
+  forecast scoreboard aggregation with Brier score, market-baseline Brier score, category
+  net paper result, and fixture CLI output.
+- Added `self_funding.py`, `config/self_funding_standard.json`, and
+  `tools/forecast_desk_self_funding.py` to deny verified self-funding claims unless sample,
+  duration, cost receipts, ratio, profit, and mode standards are met.
+- `docs/forecast_calibration.md` and `docs/self_funding_standard.md` document calibration and
+  claim-gate doctrine.
+- Tests cover market-baseline comparison, paper-mode claim denial, missing costs, zero-cost
+  handling, and founder-live standard pass.
+### Notes
+- Paper results may be self-funding candidates only. They cannot become verified
+  "FoxClaw pays for itself" claims.
+
 ## [0.3.0] - 2026-06-18
 ### Added
 - **Forecast Desk Phase E: cost-aware paper simulator and replay.** Added executable

@@ -5,7 +5,7 @@ Read it before changing code, then verify with `git log --oneline -10` and the t
 
 Last updated: 2026-06-18
 Branch: `master`
-Version: `0.3.0`
+Version: `0.3.1`
 Working repo: `C:\Users\brend\dev\foxclaw-core`
 
 ## Current Lane
@@ -87,6 +87,14 @@ Done in this pass:
 - `tools/forecast_desk_replay.py` and `docs/paper_simulation_methodology.md` added.
 - Tests cover partial fills, settlement economics, paper labels, no-lookahead rejection, and
   versioned cost/fee validation.
+- Phase F scoreboard, calibration, and self-funding gate implemented.
+- `build_forecast_scoreboard` now reports resolved count, Brier score, market-baseline
+  Brier score, category net paper result, and total net paper result.
+- `self_funding.py`, `config/self_funding_standard.json`,
+  `tools/forecast_desk_scoreboard.py`, and `tools/forecast_desk_self_funding.py` added.
+- Verified self-funding claims are denied on paper mode, missing costs, zero costs, tiny
+  samples, insufficient days, low ratio, or nonpositive net economic profit.
+- `docs/forecast_calibration.md` and `docs/self_funding_standard.md` added.
 
 ## Hard Rails
 
@@ -197,29 +205,44 @@ python tools/check_invariants.py -> green
 git diff --check           -> green
 ```
 
+Focused Phase F check before handoff update:
+
+```text
+python -m pytest tests\unit\test_self_funding.py tests\regression\test_self_funding_claim_gate.py tests\unit\test_forecast_scoring.py tests\unit\test_forecast_calibration.py -q
+-> 8 passed
+python tools\forecast_desk_scoreboard.py --fixture --json -> scoreboard emitted
+python tools\forecast_desk_self_funding.py --fixture --json -> paper claim denied
+```
+
+Phase F full-suite result:
+
+```text
+python -m pytest -q        -> 174 passed
+python tools/check_invariants.py -> green
+git diff --check           -> green
+```
+
 ## Next Phase
 
-Continue to Phase F after Phase E is committed cleanly:
+Continue to Phase G after Phase F is committed cleanly:
 
 ```powershell
 python -m pytest -q
 python tools\check_invariants.py
 git diff --check
 git add .
-git commit -m "Add cost-aware event-contract paper simulator and replay"
+git commit -m "Add Forecast Desk scoreboard and self-funding proof ledger"
 ```
 
-Then implement scoreboard, calibration, and self-funding:
+Then implement public FoxClaw Hunt export:
 
 ```text
-foxclaw/adapters/event_contracts/self_funding.py
-tools/forecast_desk_scoreboard.py
-tools/forecast_desk_self_funding.py
-config/self_funding_standard.json
-docs/forecast_calibration.md
-docs/self_funding_standard.md
-tests/unit/test_self_funding.py
-tests/regression/test_self_funding_claim_gate.py
+foxclaw/adapters/event_contracts/publication.py
+tools/forecast_desk_export_public.py
+config/publication_policy.json
+docs/public_hunt_policy.md
+docs/press_experiment.md
+tests/unit/test_public_forecast_export.py
 ```
 
 ## Watch
