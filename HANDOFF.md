@@ -5,7 +5,7 @@ Read it before changing code, then verify with `git log --oneline -10` and the t
 
 Last updated: 2026-06-18
 Branch: `master`
-Version: `0.3.1`
+Version: `0.4.0`
 Working repo: `C:\Users\brend\dev\foxclaw-core`
 
 ## Current Lane
@@ -95,6 +95,11 @@ Done in this pass:
 - Verified self-funding claims are denied on paper mode, missing costs, zero costs, tiny
   samples, insufficient days, low ratio, or nonpositive net economic profit.
 - `docs/forecast_calibration.md` and `docs/self_funding_standard.md` added.
+- Phase G public FoxClaw Hunt export implemented.
+- `publication.py`, `tools/forecast_desk_export_public.py`, `config/publication_policy.json`,
+  `docs/public_hunt_policy.md`, and `docs/press_experiment.md` added.
+- Public exports are paper-labeled, exclude private/internal fields, preserve losing/resolved
+  forecasts, and include export hashes.
 
 ## Hard Rails
 
@@ -222,27 +227,44 @@ python tools/check_invariants.py -> green
 git diff --check           -> green
 ```
 
+Focused Phase G check before handoff update:
+
+```text
+python -m pytest tests\unit\test_public_forecast_export.py -q
+-> 4 passed
+python tools\forecast_desk_export_public.py --fixture --write <temp> --json
+-> public_forecasts.json/md, scoreboard.json/md, build_log.json
+```
+
+Phase G full-suite result:
+
+```text
+python -m pytest -q        -> 178 passed
+python tools/check_invariants.py -> green
+git diff --check           -> green
+```
+
 ## Next Phase
 
-Continue to Phase G after Phase F is committed cleanly:
+Continue to Phase H after Phase G is committed cleanly:
 
 ```powershell
 python -m pytest -q
 python tools\check_invariants.py
 git diff --check
 git add .
-git commit -m "Add Forecast Desk scoreboard and self-funding proof ledger"
+git commit -m "Export immutable public FoxClaw Hunt forecast receipts"
 ```
 
-Then implement public FoxClaw Hunt export:
+Then implement continuous hunt loop and diagnostics:
 
 ```text
-foxclaw/adapters/event_contracts/publication.py
-tools/forecast_desk_export_public.py
-config/publication_policy.json
-docs/public_hunt_policy.md
-docs/press_experiment.md
-tests/unit/test_public_forecast_export.py
+tools/forecast_desk_watch.py
+tools/forecast_desk_doctor.py
+health/status JSON
+freshness receipts
+lock file / single-instance guard
+bounded schedule
 ```
 
 ## Watch

@@ -32,6 +32,7 @@ from .pricing import (  # noqa: E402
     usable_edge,
     yes_price_to_implied_probability,
 )
+from .publication import build_public_export, public_forecast, write_public_export  # noqa: E402
 from .resolution import assess_resolution_quality, record_resolution  # noqa: E402
 from .scoring import assess_forecast  # noqa: E402
 from .self_funding import evaluate_self_funding  # noqa: E402
@@ -65,6 +66,9 @@ __all__ = [
     "PaperOutcome",
     "simulate_paper_entry",
     "replay_positions",
+    "public_forecast",
+    "build_public_export",
+    "write_public_export",
     # venues
     "get_venue",
     "VENUES",

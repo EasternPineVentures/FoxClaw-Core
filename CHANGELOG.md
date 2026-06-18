@@ -9,6 +9,19 @@ preserved as the `v1-legacy` archive. Milestone map: `0.x` builds toward launch,
 bump per completed overhaul phase; **`1.0.0`** is earned at Apollo-2 cutover when v2 runs the
 live track record and is demo-ready.
 
+## [0.4.0] - 2026-06-18
+### Added
+- **Forecast Desk Phase G: public FoxClaw Hunt export.** Added sanitized static export
+  contracts, fixture CLI, publication policy, and public Hunt/press docs.
+- `publication.py` builds paper-labeled public forecasts, excludes private/internal fields,
+  preserves resolved losers, supports superseding IDs, and records an export hash.
+- `tools/forecast_desk_export_public.py` writes `public_forecasts.json`,
+  `public_forecasts.md`, `scoreboard.json`, `scoreboard.md`, and `build_log.json`.
+- Tests cover paper labels, private-field exclusion, losing forecast preservation, export
+  hash presence, and expected static files.
+### Notes
+- Public export is proof of process, not a profit or self-funding claim.
+
 ## [0.3.1] - 2026-06-18
 ### Added
 - **Forecast Desk Phase F: scoreboard, calibration, and self-funding gate.** Added resolved

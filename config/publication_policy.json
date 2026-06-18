@@ -1,0 +1,16 @@
+{
+  "version": 1,
+  "mode": "PAPER",
+  "require_paper_label": true,
+  "exclude_fields": [
+    "dossier_hash",
+    "source_receipt_hash",
+    "receipt_json",
+    "raw_payload_hash",
+    "archived_path",
+    "request_json",
+    "response_json"
+  ],
+  "preserve_resolved_and_losing_forecasts": true,
+  "require_export_hash": true
+}
