@@ -1,90 +1,124 @@
-# HANDOFF — the context football
+# HANDOFF - foxclaw-core
 
-> **What this is:** the running state of work on `foxclaw-core`, updated frequently so any
-> session (or the founder on A2) can pick up cold without re-deriving context. Travels by
-> **git** (invariant #9 — never OneDrive). When you resume: read this top-to-bottom first,
-> then `git log --oneline -10`. When you stop: update the **Now / Next / Watch** block and
-> the timestamp before you run out of juice.
+This file is the operational passoff for the clean FoxClaw company repo.
+Read it before changing code, then verify with `git log --oneline -10` and the tests.
 
-**Last updated:** 2026-06-17 · **Branch:** `master` · **Version:** `0.2.0` · **Tests:** 117 green
+Last updated: 2026-06-18
+Branch: `master`
+Version: `0.2.1`
+Working repo: `C:\Users\brend\dev\foxclaw-core`
 
----
+## Current Lane
 
-## ▶ NOW (the active task) — FORECAST DESK (Kalshi-first, pin P10)
+Forecast Desk / Kalshi-first event-contract intelligence is the active lane.
 
-**Strategic pivot (2026-06-17):** the free signals now also cover **event-contract markets**,
-hunting **mispriced probability** (Kalshi first). Same free signals, wider scope; capitalize on
-the layers *around* them (sell/license the system · node-access tiers · future founder-gated live
-op) — never by gating signals. Plan: `docs/forecast_desk_plan.md`. Business lens held throughout.
+FoxClaw is a decision matrix first. Kalshi is one public-data adapter feeding the
+receipt-driven decision machinery. The core `engine/` must remain domain-neutral; market
+and venue language stays under `foxclaw/adapters/`.
 
-**Done (P10 Phase 0):** `foxclaw/adapters/event_contracts/` scaffolded, all hard-locked
-(read-only/paper-only, live eligibility always false, A4_prohibited); `pricing.py` implemented
-(the doctrine in code) + 17 tests. **Next phases, in order:**
+Company posture:
 
-1. **Phase 1** — `venues.py` (have Kalshi) → flesh `markets.py` (normalize public market catalog
-   from already-fetched public data; no network in the pure layer) + keep `eligibility.py` deny-all.
-2. **Phase 2** — `dossiers.py` (public-evidence packets; invariant #11 rejects nonpublic) +
-   `pricing` (done) + `resolution.py` (settlement evidence).
-3. **Phase 3** — `paper.py` (paper-only event receipts) + `tools/event_contract_scanner.py`
-   (rank markets by edge gap) + a paper simulator.
-4. **Phase 4** — `store/` `event_outcomes` table + `tools/forecast_scoreboard.py` (reuse
-   `engine.score`, don't re-implement) + Founder Cockpit visibility.
+- This repo is the clean migration target and public-ready work surface.
+- Git is the handoff path.
+- OneDrive is not an authoritative runtime or database source.
+- The old OneDrive FoxClaw checkout is reference-only unless a task explicitly says
+  otherwise.
+- No credentials, DB files, raw runtime logs, or private keys belong in git.
 
-> ⚠️ **Hard rails:** every `event_contracts/*` stays `can_submit_order=false` /
-> `can_move_funds=false` / live-eligibility-false; public information only (invariant #11). Going
-> live = a separate founder-approved authority grant, never a default.
+## Phase Progress
 
-**Parked (still real, lower priority than the Desk):** front-of-pipeline ingest/parse → decide
-(v1 source `OneDrive/Desktop/FoxClaw/tools/raw_parser.py`), then shadow-parity vs A2 → v1.0.
-⚠️ **A2 boundary (invariant #2):** A2 runs the live organism on v1 and must not stop; all build
-work is on A1; cutover is a later deliberate step (pin P7).
+Done before this pass:
 
-## ✅ DONE — engine phase (v0.2.0)
+- `v0.2.0` engine phase: neutral edge, score, gate, tier owner, and market scoreboard
+  adapter were wired end to end.
+- Forecast Desk P10 Phase 0: event-contract scaffold, hard read-only/paper-only locks,
+  venue metadata, eligibility denial, and pricing doctrine in code.
 
-- **P9 resolved:** `engine/tiers.py` is the single owner of the tier vocab + multipliers +
-  boost-suppression. `edge.decision_label`, `engine/score`, `engine/gate` all defer to it.
-- `engine/score.py` (neutral grader) + `engine/gate.py` (neutral authority, opaque subject).
-- **Market scoreboard adapter** `adapters/market/scoreboard.py`: reads outcomes via the store
-  (`get_closed_outcomes_with_source`), corruption filters (invariant #8), and the full chain
-  `assess_setup` (outcomes → observations → edge → score-tier → gate-multiplier → verdict).
-- 38 new tests across this + the prior pass; **100 total green**; invariant guard green.
-- The complete decision spine now exists: `evidence → edge → gate → receipt-compatible output`.
+Done in this pass:
 
-## 👀 WATCH (don't trip these)
+- Phase A read-only Kalshi API Desk implemented.
+- Public REST environment metadata added for production and demo.
+- Credential-free REST transport added with central 429 backoff.
+- Cursor paginator added with repeated-cursor rejection and max page/item guards.
+- Kalshi fixed-point parsing uses `Decimal` and rejects binary float money.
+- Normalized series, event, market, and order-book contracts added.
+- YES/NO bid-only order books reconstruct asks via complementarity.
+- Crossed or empty books become non-tradeable receipts rather than fake executable books.
+- Historical cutoff parsing and deterministic live/historical market merge helpers added.
+- `tools/kalshi_api_desk.py` added with offline fixture mode and read-only commands:
+  `doctor`, `series`, `events`, `markets`, `inspect`, `orderbook`, `trades`.
+- `docs/kalshi_api_field_guide.md` added.
+- Offline Kalshi fixtures and tests added.
 
-- **Invariant #4** — `engine/` stays domain-neutral. No symbol/side/long/short/PnL in
-  `engine/`; the invariant guard (`check_invariants.py`) rejects it. Market words → adapters.
-- **Invariant #6** — pure stdlib in `engine/` (no numpy/scipy).
-- **Invariant #5** — ρ (trust/reliability) is diagnostic, weights-not-caps, NOT wired into
-  live sizing without the shadow-first ritual.
-- **Invariant #2** — A2 live organism never stops; this is A1 build work only. Don't touch A2.
-- Run `python -m pytest -q` before committing; run the invariant guard over `engine/`.
+## Hard Rails
 
----
+These remain non-negotiable:
 
-## Where things are
+```text
+CAN_SUBMIT_ORDER = false
+CAN_MOVE_FUNDS = false
+LIVE_EXECUTION_ALLOWED = false
+DEFAULT_AUTHORITY_LEVEL = A4_prohibited
+```
 
-- **Plan of record:** `docs/engine_port_plan.md` (per-module classification + port recipes).
-- **Pins (deferred decisions):** `docs/deferred.md` — open: P1, P2, P4–P8 (P3 + P9 resolved).
-- **Decisions already made:** `docs/decisions.md`.
-- **Hard rules:** `docs/invariants.md`. **Target layout:** `docs/architecture.md`.
-- **Phase plan:** `docs/foxclaw_v2_overhaul_plan.md`. **Keep/cut call:** `docs/foxclaw_v2_inventory.md`.
-- **v1 source tree (read-only, OneDrive):** `OneDrive/Desktop/FoxClaw/{src/grovecore,tools}/`.
+No live order path, no account creation, no funds movement, no production credential load,
+no jurisdiction bypass, and no LLM authority path. Public information only.
 
-## Map of the rebuild (what's done)
+## Verification
 
-- ✅ Scaffold + frozen DB schema (asset boundary, invariant #8).
-- ✅ Store layer: decision receipt spine, paper execution (journal → outcomes), policy.
-- ✅ Engine pure trio: `edge`, `trust/reliability`, `trust/trustworthiness`
-  (+ market-claim split to `adapters/market/claims.py`).
-- ✅ Engine gate + score (neutral) + P9 resolved (`engine/tiers.py`).
-- ✅ Market scoreboard adapter + full chain (`assess_setup`) + regression → **v0.2.0**.
-- ✅ Forecast Desk P10 Phase 0: `event_contracts/` scaffold + `pricing.py` (doctrine in code).
-- ⏳ Forecast Desk Phases 1–4 (venues/markets → dossiers/resolution → paper → scoreboard)  ← **here**.
-- ⬜ Parked: front-of-pipeline ingest/parse → decide; then shadow-parity → v1.0 at A2 cutover.
+Baseline before edits:
 
-## Resume / stop checklist
+```text
+python -m pytest -q        -> 117 passed
+python tools/check_invariants.py -> green
+git diff --check           -> green
+```
 
-**Resume:** read this file → `git log --oneline -10` → `python -m pytest -q` → open the NOW task.
-**Stop (do before context runs out):** update NOW/NEXT/WATCH + timestamp/version/test-count
-above → commit (`HANDOFF.md` included) so A2 / next session gets it via git.
+Focused Phase A check before handoff update:
+
+```text
+python -m pytest tests\unit\test_event_contract_models.py tests\unit\test_kalshi_normalization.py tests\unit\test_kalshi_orderbook.py tests\unit\test_kalshi_pagination.py tests\regression\test_kalshi_api_desk.py -q
+-> 19 passed
+```
+
+Phase-boundary result:
+
+```text
+python -m pytest -q        -> 136 passed
+python tools/check_invariants.py -> green
+git diff --check           -> green
+```
+
+## Next Phase
+
+Continue to Phase B after Phase A is committed cleanly:
+
+```powershell
+python -m pytest -q
+python tools\check_invariants.py
+git diff --check
+git add .
+git commit -m "Add read-only Kalshi API Desk and market normalizers"
+```
+
+Then implement the Forecast Desk snapshot ledger:
+
+```text
+foxclaw/adapters/event_contracts/storage/db.py
+foxclaw/adapters/event_contracts/storage/schema.py
+foxclaw/adapters/event_contracts/storage/repositories.py
+foxclaw/adapters/event_contracts/storage/raw_archive.py
+tools/forecast_desk_sync.py
+tools/freeze_forecast_db_schema.py
+config/forecast_db_schema.frozen.json
+docs/forecast_db_schema.md
+```
+
+## Watch
+
+- Keep `engine/` free of Kalshi/event-contract vocabulary.
+- Keep default tests offline and deterministic.
+- Do not hardcode `C:\Users\brend\...` in code; use explicit args, environment variables,
+  then repo-local fallback.
+- Do not put Forecast Desk DBs under OneDrive.
+- Treat Kalshi docs as live; changelog drift must become a later receipt watcher.

@@ -1,0 +1,10 @@
+{
+  "market": {
+    "ticker": "KXBROKEN",
+    "title": "Malformed fixture uses binary float money",
+    "status": "open",
+    "yes_bid_dollars": 0.42,
+    "volume_fp": "1.00",
+    "open_interest_fp": "1.00"
+  }
+}

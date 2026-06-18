@@ -1,0 +1,27 @@
+{
+  "market": {
+    "ticker": "KXJOBLESS-26JUN18-T250",
+    "event_ticker": "KXJOBLESS-26JUN18",
+    "series_ticker": "KXJOBLESS",
+    "title": "Initial jobless claims above 250k on Jun 18, 2026?",
+    "yes_sub_title": "Above 250k",
+    "no_sub_title": "250k or below",
+    "status": "open",
+    "yes_bid_dollars": "0.4200",
+    "yes_ask_dollars": "0.4300",
+    "no_bid_dollars": "0.5700",
+    "no_ask_dollars": "0.5800",
+    "last_price_dollars": "0.4100",
+    "volume_fp": "118.00",
+    "open_interest_fp": "31.00",
+    "close_time": "2026-06-18T12:25:00Z",
+    "latest_expiration_time": "2026-06-18T13:00:00Z",
+    "rules_primary": "Resolves YES if the official initial claims report is greater than 250,000.",
+    "settlement_sources": [
+      {
+        "name": "Department of Labor",
+        "url": "https://www.dol.gov/ui/data.pdf"
+      }
+    ]
+  }
+}

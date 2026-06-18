@@ -1,0 +1,20 @@
+{
+  "series": [
+    {
+      "ticker": "KXJOBLESS",
+      "frequency": "weekly",
+      "title": "Weekly Initial Jobless Claims",
+      "category": "economics",
+      "tags": ["labor", "macro"],
+      "settlement_sources": [
+        {
+          "name": "Department of Labor",
+          "url": "https://www.dol.gov/"
+        }
+      ],
+      "contract_terms_url": "https://kalshi.example/rules/KXJOBLESS",
+      "volume_fp": "10.00",
+      "last_updated_ts": "2026-06-18T00:00:00Z"
+    }
+  ]
+}

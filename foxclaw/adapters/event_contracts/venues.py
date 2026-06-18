@@ -35,7 +35,7 @@ VENUES: Final[dict[str, Venue]] = {
     "kalshi": Venue(
         name="Kalshi",
         regulatory_status="CFTC-designated contract market (emerging, jurisdiction-sensitive space)",
-        public_market_data_url="https://api.elections.kalshi.com/trade-api/v2",
+        public_market_data_url="https://external-api.kalshi.com/trade-api/v2",
         public_data_requires_auth=False,
         notes=(
             "First US lane: cleanest regulated path.",

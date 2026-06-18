@@ -1,0 +1,20 @@
+{
+  "events": [
+    {
+      "event_ticker": "KXJOBLESS-26JUN18",
+      "series_ticker": "KXJOBLESS",
+      "title": "Initial jobless claims above 250k on Jun 18, 2026?",
+      "category": "economics",
+      "status": "open",
+      "strike_date": "2026-06-18T12:30:00Z",
+      "settlement_sources": [
+        {
+          "name": "Department of Labor",
+          "url": "https://www.dol.gov/ui/data.pdf"
+        }
+      ],
+      "markets": []
+    }
+  ],
+  "cursor": null
+}

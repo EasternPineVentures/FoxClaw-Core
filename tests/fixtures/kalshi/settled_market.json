@@ -1,0 +1,11 @@
+{
+  "market": {
+    "ticker": "KXSETTLED",
+    "title": "Settled fixture",
+    "status": "settled",
+    "volume_fp": "1.00",
+    "open_interest_fp": "0.00",
+    "close_time": "2025-01-01T00:00:00Z",
+    "result": "no"
+  }
+}

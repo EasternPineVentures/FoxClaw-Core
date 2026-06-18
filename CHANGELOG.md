@@ -9,6 +9,26 @@ preserved as the `v1-legacy` archive. Milestone map: `0.x` builds toward launch,
 bump per completed overhaul phase; **`1.0.0`** is earned at Apollo-2 cutover when v2 runs the
 live track record and is demo-ready.
 
+## [0.2.1] - 2026-06-18
+### Added
+- **Forecast Desk Phase A: read-only Kalshi API Desk.** Added a credential-free Kalshi REST
+  adapter under `foxclaw/adapters/event_contracts/kalshi/`, including environment metadata,
+  central GET transport with 429 backoff, cursor pagination guards, fixed-point `Decimal`
+  parsing, normalization of series/events/markets, order-book reconstruction, and historical
+  cutoff helpers.
+- `tools/kalshi_api_desk.py` for read-only inspection (`doctor`, `series`, `events`,
+  `markets`, `inspect`, `orderbook`, `trades`) with an offline fixture mode for deterministic
+  default tests.
+- Offline Kalshi fixtures plus unit/regression coverage for fixed-point parsing, YES/NO
+  bid-to-ask inference, crossed-book invalidation, repeated pagination cursor rejection,
+  historical routing, malformed float-money rejection, and credential-free CLI posture.
+- `docs/kalshi_api_field_guide.md` documents the Phase A API boundary and read-only posture.
+### Notes
+- No credentials are loaded, no order endpoint is invoked, and all authority flags remain
+  false / `A4_prohibited`.
+- This is a patch bump because it adds the first production-shaped event-contract adapter
+  while keeping the system read-only and paper-first.
+
 ## [0.2.0] — 2026-06-17
 ### Added
 - **Engine phase complete — the market scoreboard *builder* adapter + the full decision

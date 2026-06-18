@@ -1,0 +1,25 @@
+{
+  "market": {
+    "ticker": "KXOLD-25DEC31-T1",
+    "event_ticker": "KXOLD-25DEC31",
+    "series_ticker": "KXOLD",
+    "title": "A settled historical fixture market",
+    "status": "settled",
+    "yes_bid_dollars": "0.0000",
+    "yes_ask_dollars": "1.0000",
+    "no_bid_dollars": "0.0000",
+    "no_ask_dollars": "1.0000",
+    "volume_fp": "22.00",
+    "open_interest_fp": "0.00",
+    "close_time": "2025-12-31T23:00:00Z",
+    "latest_expiration_time": "2026-01-01T00:00:00Z",
+    "result": "yes",
+    "rules_primary": "Historical fixture resolved from a public source.",
+    "settlement_sources": [
+      {
+        "name": "Fixture source",
+        "url": "https://example.invalid/settled"
+      }
+    ]
+  }
+}
