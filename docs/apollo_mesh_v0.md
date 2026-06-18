@@ -67,6 +67,40 @@ This is deliberately a V0 private-mesh signature. It is enough for A1/A2 to prov
 integrity immediately. A later adapter can map this contract to public-key/Nostr-style
 events without changing FoxClaw's internal payload model.
 
+## Shared Founder Mesh Enrollment
+
+A local `init` or `heartbeat` proves that one node is online. It does not prove that A1 and
+A2 can verify each other unless both identities were enrolled with the same founder mesh
+secret.
+
+The shared founder mesh secret is private security material:
+
+- do not paste it into chat;
+- do not commit it;
+- do not send it through Apollo Mesh;
+- keep any `--secret-file` outside git-tracked paths;
+- compare only the public `key_id` returned by `doctor` or `rekey`.
+
+Rekey A1 from a local secret file or `FOXCLAW_MESH_SECRET`:
+
+```powershell
+python tools\apollo_mesh.py --node-id A1 --json rekey --secret-file C:\path\outside\repo\founder_mesh_secret.txt
+python tools\apollo_mesh.py --node-id A1 --json doctor
+```
+
+Repeat on A2 with the same secret moved through a secure local channel:
+
+```powershell
+python tools\apollo_mesh.py --node-id A2 --json rekey --secret-file C:\path\outside\repo\founder_mesh_secret.txt
+python tools\apollo_mesh.py --node-id A2 --json doctor
+```
+
+If both `doctor` outputs show the same `key_id`, the nodes are enrolled in the same founder
+mesh. The key ID is safe to compare; the secret is not.
+
+`doctor` is read-only. If no identity exists yet, it reports `identity_exists=false` and
+`secret_loaded=false` without creating `data/apollo_mesh/identity.json`.
+
 ## Commands
 
 Initialize a local identity:
@@ -119,12 +153,15 @@ After pushing this version, A2 should run:
 ```powershell
 git pull
 python -m pytest tests\unit\test_apollo_mesh_events.py tests\regression\test_apollo_mesh_cli.py -q
-python tools\apollo_mesh.py --node-id A2 init
-python tools\apollo_mesh.py --node-id A2 --json heartbeat --message "A2 online"
+python tools\apollo_mesh.py --node-id A2 --json doctor
+python tools\apollo_mesh.py --node-id A2 --json heartbeat --message "A2 founder node online"
 ```
 
 Then paste the heartbeat JSON back to A1. Until relay transport exists, paste/file exchange is
 the transport. The event format is the important part.
+
+If A2 initialized before the shared founder mesh secret was installed, run the rekey flow
+above on both nodes before treating received events as cross-node verified.
 
 ## Next Adapter
 

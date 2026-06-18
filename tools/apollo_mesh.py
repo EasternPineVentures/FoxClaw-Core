@@ -16,12 +16,15 @@ if str(REPO) not in sys.path:
 
 from foxclaw.nodes.mesh import (  # noqa: E402
     ApolloMeshIdentity,
+    MESH_SECRET_ENV,
     create_mesh_event,
     dumps_event,
     event_from_json,
+    identity_from_json,
     load_or_create_identity,
     to_jsonable,
     verify_mesh_event,
+    write_identity,
 )
 from foxclaw.nodes.mesh_store import ApolloMeshStore  # noqa: E402
 
@@ -40,6 +43,10 @@ def main(argv: list[str] | None = None) -> int:
     sub = parser.add_subparsers(dest="command", required=True)
 
     sub.add_parser("init")
+    sub.add_parser("doctor")
+
+    rekey = sub.add_parser("rekey")
+    rekey.add_argument("--secret-file", help="local file containing the founder mesh secret")
 
     heartbeat = sub.add_parser("heartbeat")
     heartbeat.add_argument("--message", default="alive")
@@ -60,11 +67,25 @@ def main(argv: list[str] | None = None) -> int:
 
     args = parser.parse_args(argv)
     mesh_dir = Path(args.mesh_dir)
-    identity = _identity(args)
     store = ApolloMeshStore(mesh_dir)
+    if args.command == "doctor":
+        return _doctor(args, mesh_dir=mesh_dir, store=store)
+    if args.command == "rekey":
+        identity = _rekey_identity(args)
+    else:
+        identity = _identity(args)
 
     if args.command == "init":
         return _emit(identity.public_view(), json_mode=args.json)
+    if args.command == "rekey":
+        payload = {
+            **identity.public_view(),
+            "identity_file": str(_identity_path(args).resolve()),
+            "identity_exists": True,
+            "secret_printed": False,
+            "rekeyed": True,
+        }
+        return _emit(payload, json_mode=args.json)
     if args.command == "heartbeat":
         event = create_mesh_event(
             identity=identity,
@@ -105,13 +126,71 @@ def main(argv: list[str] | None = None) -> int:
 
 
 def _identity(args: argparse.Namespace) -> ApolloMeshIdentity:
-    path = Path(args.identity_file) if args.identity_file else Path(args.mesh_dir) / "identity.json"
+    path = _identity_path(args)
     return load_or_create_identity(
         path,
         node_id=args.node_id,
         secret=FIXTURE_SECRET if args.fixture else None,
         created_at=FIXTURE_TIME if args.fixture else None,
     )
+
+
+def _doctor(args: argparse.Namespace, *, mesh_dir: Path, store: ApolloMeshStore) -> int:
+    path = _identity_path(args)
+    identity_payload: dict[str, Any]
+    if path.exists():
+        identity = identity_from_json(json.loads(path.read_text(encoding="utf-8")))
+        identity_payload = {**identity.public_view(), "identity_exists": True}
+    else:
+        identity_payload = {
+            "node_id": args.node_id,
+            "node_role": "founder_node",
+            "key_id": None,
+            "created_at": None,
+            "secret_loaded": False,
+            "identity_exists": False,
+        }
+    payload = {
+        **identity_payload,
+        "mesh_dir": str(mesh_dir.resolve()),
+        "identity_file": str(path.resolve()),
+        "inbox_count": len(store.read("inbox")),
+        "outbox_count": len(store.read("outbox")),
+        "secret_printed": False,
+    }
+    return _emit(payload, json_mode=args.json)
+
+
+def _rekey_identity(args: argparse.Namespace) -> ApolloMeshIdentity:
+    secret = _secret_for_rekey(args)
+    return write_identity(
+        _identity_path(args),
+        node_id=args.node_id,
+        secret=secret,
+        created_at=FIXTURE_TIME if args.fixture else None,
+    )
+
+
+def _identity_path(args: argparse.Namespace) -> Path:
+    if args.identity_file:
+        return Path(args.identity_file)
+    return Path(args.mesh_dir) / "identity.json"
+
+
+def _secret_for_rekey(args: argparse.Namespace) -> str:
+    if args.fixture:
+        return FIXTURE_SECRET
+    if args.secret_file:
+        text = Path(args.secret_file).read_text(encoding="utf-8").strip()
+        if not text:
+            raise SystemExit("--secret-file is empty")
+        return text
+    import os
+
+    text = os.environ.get(MESH_SECRET_ENV, "").strip()
+    if not text:
+        raise SystemExit(f"set {MESH_SECRET_ENV} or pass --secret-file for rekey")
+    return text
 
 
 def _emit(value: Any, *, json_mode: bool) -> int:

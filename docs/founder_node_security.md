@@ -68,6 +68,31 @@ Apollo Mesh V0 rejects content fields that look like:
 
 The mesh can share context. It cannot carry remote-control power.
 
+## Founder Mesh Secret
+
+The founder mesh secret is not a message payload. It is private security material used only
+to enroll local founder identities.
+
+Safe to compare:
+
+- `node_id`;
+- `node_role`;
+- `key_id`;
+- event IDs;
+- public doctor output.
+
+Not safe to share publicly or commit:
+
+- the founder mesh secret;
+- secret files;
+- `FOXCLAW_MESH_SECRET`;
+- `data/apollo_mesh/identity.json`.
+
+A1 and A2 should share the same founder mesh secret only through a secure local channel, then
+use `python tools\apollo_mesh.py --node-id A1 --json doctor` and the A2 equivalent to confirm
+that the `key_id` matches. The secret itself must never be pasted into chat or sent through
+Apollo Mesh.
+
 ## Public/Community Nodes Are Later
 
 Do not connect public/community nodes to the founder mesh.

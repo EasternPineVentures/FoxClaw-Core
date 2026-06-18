@@ -9,6 +9,20 @@ preserved as the `v1-legacy` archive. Milestone map: `0.x` builds toward launch,
 bump per completed overhaul phase; **`1.0.0`** is earned at Apollo-2 cutover when v2 runs the
 live track record and is demo-ready.
 
+## [0.4.9] - 2026-06-18
+### Added
+- **Apollo Mesh founder secret enrollment.** Added read-only `doctor` and secret-safe
+  `rekey` commands so A1/A2 can converge on one shared founder mesh secret without printing
+  it.
+- Added `write_identity` for local secret-backed founder identity enrollment.
+- Tests prove A1/A2 events verify across nodes only when the founder mesh secret matches,
+  that CLI `rekey` / `doctor` output never includes the secret, and that `doctor` does not
+  create identity state by accident.
+### Notes
+- A local heartbeat proves a node is online. Cross-node verification requires both founder
+  nodes to use the same private mesh secret and compare only the public `key_id`.
+- Do not paste the founder mesh secret into chat, commit it, or send it through Apollo Mesh.
+
 ## [0.4.8] - 2026-06-18
 ### Added
 - **Founder Node Security hardening.** Apollo Mesh V0 events now carry

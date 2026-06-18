@@ -17,6 +17,7 @@ from .mesh import (
     event_from_json,
     load_or_create_identity,
     verify_mesh_event,
+    write_identity,
 )
 from .mesh_store import ApolloMeshStore
 
@@ -36,4 +37,5 @@ __all__ = [
     "event_from_json",
     "load_or_create_identity",
     "verify_mesh_event",
+    "write_identity",
 ]

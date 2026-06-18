@@ -193,6 +193,29 @@ def load_or_create_identity(
     return identity
 
 
+def write_identity(
+    path: str | Path,
+    *,
+    node_id: str,
+    secret: str,
+    created_at: datetime | None = None,
+) -> ApolloMeshIdentity:
+    """Write a founder mesh identity from a locally supplied secret."""
+
+    identity_path = Path(path)
+    now = (created_at or datetime.now(UTC)).astimezone(UTC).replace(microsecond=0)
+    identity = ApolloMeshIdentity(
+        node_id=node_id,
+        key_id=key_id_for_secret(secret),
+        secret=secret,
+        created_at=now,
+        node_role=FOUNDER_NODE_ROLE,
+    )
+    identity_path.parent.mkdir(parents=True, exist_ok=True)
+    identity_path.write_text(json.dumps(to_jsonable(identity), indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    return identity
+
+
 def identity_from_json(payload: Mapping[str, Any]) -> ApolloMeshIdentity:
     return ApolloMeshIdentity(
         node_id=_required_text(payload.get("node_id"), "node_id"),

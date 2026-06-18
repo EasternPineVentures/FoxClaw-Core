@@ -14,6 +14,7 @@ from foxclaw.nodes.mesh import (
     load_or_create_identity,
     to_jsonable,
     verify_mesh_event,
+    write_identity,
 )
 from foxclaw.nodes.mesh_store import ApolloMeshStore
 
@@ -63,6 +64,21 @@ def test_mesh_event_tamper_breaks_verification():
     tampered = event_from_json(payload)
 
     assert verify_mesh_event(tampered, secret=SECRET) is False
+
+
+def test_founder_nodes_with_shared_secret_verify_each_other(tmp_path: Path):
+    a1 = write_identity(tmp_path / "a1.json", node_id="A1", secret=SECRET, created_at=NOW)
+    a2 = write_identity(tmp_path / "a2.json", node_id="A2", secret=SECRET, created_at=NOW)
+    event = create_mesh_event(
+        identity=a2,
+        kind="node.heartbeat",
+        content={"message": "A2 founder node online"},
+        created_at=NOW,
+    )
+
+    assert a1.key_id == a2.key_id
+    assert verify_mesh_event(event, secret=a1.secret) is True
+    assert verify_mesh_event(event, secret="different-secret-" + "2" * 32) is False
 
 
 def test_mesh_event_rejects_remote_command_or_secret_fields():

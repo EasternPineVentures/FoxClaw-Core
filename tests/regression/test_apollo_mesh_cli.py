@@ -133,3 +133,74 @@ def test_apollo_mesh_cli_heartbeat_writes_outbox(tmp_path: Path):
     payload = json.loads(outbox.stdout)
     assert payload["count"] == 1
     assert payload["events"][0]["kind"] == "node.heartbeat"
+
+
+def test_apollo_mesh_cli_rekey_and_doctor_do_not_print_secret(tmp_path: Path):
+    mesh_dir = tmp_path / "mesh"
+    identity_file = mesh_dir / "identity.json"
+    secret_file = tmp_path / "founder_mesh_secret.txt"
+    secret = "shared-founder-mesh-secret-" + "3" * 32
+    secret_file.write_text(secret, encoding="utf-8")
+
+    rekey = _run(
+        "--mesh-dir",
+        str(mesh_dir),
+        "--identity-file",
+        str(identity_file),
+        "--node-id",
+        "A2",
+        "--json",
+        "rekey",
+        "--secret-file",
+        str(secret_file),
+    )
+    rekey_payload = json.loads(rekey.stdout)
+    assert rekey_payload["rekeyed"] is True
+    assert rekey_payload["node_id"] == "A2"
+    assert rekey_payload["node_role"] == "founder_node"
+    assert rekey_payload["secret_printed"] is False
+    assert secret not in rekey.stdout
+
+    doctor = _run(
+        "--mesh-dir",
+        str(mesh_dir),
+        "--identity-file",
+        str(identity_file),
+        "--node-id",
+        "A2",
+        "--json",
+        "doctor",
+    )
+    doctor_payload = json.loads(doctor.stdout)
+    assert doctor_payload["node_id"] == "A2"
+    assert doctor_payload["key_id"] == rekey_payload["key_id"]
+    assert doctor_payload["identity_exists"] is True
+    assert doctor_payload["secret_printed"] is False
+    assert doctor_payload["inbox_count"] == 0
+    assert doctor_payload["outbox_count"] == 0
+    assert secret not in doctor.stdout
+
+
+def test_apollo_mesh_cli_doctor_does_not_create_identity(tmp_path: Path):
+    mesh_dir = tmp_path / "mesh"
+    identity_file = mesh_dir / "identity.json"
+
+    doctor = _run(
+        "--mesh-dir",
+        str(mesh_dir),
+        "--identity-file",
+        str(identity_file),
+        "--node-id",
+        "A2",
+        "--json",
+        "doctor",
+    )
+
+    doctor_payload = json.loads(doctor.stdout)
+    assert doctor_payload["node_id"] == "A2"
+    assert doctor_payload["node_role"] == "founder_node"
+    assert doctor_payload["key_id"] is None
+    assert doctor_payload["identity_exists"] is False
+    assert doctor_payload["secret_loaded"] is False
+    assert doctor_payload["secret_printed"] is False
+    assert not identity_file.exists()

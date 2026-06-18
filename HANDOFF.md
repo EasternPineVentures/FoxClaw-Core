@@ -5,7 +5,7 @@ Read it before changing code, then verify with `git log --oneline -10` and the t
 
 Last updated: 2026-06-18
 Branch: `master`
-Version: `0.4.8`
+Version: `0.4.9`
 Working repo: `C:\Users\brend\dev\foxclaw-core`
 
 ## Current Lane
@@ -152,6 +152,13 @@ Done in this pass:
   `public_export_allowed=false`.
 - `docs/founder_node_security.md` documents Apollo nodes as founder/IP-protected nodes;
   public/community nodes require a separate sanitized contract later.
+- Apollo Mesh founder secret enrollment added.
+- `tools/apollo_mesh.py doctor` reports local mesh identity, inbox/outbox counts, and public
+  key ID without printing secrets or creating identity state.
+- `tools/apollo_mesh.py rekey --secret-file <local-secret-file>` enrolls A1/A2 into the same
+  private founder mesh secret without printing the secret.
+- A2's local heartbeat proves it is online; A1/A2 cross-node verification requires matching
+  `key_id` after shared-secret enrollment.
 
 ## Hard Rails
 
@@ -415,17 +422,34 @@ python tools\check_invariants.py -> green
 git diff --check           -> green
 ```
 
+Focused Apollo Mesh founder enrollment check before handoff update:
+
+```text
+python -m pytest tests\unit\test_apollo_mesh_events.py tests\regression\test_apollo_mesh_cli.py -q
+-> 12 passed
+```
+
+Apollo Mesh founder enrollment full-suite result:
+
+```text
+python -m pytest -q        -> 211 passed
+python tools\check_invariants.py -> green
+git diff --check           -> green
+```
+
 ## Next Phase
 
 Next safe work:
 
+- Enroll A1 and A2 with the same founder mesh secret through a secure local channel, then
+  compare only `doctor` `key_id` outputs. Do not paste or commit the secret.
 - Add a private trusted-roster/auth boundary if this intake becomes multi-user instead of
   operator-run.
 - Have A2 pull this repo, verify version/commit/tests, and run the read-only old-repo
   inventory described in `docs/a2_migration_context.md`.
 - Use `python tools\apollo_node_brief.py --node-id A1 --peer-node A2` before handing
   active work from A1 to A2, and the reverse command before handing status back.
-- Use `python tools\apollo_mesh.py --node-id A2 --json heartbeat --message "A2 online"`
+- Use `python tools\apollo_mesh.py --node-id A2 --json heartbeat --message "A2 founder node online"`
   after A2 pulls this version, then paste the signed heartbeat back to A1.
 - Keep Apollo Mesh V0 founder-only. Do not connect public/community nodes until a separate
   sanitized contract exists.

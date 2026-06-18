@@ -58,8 +58,8 @@ foxclaw-core git repo from two VSCode workstations.
 Current target repo clones:
 - A1 path: C:\Users\brend\dev\foxclaw-core
 - A2 path: C:\Users\fox1i\Desktop\FoxClaw-Core-master
-- Expected version after pull: 0.4.8 or newer
-- Expected recent commit: Harden Apollo founder node mesh security
+- Expected version after pull: 0.4.9 or newer
+- Expected recent commit: Add Apollo Mesh founder secret enrollment
 
 The old A2 FoxClaw repo is still treated as the running legacy/reference system. Do not
 delete, rename, move, or rewrite it. Start read-only.
@@ -98,8 +98,12 @@ Two-workstation rules:
 - Commit each finished slice separately.
 - Use `python tools\apollo_node_brief.py --node-id A2 --peer-node A1 --json` when handing
   status back.
-- Use `python tools\apollo_mesh.py --node-id A2 --json heartbeat --message "A2 online"` to
-  prove the structured mesh event layer.
+- Use `python tools\apollo_mesh.py --node-id A2 --json doctor` to inspect the local founder
+  mesh identity without printing secrets or creating identity state.
+- Use `python tools\apollo_mesh.py --node-id A2 --json heartbeat --message "A2 founder node online"`
+  to prove the structured mesh event layer.
+- If A1/A2 need to verify each other's events, enroll both nodes with the same private
+  founder mesh secret using `rekey`; compare only the public `key_id`.
 - Keep the tree clean before handing work between A1 and A2.
 - Do not edit the same files on both machines at once.
 - If the other clone has uncommitted changes, stop and clarify before overlapping.
@@ -115,6 +119,8 @@ Strategic direction:
   handoff, question, alert, and context packets.
 - Apollo Mesh events are founder-private and `do_not_export` by default; public-safe exports
   require a separate sanitized contract.
+- A local heartbeat proves the node is online. Shared-secret enrollment proves A1/A2 are in
+  the same founder mesh.
 ```
 
 ## Which Planning Option To Choose
@@ -137,7 +143,7 @@ shadow the old repo.
 
 As of this brief:
 
-- `foxclaw-core` version is `0.4.8`.
+- `foxclaw-core` version is `0.4.9`.
 - The active lane is Forecast Desk / Kalshi-first event-contract intelligence.
 - The core engine remains domain-neutral.
 - Forecast Desk is read-only and paper-only.
@@ -150,8 +156,12 @@ As of this brief:
   inbox/outbox logs.
 - `docs/founder_node_security.md` documents why Apollo nodes are founder-only and
   IP-protected.
+- `tools/apollo_mesh.py doctor` and `rekey` provide shared founder mesh enrollment without
+  printing the secret; compare only `key_id`.
 - Forecast DB schema is version `3`.
-- Latest local verification: `python -m pytest -q` passed with `208 passed`.
+- Latest focused mesh verification:
+  `python -m pytest tests\unit\test_apollo_mesh_events.py tests\regression\test_apollo_mesh_cli.py -q`
+  passed with `12 passed`.
 
 ## What A2 Should Not Do Yet
 
