@@ -5,7 +5,7 @@ Read it before changing code, then verify with `git log --oneline -10` and the t
 
 Last updated: 2026-06-18
 Branch: `master`
-Version: `0.4.4`
+Version: `0.4.5`
 Working repo: `C:\Users\brend\dev\foxclaw-core`
 
 ## Current Lane
@@ -125,6 +125,11 @@ Done in this pass:
   node handoff receipts with repo truth, current slice, next request, blockers, notes,
   dirty-file status, and all authority flags locked false.
 - `docs/apollo_node_coordination.md` documents the A1/A2 handoff rhythm and failure modes.
+- Progress Operating Model added in `docs/progress_operating_model.md`.
+- FoxClaw/Redshift paper boundary note added in `docs/foxclaw_redshift_paper_boundary.md`.
+- Current recommendation: do not move all paper trading to Redshift in one step. Keep
+  FoxClaw as the decision matrix and prove a receipt handshake where Redshift can rehearse
+  paper execution and return paper outcomes.
 
 ## Hard Rails
 
@@ -327,6 +332,15 @@ python tools\check_invariants.py -> green
 git diff --check           -> green
 ```
 
+Progress/Redshift boundary documentation verification:
+
+```text
+documentation-only phase; no runtime behavior changed
+python -m pytest -q        -> 192 passed
+python tools\check_invariants.py -> green
+git diff --check           -> green
+```
+
 ## Next Phase
 
 Next safe work:
@@ -337,6 +351,8 @@ Next safe work:
   inventory described in `docs/a2_migration_context.md`.
 - Use `python tools\apollo_node_brief.py --node-id A1 --peer-node A2` before handing
   active work from A1 to A2, and the reverse command before handing status back.
+- Build a Redshift Paper Boundary V1 fixture before deciding whether paper runtime loops
+  should move to Redshift.
 - Add source-specific import adapters only after their trust and privacy boundaries are
   explicit.
 - Continue to Phase I/J only after deciding whether to enter demo-auth work.

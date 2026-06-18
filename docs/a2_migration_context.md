@@ -55,8 +55,8 @@ foxclaw-core git repo from two VSCode workstations.
 Current target repo clones:
 - A1 path: C:\Users\brend\dev\foxclaw-core
 - A2 path: C:\Users\fox1i\Desktop\FoxClaw-Core-master
-- Expected version after pull: 0.4.4 or newer
-- Expected recent commit: Add Apollo node coordination briefs
+- Expected version after pull: 0.4.5 or newer
+- Expected recent commit: Document progress model and Redshift paper boundary
 
 The old A2 FoxClaw repo is still treated as the running legacy/reference system. Do not
 delete, rename, move, or rewrite it. Start read-only.
@@ -104,6 +104,8 @@ Strategic direction:
 - Forecast Desk and football intelligence are a high-value wedge.
 - Public credibility comes from receipts, calibration, losing forecast retention, and clean
   evidence handling, not from carrying old code forward.
+- Redshift may become a paper-execution rehearsal lane only through a receipt handshake;
+  FoxClaw remains the decision matrix.
 ```
 
 ## Which Planning Option To Choose
@@ -126,12 +128,13 @@ shadow the old repo.
 
 As of this brief:
 
-- `foxclaw-core` version is `0.4.4`.
+- `foxclaw-core` version is `0.4.5`.
 - The active lane is Forecast Desk / Kalshi-first event-contract intelligence.
 - The core engine remains domain-neutral.
 - Forecast Desk is read-only and paper-only.
 - Trusted Evidence Intake V1 exists for context-only evidence submissions.
 - Apollo Node Coordination V1 exists for A1/A2 handoff receipts.
+- Progress and Redshift paper-boundary docs exist for deciding what moves next.
 - Forecast DB schema is version `3`.
 - Latest local verification: `python -m pytest -q` passed with `192 passed`.
 

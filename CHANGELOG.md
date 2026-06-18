@@ -9,6 +9,16 @@ preserved as the `v1-legacy` archive. Milestone map: `0.x` builds toward launch,
 bump per completed overhaul phase; **`1.0.0`** is earned at Apollo-2 cutover when v2 runs the
 live track record and is demo-ready.
 
+## [0.4.5] - 2026-06-18
+### Added
+- Added `docs/progress_operating_model.md` to define progress across build, migration,
+  decision-quality, paper-continuity, and node-coordination lanes.
+- Added `docs/foxclaw_redshift_paper_boundary.md` to capture the recommended boundary:
+  FoxClaw owns decisions and scoring; Redshift may rehearse paper execution through receipts.
+### Notes
+- Do not move all paper trading to Redshift in one step. Prove a paper receipt handshake
+  first, then decide long-term ownership.
+
 ## [0.4.4] - 2026-06-18
 ### Added
 - **Apollo Node Coordination V1.** Added `foxclaw.nodes.apollo` contracts and
