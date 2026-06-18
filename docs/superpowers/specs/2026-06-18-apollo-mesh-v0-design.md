@@ -55,6 +55,8 @@ live runtime state, or decision authority.
 - No shared SQLite database.
 - No OneDrive-synced source of truth.
 - No public relay, public feed, or secret-bearing event content.
+- No solicitation, purchase, acceptance, or use of confidential market-moving information.
+- No insider-source workflow, private tip workflow, or MNPI-bearing network-intel workflow.
 - No Forecast Desk decision influence in V0.
 - No autonomous manager authority. The steward can notice, summarize, remind, and propose;
   it cannot command, execute, mutate decision state, or bypass local policy.
@@ -283,6 +285,37 @@ Every imported intel event receives local receipt status:
 - `accepted`: payload schema and policy passed.
 - `quarantined`: signature, roster, schema, clock, or policy failed.
 
+## Market Integrity / MNPI Firewall
+
+Apollo Mesh V0 is a signed public-intelligence and memory network. It must be designed so
+FoxClaw can clearly say what it does not do: it does not buy secrets, solicit insiders, trade
+on confidential information, or let node intel execute actions.
+
+Accepted `intel.observation` and `intel.receipt` events must include source provenance and a
+shareability attestation. The accepted source lane is limited to:
+
+- `public_url`
+- `official_release`
+- `licensed_data`
+- `own_observation`
+- `analysis`
+
+Each accepted intel payload must state:
+
+- source type;
+- evidence, such as a public URL, license note, observation note, or analysis note;
+- rights attestation that the sender can share it and that it is not confidential;
+- MNPI status of `not_mnpi`.
+
+Events with missing provenance, missing attestation, `unknown` MNPI status,
+`suspected_mnpi`, or `confidential_rejected` must be quarantined locally. Quarantined intel
+can be logged and reviewed, but it cannot become accepted memory, feed a steward digest as
+trusted fact, execute an action, set probabilities, or influence any production trading or
+prediction-market path.
+
+This firewall belongs in code, not just copy. The first implementation slice must include
+tests proving accepted public intel passes and suspicious/non-public intel quarantines.
+
 ## Relay Policy
 
 The V0 relay must be private:
@@ -334,6 +367,10 @@ Minimum tests for the implementation plan:
 - Signing and verification pass for the right key and fail for the wrong key.
 - Authority flags default false and cannot be omitted.
 - Unknown event types are rejected or quarantined.
+- Public-intel events with source provenance, evidence, attestation, and `not_mnpi` status
+  are accepted by the compliance firewall.
+- Intel events with missing attestation, `unknown` MNPI status, `suspected_mnpi`, or
+  `confidential_rejected` are quarantined.
 - Local store appends inbox/outbox records without overwriting.
 - Duplicate event ids do not create duplicate accepted records.
 - Nostr mapping preserves event type, node id, priority, references, and content.

@@ -2,7 +2,7 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Build the first local-safe Apollo Mesh slice: signed network-intel events, local memory, steward summaries, context packs, and a downloadable testkit scaffold.
+**Goal:** Build the first local-safe Apollo Mesh slice: signed public-intelligence events, local memory, steward summaries, context packs, and a downloadable testkit scaffold.
 
 **Architecture:** `foxclaw/node` owns the mesh event model, identity, local store, steward, context packs, and CLI. `foxclaw/adapters/nostr` maps FoxClaw events to private Nostr transport using an optional dependency, keeping the engine pure and relay mechanics outside authority. `foxclaw/testkit` packages safe diagnostics and synthetic fixtures for trusted node testers.
 
@@ -27,6 +27,18 @@ dependency and adapter internals only. The acceptable alternatives are:
 Do not let a library decision leak into `NodeEvent`, `NodeEventStore`, `MeshSteward`,
 `context.py`, or `testkit` diagnostics. Those modules must remain transport-agnostic.
 
+## Planning Containment
+
+Keep planning, scratch reasoning, and agent coordination notes inside `docs/superpowers/`.
+Do not add scattered migration notes, brainstorming notes, or "temporary" planning files to
+runtime folders, engine folders, adapter packages, or the legacy A2 checkout.
+
+The implementation itself stays in a small set of purpose-built modules:
+
+- `foxclaw/node`: FoxClaw-owned event, identity, memory, policy, and CLI code.
+- `foxclaw/adapters/nostr`: private relay transport mechanics only.
+- `foxclaw/testkit`: safe tester diagnostics and synthetic fixtures only.
+
 ## Scope And Stop Conditions
 
 This plan starts after the Apollo Mesh V0 design spec is approved. It deliberately avoids full relay operations, public package publishing, and production node onboarding until A1's newer baseline is pushed and reviewed.
@@ -37,11 +49,41 @@ Stop immediately if:
 - `VERSION` or `docs/a2_migration_context.md` indicates A1's newer baseline landed and this branch needs rebase.
 - Any test requires printing private keys, `.env` values, DB contents, or runtime logs.
 - A change attempts to give mesh events execution, probability-setting, order, or funds authority.
+- A change accepts confidential, non-public, or suspicious market-moving information as
+  network intel.
+
+## Public-Intelligence / Market-Integrity Ground Rules
+
+FoxClaw Mesh V0 is a signed public-intelligence and memory network. It must not become a
+secret-buying, insider-signal, or auto-trading network.
+
+Accepted `intel.observation` and `intel.receipt` events must carry source provenance and a
+shareability attestation. Missing, confidential, suspicious, or non-public intel is
+quarantined locally and does not become accepted mesh memory.
+
+Allowed accepted source types:
+
+- `public_url`
+- `official_release`
+- `licensed_data`
+- `own_observation`
+- `analysis`
+
+Quarantine-only source/status values:
+
+- `confidential_rejected`
+- `suspected_mnpi`
+- `unknown`
+
+The Mesh Steward can flag, quarantine, summarize, and ask for human review. It cannot trade,
+submit orders, set probabilities, move funds, command another node, or promote quarantined
+intel into accepted memory.
 
 ## File Structure
 
 - Create `foxclaw/node/__init__.py`: safe exports for mesh primitives.
 - Create `foxclaw/node/events.py`: `AuthorityFlags`, `NodeEvent`, validation, canonical JSON, event id.
+- Create `foxclaw/node/compliance.py`: public-intelligence provenance, MNPI firewall, quarantine decisions.
 - Create `foxclaw/node/identity.py`: local node identity loading/generation using `pynostr`.
 - Create `foxclaw/node/store.py`: append-only inbox/outbox JSONL store with duplicate detection.
 - Create `foxclaw/node/steward.py`: deterministic advisory manager over accepted events.
@@ -71,7 +113,8 @@ Stop immediately if:
 # tests/unit/test_mesh_package_surfaces.py
 from __future__ import annotations
 
-import importlib.metadata
+from pathlib import Path
+import tomllib
 
 
 def test_node_packages_import_without_side_effects():
@@ -85,9 +128,10 @@ def test_node_packages_import_without_side_effects():
 
 
 def test_project_exposes_mesh_extra():
-    metadata = importlib.metadata.metadata("foxclaw-core")
-    provides_extra = metadata.get_all("Provides-Extra") or []
-    assert "mesh" in provides_extra
+    pyproject = tomllib.loads(Path("pyproject.toml").read_text(encoding="utf-8"))
+    optional_dependencies = pyproject["project"]["optional-dependencies"]
+    assert "mesh" in optional_dependencies
+    assert "pynostr[websocket-client]==0.7.0" in optional_dependencies["mesh"]
 ```
 
 - [ ] **Step 2: Run test to verify it fails**
@@ -347,7 +391,189 @@ git add foxclaw/node/events.py tests/unit/test_node_events.py
 git commit -m "feat: add node event schema"
 ```
 
-### Task 3: Test Identity And Nostr Mapping
+### Task 3: Public-Intelligence Compliance Firewall
+
+**Files:**
+- Create: `foxclaw/node/compliance.py`
+- Test: `tests/unit/test_mesh_compliance.py`
+
+- [ ] **Step 1: Write failing tests for provenance, attestation, and MNPI quarantine**
+
+```python
+# tests/unit/test_mesh_compliance.py
+from __future__ import annotations
+
+from foxclaw.node.compliance import review_public_intel
+from foxclaw.node.events import NodeEvent
+
+
+def make_intel(payload: dict[str, object]) -> NodeEvent:
+    return NodeEvent(
+        event_type="intel.observation",
+        from_node="apollo-2",
+        created_at="2026-06-18T00:00:00Z",
+        priority="normal",
+        summary="public-intel test event",
+        payload=payload,
+        references=[],
+    )
+
+
+def test_public_url_with_attestation_is_accepted():
+    event = make_intel(
+        {
+            "source_type": "public_url",
+            "evidence": {"url": "https://example.com/official-release"},
+            "rights_attestation": {"can_share": True, "not_confidential": True},
+            "mnpi_status": "not_mnpi",
+        }
+    )
+    review = review_public_intel(event)
+    assert review.status == "accepted"
+    assert review.reason == "public_intel_provenance_passed"
+
+
+def test_missing_attestation_is_quarantined():
+    event = make_intel(
+        {
+            "source_type": "official_release",
+            "evidence": {"url": "https://example.com/filing"},
+            "mnpi_status": "not_mnpi",
+        }
+    )
+    review = review_public_intel(event)
+    assert review.status == "quarantined"
+    assert review.reason == "missing_shareability_attestation"
+
+
+def test_suspected_mnpi_is_quarantined():
+    event = make_intel(
+        {
+            "source_type": "confidential_rejected",
+            "evidence": {"note": "claimed private source"},
+            "rights_attestation": {"can_share": False, "not_confidential": False},
+            "mnpi_status": "suspected_mnpi",
+        }
+    )
+    review = review_public_intel(event)
+    assert review.status == "quarantined"
+    assert review.reason == "suspected_or_non_public_market_intel"
+
+
+def test_non_intel_event_is_not_blocked_by_intel_firewall():
+    heartbeat = NodeEvent(
+        event_type="node.heartbeat",
+        from_node="apollo-2",
+        created_at="2026-06-18T00:00:00Z",
+        priority="normal",
+        summary="Apollo 2 online",
+        payload={},
+        references=[],
+    )
+    review = review_public_intel(heartbeat)
+    assert review.status == "accepted"
+    assert review.reason == "not_public_intel_event"
+```
+
+- [ ] **Step 2: Run test to verify it fails**
+
+Run: `python -m pytest tests/unit/test_mesh_compliance.py -q`
+
+Expected: FAIL because `foxclaw.node.compliance` does not exist.
+
+- [ ] **Step 3: Implement the compliance firewall**
+
+```python
+# foxclaw/node/compliance.py
+from __future__ import annotations
+
+from dataclasses import dataclass
+from typing import Any
+
+from .events import NodeEvent
+
+PUBLIC_INTEL_EVENT_TYPES = {"intel.observation", "intel.receipt"}
+
+ACCEPTED_SOURCE_TYPES = {
+    "public_url",
+    "official_release",
+    "licensed_data",
+    "own_observation",
+    "analysis",
+}
+
+QUARANTINE_SOURCE_TYPES = {"confidential_rejected"}
+QUARANTINE_MNPI_STATUSES = {"suspected_mnpi", "unknown"}
+
+
+@dataclass(frozen=True)
+class ComplianceReview:
+    status: str
+    reason: str
+    policy: str = "public_intel_v1"
+
+    def as_dict(self) -> dict[str, str]:
+        return {"status": self.status, "reason": self.reason, "policy": self.policy}
+
+
+def _as_mapping(value: Any) -> dict[str, Any]:
+    return value if isinstance(value, dict) else {}
+
+
+def review_public_intel(event: NodeEvent) -> ComplianceReview:
+    if event.event_type not in PUBLIC_INTEL_EVENT_TYPES:
+        return ComplianceReview(status="accepted", reason="not_public_intel_event")
+
+    payload = event.payload
+    source_type = str(payload.get("source_type", "")).strip()
+    mnpi_status = str(payload.get("mnpi_status", "")).strip()
+    evidence = _as_mapping(payload.get("evidence"))
+    attestation = _as_mapping(payload.get("rights_attestation"))
+
+    if source_type in QUARANTINE_SOURCE_TYPES or mnpi_status in QUARANTINE_MNPI_STATUSES:
+        return ComplianceReview(
+            status="quarantined",
+            reason="suspected_or_non_public_market_intel",
+        )
+
+    if source_type not in ACCEPTED_SOURCE_TYPES:
+        return ComplianceReview(status="quarantined", reason="unsupported_source_type")
+
+    if mnpi_status != "not_mnpi":
+        return ComplianceReview(
+            status="quarantined",
+            reason="missing_or_invalid_mnpi_status",
+        )
+
+    if not attestation.get("can_share") or not attestation.get("not_confidential"):
+        return ComplianceReview(
+            status="quarantined",
+            reason="missing_shareability_attestation",
+        )
+
+    if source_type in {"public_url", "official_release"} and not evidence.get("url"):
+        return ComplianceReview(status="quarantined", reason="missing_public_evidence_url")
+
+    if source_type in {"licensed_data", "own_observation", "analysis"} and not evidence:
+        return ComplianceReview(status="quarantined", reason="missing_evidence")
+
+    return ComplianceReview(status="accepted", reason="public_intel_provenance_passed")
+```
+
+- [ ] **Step 4: Run compliance tests**
+
+Run: `python -m pytest tests/unit/test_mesh_compliance.py -q`
+
+Expected: PASS.
+
+- [ ] **Step 5: Commit**
+
+```bash
+git add foxclaw/node/compliance.py tests/unit/test_mesh_compliance.py
+git commit -m "feat: add public intel compliance firewall"
+```
+
+### Task 4: Test Identity And Nostr Mapping
 
 **Files:**
 - Create: `foxclaw/node/identity.py`
@@ -494,7 +720,7 @@ git add foxclaw/node/identity.py foxclaw/adapters/nostr/mapping.py tests/unit/te
 git commit -m "feat: add test node identity and nostr mapping"
 ```
 
-### Task 4: Local Append-Only Event Store
+### Task 5: Local Append-Only Event Store
 
 **Files:**
 - Create: `foxclaw/node/store.py`
@@ -618,7 +844,7 @@ git add foxclaw/node/store.py tests/unit/test_node_event_store.py
 git commit -m "feat: add local node event store"
 ```
 
-### Task 5: Steward And Context Packs
+### Task 6: Steward And Context Packs
 
 **Files:**
 - Create: `foxclaw/node/steward.py`
@@ -774,7 +1000,7 @@ git add foxclaw/node/steward.py foxclaw/node/context.py tests/unit/test_mesh_ste
 git commit -m "feat: add mesh steward and context packs"
 ```
 
-### Task 6: Testkit Diagnostics And Internal Wheel Guard
+### Task 7: Testkit Diagnostics And Internal Wheel Guard
 
 **Files:**
 - Create: `foxclaw/testkit/diagnostics.py`
@@ -801,6 +1027,8 @@ def test_synthetic_observation_is_test_only():
     event = synthetic_observation("tester-1")
     assert event.event_type == "intel.observation"
     assert event.payload["test_fixture"] is True
+    assert event.payload["source_type"] == "analysis"
+    assert event.payload["mnpi_status"] == "not_mnpi"
 
 
 def test_run_diagnostics_is_redacted(tmp_path):
@@ -849,7 +1077,13 @@ def synthetic_observation(node_id: str) -> NodeEvent:
         created_at="2026-06-18T00:00:00Z",
         priority="normal",
         summary="Synthetic test intel fixture",
-        payload={"test_fixture": True},
+        payload={
+            "test_fixture": True,
+            "source_type": "analysis",
+            "evidence": {"note": "synthetic fixture generated by foxclaw.testkit"},
+            "rights_attestation": {"can_share": True, "not_confidential": True},
+            "mnpi_status": "not_mnpi",
+        },
         references=[],
     )
 ```
@@ -937,14 +1171,14 @@ git add foxclaw/testkit/diagnostics.py foxclaw/testkit/fixtures.py tests/unit/te
 git commit -m "feat: add node testkit diagnostics"
 ```
 
-### Task 7: Full Verification
+### Task 8: Full Verification
 
 **Files:**
-- Modify only files already introduced by Tasks 1-6 if verification fails.
+- Modify only files already introduced by Tasks 1-7 if verification fails.
 
 - [ ] **Step 1: Run focused mesh tests**
 
-Run: `python -m pytest tests/unit/test_mesh_package_surfaces.py tests/unit/test_node_events.py tests/unit/test_node_identity_nostr_mapping.py tests/unit/test_node_event_store.py tests/unit/test_mesh_steward_context.py tests/unit/test_node_testkit.py tests/regression/test_node_testkit_package_guard.py -q`
+Run: `python -m pytest tests/unit/test_mesh_package_surfaces.py tests/unit/test_node_events.py tests/unit/test_mesh_compliance.py tests/unit/test_node_identity_nostr_mapping.py tests/unit/test_node_event_store.py tests/unit/test_mesh_steward_context.py tests/unit/test_node_testkit.py tests/regression/test_node_testkit_package_guard.py -q`
 
 Expected: PASS.
 
