@@ -9,6 +9,16 @@ preserved as the `v1-legacy` archive. Milestone map: `0.x` builds toward launch,
 bump per completed overhaul phase; **`1.0.0`** is earned at Apollo-2 cutover when v2 runs the
 live track record and is demo-ready.
 
+## [0.4.3] - 2026-06-18
+### Added
+- Added `docs/a2_migration_context.md` as the A1/A2 coordination brief for the clean
+  `foxclaw-core` migration.
+- The brief gives A2 a paste-ready planning prompt, two-workstation VSCode/git rules,
+  Keep / Cut / Port / Rebuild deliverable format, and next sprint guardrails.
+### Notes
+- A1 and A2 are two workstations on the same clean repo. The old A2 FoxClaw checkout remains
+  legacy/reference runtime unless explicitly touched.
+
 ## [0.4.2] - 2026-06-18
 ### Added
 - **Trusted Evidence Intake V1.** Added context-only trusted submitter, evidence packet,

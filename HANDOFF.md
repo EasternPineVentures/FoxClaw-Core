@@ -5,7 +5,7 @@ Read it before changing code, then verify with `git log --oneline -10` and the t
 
 Last updated: 2026-06-18
 Branch: `master`
-Version: `0.4.2`
+Version: `0.4.3`
 Working repo: `C:\Users\brend\dev\foxclaw-core`
 
 ## Current Lane
@@ -20,7 +20,9 @@ Company posture:
 
 - This repo is the clean migration target and public-ready work surface.
 - Git is the handoff path.
-- A2 is a pull/deploy target for this work; it was not touched from this repo pass.
+- A1 and A2 are VSCode workstations on the same clean `foxclaw-core` git repo.
+- A2 also has an old FoxClaw checkout that may still be useful runtime/reference material;
+  treat that old checkout as legacy/read-only unless a task explicitly says otherwise.
 - OneDrive is not an authoritative runtime or database source.
 - The old OneDrive FoxClaw checkout is reference-only unless a task explicitly says
   otherwise.
@@ -115,6 +117,9 @@ Done in this pass:
   `trusted_evidence_validations`; frozen schema artifacts were refreshed.
 - `docs/trusted_evidence_intake.md` documents the trust-to-submit, not trust-to-decide
   boundary, including football evidence and Redshift context-only usage.
+- A1/A2 migration coordination brief added in `docs/a2_migration_context.md`.
+- The A2 planning default is `C first, then B`: produce a Keep / Cut / Port / Rebuild list
+  from the old running A2 repo, then turn it into the next sprint plan.
 
 ## Hard Rails
 
@@ -294,12 +299,20 @@ python tools\check_invariants.py -> green
 git diff --check           -> green; CRLF normalization warnings only on generated schema docs
 ```
 
+A1/A2 migration brief verification:
+
+```text
+documentation-only phase; no runtime behavior changed
+```
+
 ## Next Phase
 
 Next safe work:
 
 - Add a private trusted-roster/auth boundary if this intake becomes multi-user instead of
   operator-run.
+- Have A2 pull this repo, verify version/commit/tests, and run the read-only old-repo
+  inventory described in `docs/a2_migration_context.md`.
 - Add source-specific import adapters only after their trust and privacy boundaries are
   explicit.
 - Continue to Phase I/J only after deciding whether to enter demo-auth work.
