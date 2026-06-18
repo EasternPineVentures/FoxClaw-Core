@@ -6,26 +6,38 @@
 > then `git log --oneline -10`. When you stop: update the **Now / Next / Watch** block and
 > the timestamp before you run out of juice.
 
-**Last updated:** 2026-06-17 · **Branch:** `master` · **Version:** `0.2.0` · **Tests:** 100 green
+**Last updated:** 2026-06-17 · **Branch:** `master` · **Version:** `0.2.0` · **Tests:** 117 green
 
 ---
 
-## ▶ NOW (the active task)
+## ▶ NOW (the active task) — FORECAST DESK (Kalshi-first, pin P10)
 
-**Engine phase is COMPLETE (v0.2.0).** The next phase is the **front of the pipeline**:
-ingest / parse → decide, so live evidence can flow into the engine chain that now exists.
+**Strategic pivot (2026-06-17):** the free signals now also cover **event-contract markets**,
+hunting **mispriced probability** (Kalshi first). Same free signals, wider scope; capitalize on
+the layers *around* them (sell/license the system · node-access tiers · future founder-gated live
+op) — never by gating signals. Plan: `docs/forecast_desk_plan.md`. Business lens held throughout.
 
-1. **ingest / parse** — port the v1 intake/parse path into `adapters/` + `store/` (raw events
-   → parse attempts → accepted candidates → decision receipts). The receipt-spine store tables
-   already exist; this is the producer side. v1 source: `OneDrive/Desktop/FoxClaw/tools/raw_parser.py`
-   and the parse/candidate modules (survey first, like the engine port — classify before copying).
-2. **decide** — the orchestrator that ties parse → `engine` (`adapters/market.assess_setup` is
-   the reference chain) → a written decision receipt. This is where the brain runs a real input
-   end to end.
-3. Then **shadow-parity** against the live A2 `grove_core.db` (Phase 3) → v1.0 at cutover.
+**Done (P10 Phase 0):** `foxclaw/adapters/event_contracts/` scaffolded, all hard-locked
+(read-only/paper-only, live eligibility always false, A4_prohibited); `pricing.py` implemented
+(the doctrine in code) + 17 tests. **Next phases, in order:**
 
-> ⚠️ **A2 boundary (invariant #2):** A2 runs the live organism on v1 and must not stop. All of
-> the above is A1 build work; cutover is a later, deliberate step (pin P7).
+1. **Phase 1** — `venues.py` (have Kalshi) → flesh `markets.py` (normalize public market catalog
+   from already-fetched public data; no network in the pure layer) + keep `eligibility.py` deny-all.
+2. **Phase 2** — `dossiers.py` (public-evidence packets; invariant #11 rejects nonpublic) +
+   `pricing` (done) + `resolution.py` (settlement evidence).
+3. **Phase 3** — `paper.py` (paper-only event receipts) + `tools/event_contract_scanner.py`
+   (rank markets by edge gap) + a paper simulator.
+4. **Phase 4** — `store/` `event_outcomes` table + `tools/forecast_scoreboard.py` (reuse
+   `engine.score`, don't re-implement) + Founder Cockpit visibility.
+
+> ⚠️ **Hard rails:** every `event_contracts/*` stays `can_submit_order=false` /
+> `can_move_funds=false` / live-eligibility-false; public information only (invariant #11). Going
+> live = a separate founder-approved authority grant, never a default.
+
+**Parked (still real, lower priority than the Desk):** front-of-pipeline ingest/parse → decide
+(v1 source `OneDrive/Desktop/FoxClaw/tools/raw_parser.py`), then shadow-parity vs A2 → v1.0.
+⚠️ **A2 boundary (invariant #2):** A2 runs the live organism on v1 and must not stop; all build
+work is on A1; cutover is a later deliberate step (pin P7).
 
 ## ✅ DONE — engine phase (v0.2.0)
 
@@ -67,8 +79,9 @@ ingest / parse → decide, so live evidence can flow into the engine chain that 
   (+ market-claim split to `adapters/market/claims.py`).
 - ✅ Engine gate + score (neutral) + P9 resolved (`engine/tiers.py`).
 - ✅ Market scoreboard adapter + full chain (`assess_setup`) + regression → **v0.2.0**.
-- ⏳ ingest/parse → decide (front of the pipeline)  ← **you are here**.
-- ⬜ shadow-parity against A2 `grove_core.db`, then v1.0 at A2 cutover.
+- ✅ Forecast Desk P10 Phase 0: `event_contracts/` scaffold + `pricing.py` (doctrine in code).
+- ⏳ Forecast Desk Phases 1–4 (venues/markets → dossiers/resolution → paper → scoreboard)  ← **here**.
+- ⬜ Parked: front-of-pipeline ingest/parse → decide; then shadow-parity → v1.0 at A2 cutover.
 
 ## Resume / stop checklist
 
