@@ -117,6 +117,44 @@ decomposed on the way in (neutral logic → `engine/`, market `source:symbol:sid
 > **Why deferred:** it only needed resolving when the engine port reached gate + scoring.
 > **Trigger:** when porting `engine/gate.py` + `engine/score.py`.
 
+## P10 · 🚧 Event-contract / Forecast Desk lane (Kalshi-first)
+**What:** a new scope for FoxClaw's free signals — **mispriced-probability** forecasts on
+event-contract markets (Kalshi first). The doctrine: `usable_edge = FoxClaw_probability −
+market_implied_probability − spread − fees − slippage − legal/account_restrictions`. FoxClaw
+hunts mispriced probability, **not** high-probability events (a 95% event at 98¢ is boring; a
+62% event at 43¢ may be the edge). Same as today, **the signals are given away free**
+([[free-signals-strategy]]); this just widens what they cover. Build sequence + posture live in
+`docs/forecast_desk_plan.md`. Home: `foxclaw/adapters/event_contracts/` (NOT `engine/` — it is
+market/venue-specific, invariant #4).
+**Posture (hard-locked, invariant #1 + #11):** read-only public market data + paper simulation
+only. No accounts, no wallets/deposits, no live order routing, no jurisdiction bypass, no LLM
+approval, **no nonpublic/insider/hacked/classified/private data** (invariant #11). Venues beyond
+Kalshi need separate founder-approved, jurisdiction-specific review. Frame the space as
+*emerging, partially regulated, jurisdiction-sensitive* — never "unregulated."
+**Why deferred:** the engine decision spine (edge → score → gate, v0.2.0) had to exist first;
+now it does, so the Forecast Desk reuses it through the same adapter border the market scoreboard
+uses (`assess_setup` is the reference chain). Scaffolding it all at once would be guessing at
+boundaries before the first pure piece (`pricing.py`) is proven.
+**Trigger:** now (post-v0.2.0). Start with the scaffold + `pricing.py` (pure doctrine in code),
+then venue/eligibility/markets → dossiers/resolution → paper sim → forecast scoreboard. Keep
+each adapter `can_submit_order=false` / `can_move_funds=false` / live-eligibility-false.
+
+## P11 · ❓ Node contribution → personal-fox access (reward loop, not profit-share)
+**What:** the "why run a node?" answer. Access to a **personal fox** (scout) and deeper
+intelligence is **earned by contributing useful network work** (market watching, evidence
+scouting, resolution checking, forecast validation, compute), not bought by subscription. Tiered
+access (0 Public → 1 Node Operator → 2 Trusted → 3 Verified Contributor → 4 Apollo-adjacent →
+Core Apollo). This is the monetization-adjacent layer kept **architecturally separate** from the
+engine, consistent with the free-signals thesis ([[free-signals-strategy]]).
+**Hard locks:** contribution earns *reputation/access*, **never** profit-share, token yield, or
+investment return; no user fund custody; no trade execution by public nodes; no access to Apollo
+private internals; no secret sharing; no public live authority.
+**Why deferred:** it depends on the node-network substrate (signed append-only event log,
+invariant #9) and the public-node boundary, neither built yet; designing the reward tiers before
+that exists would lock in assumptions.
+**Trigger:** when the public-node / CoinFox layer is designed — keep it out of `foxclaw-core`'s
+engine/store until then. Record the access-tier model in its own doc at that point.
+
 ---
 
 ## Process note — layering, so things don't step on each other

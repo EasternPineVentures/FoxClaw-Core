@@ -93,6 +93,25 @@ Decisions, and security-relevant events, leave a replayable receipt: why, inputs
 version, result. Prefer receipts over hidden magic.
 *Why:* the brain must be auditable, correctable, and improvable by the next agent.
 
+### 11. Public information only. No nonpublic, insider, hacked, classified, or private data.
+FoxClaw estimates probability **only** from information that is lawfully public. It must
+never form, score, or act on a forecast that depends on insider/material-nonpublic,
+hacked/leaked, classified, or doxxed/private personal data. This is a hard input filter,
+not a preference: an evidence source that smells nonpublic is rejected at intake, never
+"used carefully." Applies everywhere, and especially to the **event-contract / Forecast
+Desk** lane (Kalshi-first), where the temptation to trade on weird information is highest.
+*Why:* the edge must come from better *reasoning over public evidence*, not from privileged
+access — that is the only edge that is legal, durable, and shareable as a free signal.
+*Where:* `foxclaw/adapters/event_contracts/` (dossier intake), `docs/forecast_desk_plan.md`.
+
+### Event-contract hard locks (a corollary of #1, called out so it can't be missed).
+Every `foxclaw/adapters/event_contracts/*` module is **read-only + paper-only**:
+`can_submit_order=false`, `can_move_funds=false`, live eligibility **always false**, default
+authority `A4_prohibited`. No account creation, no wallet/deposit, no live order routing, no
+jurisdiction bypass, no LLM approval path. Venue expansion beyond Kalshi requires a separate,
+founder-approved, venue-and-jurisdiction-specific review. *Why:* the Forecast Desk is an
+intelligence lane, not an execution lane. *Where:* `docs/forecast_desk_plan.md` (pin P10).
+
 ---
 
 See `docs/decisions.md` for *why* these are the way they are, and `AGENTS.md` for
