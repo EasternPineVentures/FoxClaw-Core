@@ -1,6 +1,6 @@
 # Apollo Mesh V0
 
-Apollo Mesh is the node-network substrate for A1, A2, and future FoxClaw nodes.
+Apollo Mesh V0 is the founder-node substrate for A1, A2, and future founder FoxClaw nodes.
 
 V0 is local-first and transport-neutral:
 
@@ -11,6 +11,8 @@ V0 is local-first and transport-neutral:
 
 This gives the nodes a shared language now without making a public relay, blockchain, or
 third-party dependency the architecture.
+
+Apollo Mesh V0 is founder-only. See `docs/founder_node_security.md`.
 
 ## What V0 Can Share
 
@@ -41,6 +43,18 @@ can_remote_command=false
 
 The content filter rejects command, order, funds, credential, token, secret, live order, and
 account fields. A mesh event can carry context; it cannot carry power.
+
+Every V0 event is also founder-private by default:
+
+```text
+node_role=founder_node
+data_classification=founder_private
+redistribution=do_not_export
+public_export_allowed=false
+```
+
+Public/community nodes need a separate sanitized contract later. They do not attach to the
+founder mesh.
 
 ## Signing
 

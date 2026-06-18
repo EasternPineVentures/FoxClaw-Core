@@ -9,6 +9,21 @@ preserved as the `v1-legacy` archive. Milestone map: `0.x` builds toward launch,
 bump per completed overhaul phase; **`1.0.0`** is earned at Apollo-2 cutover when v2 runs the
 live track record and is demo-ready.
 
+## [0.4.8] - 2026-06-18
+### Added
+- **Founder Node Security hardening.** Apollo Mesh V0 events now carry
+  `node_role=founder_node`, `data_classification=founder_private`,
+  `redistribution=do_not_export`, and `public_export_allowed=false`.
+- Added `docs/founder_node_security.md` to document Apollo nodes as founder-only,
+  IP-protected coordination nodes.
+- Updated A1/A2 and Apollo Mesh docs to distinguish founder mesh from future
+  public/community node contracts.
+- Tests now reject non-founder node roles, public export flags, and non-founder-private
+  mesh classifications.
+### Notes
+- Apollo Mesh V0 is not the public node network. It is the founder mesh for fast, private,
+  signed A1/A2 coordination.
+
 ## [0.4.7] - 2026-06-18
 ### Added
 - **Apollo Mesh V0.** Added local signed node events, HMAC-SHA256 canonical event sealing,

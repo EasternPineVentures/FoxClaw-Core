@@ -8,6 +8,7 @@ is a signed-in-practice operator packet: current repo truth, current slice, next
 blockers, and the rails that stay locked.
 
 For structured node-to-node events, use Apollo Mesh V0 in `docs/apollo_mesh_v0.md`.
+For founder-node IP/security posture, read `docs/founder_node_security.md`.
 
 ## Nodes
 
@@ -52,6 +53,15 @@ Generate a signed local mesh heartbeat:
 
 ```powershell
 python tools\apollo_mesh.py --node-id A1 --json heartbeat --message alive
+```
+
+The event is founder-private by construction:
+
+```text
+node_role=founder_node
+data_classification=founder_private
+redistribution=do_not_export
+public_export_allowed=false
 ```
 
 Generate a signed local mesh handoff:

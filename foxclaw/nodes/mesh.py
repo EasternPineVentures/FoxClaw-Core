@@ -21,6 +21,13 @@ MESH_PROTOCOL = "apollo_mesh_event_v0"
 MESH_SCHEMA_VERSION = 1
 MESH_SECRET_ENV = "FOXCLAW_MESH_SECRET"
 SIGNATURE_PREFIX = "hmac-sha256:"
+FOUNDER_NODE_ROLE = "founder_node"
+FOUNDER_PRIVATE = "founder_private"
+DO_NOT_EXPORT = "do_not_export"
+
+ALLOWED_NODE_ROLES = frozenset({FOUNDER_NODE_ROLE})
+ALLOWED_DATA_CLASSIFICATIONS = frozenset({FOUNDER_PRIVATE})
+ALLOWED_REDISTRIBUTION = frozenset({DO_NOT_EXPORT, "founder_mesh_only"})
 
 ALLOWED_EVENT_KINDS = frozenset(
     {
@@ -83,6 +90,7 @@ class ApolloMeshIdentity:
     key_id: str
     secret: str
     created_at: datetime
+    node_role: str = FOUNDER_NODE_ROLE
 
     def __post_init__(self) -> None:
         if not _text(self.node_id):
@@ -93,10 +101,13 @@ class ApolloMeshIdentity:
             raise ValueError("mesh secret is too short")
         if self.created_at.tzinfo is None or self.created_at.utcoffset() is None:
             raise ValueError("created_at must be timezone-aware")
+        if self.node_role not in ALLOWED_NODE_ROLES:
+            raise ValueError("Apollo Mesh V0 is founder-node only")
 
     def public_view(self) -> dict[str, Any]:
         return {
             "node_id": self.node_id,
+            "node_role": self.node_role,
             "key_id": self.key_id,
             "created_at": _iso(self.created_at),
             "secret_loaded": True,
@@ -109,10 +120,14 @@ class ApolloMeshEvent:
     schema_version: int
     event_id: str
     from_node: str
+    node_role: str
     created_at: datetime
     kind: str
     tags: tuple[str, ...]
     content: Mapping[str, Any]
+    data_classification: str
+    redistribution: str
+    public_export_allowed: bool
     prev_hash: str | None
     signer_key_id: str
     signature: str
@@ -127,6 +142,8 @@ class ApolloMeshEvent:
             raise ValueError("event_id must be sha256-prefixed")
         if not _text(self.from_node):
             raise ValueError("from_node is required")
+        if self.node_role not in ALLOWED_NODE_ROLES:
+            raise ValueError("Apollo Mesh V0 accepts founder-node events only")
         if self.created_at.tzinfo is None or self.created_at.utcoffset() is None:
             raise ValueError("created_at must be timezone-aware")
         if self.kind not in ALLOWED_EVENT_KINDS:
@@ -136,6 +153,12 @@ class ApolloMeshEvent:
         if not isinstance(self.content, Mapping):
             raise TypeError("content must be a mapping")
         reject_forbidden_content(self.content)
+        if self.data_classification not in ALLOWED_DATA_CLASSIFICATIONS:
+            raise ValueError("Apollo Mesh V0 events must stay founder_private")
+        if self.redistribution not in ALLOWED_REDISTRIBUTION:
+            raise ValueError("unsupported mesh redistribution policy")
+        if self.public_export_allowed:
+            raise ValueError("Apollo Mesh V0 events cannot be marked public-exportable")
         if self.prev_hash is not None and not self.prev_hash.startswith("sha256:"):
             raise ValueError("prev_hash must be sha256-prefixed when present")
         if not self.signer_key_id.startswith("mesh-key:"):
@@ -163,6 +186,7 @@ def load_or_create_identity(
         key_id=key_id_for_secret(loaded_secret),
         secret=loaded_secret,
         created_at=now,
+        node_role=FOUNDER_NODE_ROLE,
     )
     identity_path.parent.mkdir(parents=True, exist_ok=True)
     identity_path.write_text(json.dumps(to_jsonable(identity), indent=2, sort_keys=True) + "\n", encoding="utf-8")
@@ -175,6 +199,7 @@ def identity_from_json(payload: Mapping[str, Any]) -> ApolloMeshIdentity:
         key_id=_required_text(payload.get("key_id"), "key_id"),
         secret=_required_text(payload.get("secret"), "secret"),
         created_at=_parse_datetime(payload.get("created_at"), "created_at"),
+        node_role=_optional_text(payload.get("node_role")) or FOUNDER_NODE_ROLE,
     )
 
 
@@ -191,10 +216,14 @@ def create_mesh_event(
     observed = (created_at or datetime.now(UTC)).astimezone(UTC).replace(microsecond=0)
     unsigned = unsigned_payload(
         from_node=identity.node_id,
+        node_role=identity.node_role,
         created_at=observed,
         kind=kind,
         tags=tags,
         content=content,
+        data_classification=FOUNDER_PRIVATE,
+        redistribution=DO_NOT_EXPORT,
+        public_export_allowed=False,
         prev_hash=prev_hash,
         signer_key_id=identity.key_id,
     )
@@ -204,10 +233,14 @@ def create_mesh_event(
         schema_version=MESH_SCHEMA_VERSION,
         event_id=event_id,
         from_node=identity.node_id,
+        node_role=identity.node_role,
         created_at=observed,
         kind=kind,
         tags=tuple(_text(tag) for tag in tags if _text(tag)),
         content=dict(content),
+        data_classification=FOUNDER_PRIVATE,
+        redistribution=DO_NOT_EXPORT,
+        public_export_allowed=False,
         prev_hash=prev_hash,
         signer_key_id=identity.key_id,
         signature=sign_event_id(event_id, identity.secret),
@@ -218,10 +251,14 @@ def create_mesh_event(
 def verify_mesh_event(event: ApolloMeshEvent, *, secret: str) -> bool:
     unsigned = unsigned_payload(
         from_node=event.from_node,
+        node_role=event.node_role,
         created_at=event.created_at,
         kind=event.kind,
         tags=event.tags,
         content=event.content,
+        data_classification=event.data_classification,
+        redistribution=event.redistribution,
+        public_export_allowed=event.public_export_allowed,
         prev_hash=event.prev_hash,
         signer_key_id=event.signer_key_id,
     )
@@ -240,10 +277,14 @@ def event_from_json(payload: Mapping[str, Any]) -> ApolloMeshEvent:
         schema_version=int(payload.get("schema_version") or 0),
         event_id=_required_text(payload.get("event_id"), "event_id"),
         from_node=_required_text(payload.get("from_node"), "from_node"),
+        node_role=_optional_text(payload.get("node_role")) or FOUNDER_NODE_ROLE,
         created_at=_parse_datetime(payload.get("created_at"), "created_at"),
         kind=_required_text(payload.get("kind"), "kind"),
         tags=tuple(str(tag) for tag in payload.get("tags") or ()),
         content=dict(payload.get("content") or {}),
+        data_classification=_optional_text(payload.get("data_classification")) or FOUNDER_PRIVATE,
+        redistribution=_optional_text(payload.get("redistribution")) or DO_NOT_EXPORT,
+        public_export_allowed=bool(payload.get("public_export_allowed", False)),
         prev_hash=_optional_text(payload.get("prev_hash")),
         signer_key_id=_required_text(payload.get("signer_key_id"), "signer_key_id"),
         signature=_required_text(payload.get("signature"), "signature"),
@@ -260,10 +301,14 @@ def event_from_json(payload: Mapping[str, Any]) -> ApolloMeshEvent:
 def unsigned_payload(
     *,
     from_node: str,
+    node_role: str,
     created_at: datetime,
     kind: str,
     tags: tuple[str, ...],
     content: Mapping[str, Any],
+    data_classification: str,
+    redistribution: str,
+    public_export_allowed: bool,
     prev_hash: str | None,
     signer_key_id: str,
 ) -> dict[str, Any]:
@@ -271,10 +316,14 @@ def unsigned_payload(
         "protocol": MESH_PROTOCOL,
         "schema_version": MESH_SCHEMA_VERSION,
         "from_node": from_node,
+        "node_role": node_role,
         "created_at": _iso(created_at),
         "kind": kind,
         "tags": list(tags),
         "content": to_jsonable(content),
+        "data_classification": data_classification,
+        "redistribution": redistribution,
+        "public_export_allowed": public_export_allowed,
         "prev_hash": prev_hash,
         "signer_key_id": signer_key_id,
     }

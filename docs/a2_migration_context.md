@@ -36,6 +36,7 @@ Coordination rules:
   the other workstation.
 - Use `tools\apollo_mesh.py` for signed local heartbeat, handoff, question, alert, and
   context events before relay transport exists.
+- Treat Apollo Mesh V0 as founder-only. Do not connect public/community nodes to it.
 - Push only when the slice is ready for the other workstation to pull.
 - Avoid editing the same files on both machines at the same time.
 - Before switching machines, run `git status --short --branch` and leave the tree clean or
@@ -57,8 +58,8 @@ foxclaw-core git repo from two VSCode workstations.
 Current target repo clones:
 - A1 path: C:\Users\brend\dev\foxclaw-core
 - A2 path: C:\Users\fox1i\Desktop\FoxClaw-Core-master
-- Expected version after pull: 0.4.7 or newer
-- Expected recent commit: Add Apollo Mesh V0 local signed events
+- Expected version after pull: 0.4.8 or newer
+- Expected recent commit: Harden Apollo founder node mesh security
 
 The old A2 FoxClaw repo is still treated as the running legacy/reference system. Do not
 delete, rename, move, or rewrite it. Start read-only.
@@ -112,6 +113,8 @@ Strategic direction:
   decision matrix.
 - Apollo Mesh V0 provides signed local node events; use it for fast A1/A2 heartbeat,
   handoff, question, alert, and context packets.
+- Apollo Mesh events are founder-private and `do_not_export` by default; public-safe exports
+  require a separate sanitized contract.
 ```
 
 ## Which Planning Option To Choose
@@ -134,7 +137,7 @@ shadow the old repo.
 
 As of this brief:
 
-- `foxclaw-core` version is `0.4.7`.
+- `foxclaw-core` version is `0.4.8`.
 - The active lane is Forecast Desk / Kalshi-first event-contract intelligence.
 - The core engine remains domain-neutral.
 - Forecast Desk is read-only and paper-only.
@@ -145,8 +148,10 @@ As of this brief:
   -> Redshift paper execution -> Redshift outcome receipt handshake.
 - `tools/apollo_mesh.py` provides Apollo Mesh V0 local signed events with append-only
   inbox/outbox logs.
+- `docs/founder_node_security.md` documents why Apollo nodes are founder-only and
+  IP-protected.
 - Forecast DB schema is version `3`.
-- Latest local verification: `python -m pytest -q` passed with `207 passed`.
+- Latest local verification: `python -m pytest -q` passed with `208 passed`.
 
 ## What A2 Should Not Do Yet
 

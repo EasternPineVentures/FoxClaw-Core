@@ -5,7 +5,7 @@ Read it before changing code, then verify with `git log --oneline -10` and the t
 
 Last updated: 2026-06-18
 Branch: `master`
-Version: `0.4.7`
+Version: `0.4.8`
 Working repo: `C:\Users\brend\dev\foxclaw-core`
 
 ## Current Lane
@@ -146,6 +146,12 @@ Done in this pass:
 - `tools/apollo_mesh.py` adds `init`, `heartbeat`, `handoff`, `receive`, and `inbox`
   commands for A1/A2 structured node communication.
 - `docs/apollo_mesh_v0.md` documents the local-first mesh contract and the later relay path.
+- Founder Node Security hardening added.
+- Apollo Mesh V0 is now explicitly founder-only: events carry `node_role=founder_node`,
+  `data_classification=founder_private`, `redistribution=do_not_export`, and
+  `public_export_allowed=false`.
+- `docs/founder_node_security.md` documents Apollo nodes as founder/IP-protected nodes;
+  public/community nodes require a separate sanitized contract later.
 
 ## Hard Rails
 
@@ -392,6 +398,23 @@ python tools\check_invariants.py -> green
 git diff --check           -> green
 ```
 
+Focused Founder Node Security check before handoff update:
+
+```text
+python -m pytest tests\unit\test_apollo_mesh_events.py tests\regression\test_apollo_mesh_cli.py -q
+-> 9 passed
+python tools\apollo_mesh.py --mesh-dir <temp> --node-id A1 --fixture --json heartbeat --message "founder node online"
+-> signed founder_private heartbeat emitted, public_export_allowed false
+```
+
+Founder Node Security full-suite result:
+
+```text
+python -m pytest -q        -> 208 passed
+python tools\check_invariants.py -> green
+git diff --check           -> green
+```
+
 ## Next Phase
 
 Next safe work:
@@ -404,6 +427,8 @@ Next safe work:
   active work from A1 to A2, and the reverse command before handing status back.
 - Use `python tools\apollo_mesh.py --node-id A2 --json heartbeat --message "A2 online"`
   after A2 pulls this version, then paste the signed heartbeat back to A1.
+- Keep Apollo Mesh V0 founder-only. Do not connect public/community nodes until a separate
+  sanitized contract exists.
 - Have A2 compare the Redshift Paper Boundary V1 fields against the old paper runtime
   inventory, then decide what maps, what gets cut, and what remains Redshift-only.
 - Add source-specific import adapters only after their trust and privacy boundaries are

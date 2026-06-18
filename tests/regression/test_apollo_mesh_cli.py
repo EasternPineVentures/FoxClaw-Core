@@ -36,6 +36,7 @@ def test_apollo_mesh_cli_handoff_round_trips_to_inbox(tmp_path: Path):
     )
     public_identity = json.loads(init.stdout)
     assert public_identity["node_id"] == "A1"
+    assert public_identity["node_role"] == "founder_node"
     assert public_identity["secret_loaded"] is True
     assert "secret" not in public_identity
 
@@ -61,6 +62,10 @@ def test_apollo_mesh_cli_handoff_round_trips_to_inbox(tmp_path: Path):
     event = json.loads(sent.stdout)
     assert event["kind"] == "handoff.note"
     assert event["from_node"] == "A1"
+    assert event["node_role"] == "founder_node"
+    assert event["data_classification"] == "founder_private"
+    assert event["redistribution"] == "do_not_export"
+    assert event["public_export_allowed"] is False
     assert event["tags"] == ["to:A2"]
     assert event["authority"]["can_remote_command"] is False
 

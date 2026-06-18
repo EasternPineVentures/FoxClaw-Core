@@ -43,6 +43,10 @@ def test_mesh_event_signs_and_verifies_canonical_payload():
     assert event.protocol == "apollo_mesh_event_v0"
     assert event.event_id.startswith("sha256:")
     assert event.signature.startswith("hmac-sha256:")
+    assert event.node_role == "founder_node"
+    assert event.data_classification == "founder_private"
+    assert event.redistribution == "do_not_export"
+    assert event.public_export_allowed is False
     assert event.authority.can_remote_command is False
     assert verify_mesh_event(event, secret=SECRET) is True
 
@@ -119,4 +123,27 @@ def test_mesh_event_cannot_be_rehydrated_with_authority_true():
     payload["authority"]["can_submit_order"] = True
 
     with pytest.raises(ValueError, match="cannot grant authority"):
+        event_from_json(payload)
+
+
+def test_mesh_event_cannot_be_marked_public_exportable_or_non_founder():
+    event = create_mesh_event(
+        identity=_identity(),
+        kind="node.heartbeat",
+        content={"message": "alive"},
+        created_at=NOW,
+    )
+    payload = to_jsonable(event)
+    payload["public_export_allowed"] = True
+    with pytest.raises(ValueError, match="public-exportable"):
+        event_from_json(payload)
+
+    payload = to_jsonable(event)
+    payload["node_role"] = "public_node"
+    with pytest.raises(ValueError, match="founder-node"):
+        event_from_json(payload)
+
+    payload = to_jsonable(event)
+    payload["data_classification"] = "public"
+    with pytest.raises(ValueError, match="founder_private"):
         event_from_json(payload)
