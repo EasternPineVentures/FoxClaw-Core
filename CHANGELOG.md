@@ -9,6 +9,16 @@ preserved as the `v1-legacy` archive. Milestone map: `0.x` builds toward launch,
 bump per completed overhaul phase; **`1.0.0`** is earned at Apollo-2 cutover when v2 runs the
 live track record and is demo-ready.
 
+## [0.4.1] - 2026-06-18
+### Added
+- **Forecast Desk Phase H: continuous hunt loop scaffold and diagnostics.** Added
+  `forecast_desk_doctor.py` and `forecast_desk_watch.py` with paper-only health receipts,
+  explicit silence reasons, freshness receipt, and single-instance lock handling.
+- Regression coverage verifies doctor silence reasons and watch-once status output.
+### Notes
+- Phase H is a safe once-mode scaffold. A bounded recurring scheduler can build on this
+  without adding live authority.
+
 ## [0.4.0] - 2026-06-18
 ### Added
 - **Forecast Desk Phase G: public FoxClaw Hunt export.** Added sanitized static export

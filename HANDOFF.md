@@ -5,7 +5,7 @@ Read it before changing code, then verify with `git log --oneline -10` and the t
 
 Last updated: 2026-06-18
 Branch: `master`
-Version: `0.4.0`
+Version: `0.4.1`
 Working repo: `C:\Users\brend\dev\foxclaw-core`
 
 ## Current Lane
@@ -100,6 +100,10 @@ Done in this pass:
   `docs/public_hunt_policy.md`, and `docs/press_experiment.md` added.
 - Public exports are paper-labeled, exclude private/internal fields, preserve losing/resolved
   forecasts, and include export hashes.
+- Phase H continuous hunt loop scaffold and diagnostics implemented.
+- `tools/forecast_desk_doctor.py` reports paper-only health and all standard silence reasons.
+- `tools/forecast_desk_watch.py --once` writes status JSON with a freshness receipt and
+  releases its lock file.
 
 ## Hard Rails
 
@@ -244,27 +248,43 @@ python tools/check_invariants.py -> green
 git diff --check           -> green
 ```
 
+Focused Phase H check before handoff update:
+
+```text
+python -m pytest tests\regression\test_forecast_desk_watch_doctor.py -q
+-> 2 passed
+python tools\forecast_desk_doctor.py --fixture --json -> paper status emitted
+python tools\forecast_desk_watch.py --once --fixture --status-file <temp> --lock-file <temp> --json -> status JSON and lock released
+```
+
+Phase H full-suite result:
+
+```text
+python -m pytest -q        -> 180 passed
+python tools/check_invariants.py -> green
+git diff --check           -> green
+```
+
 ## Next Phase
 
-Continue to Phase H after Phase G is committed cleanly:
+Continue to Phase I/J only after deciding whether to enter demo-auth work:
 
 ```powershell
 python -m pytest -q
 python tools\check_invariants.py
 git diff --check
 git add .
-git commit -m "Export immutable public FoxClaw Hunt forecast receipts"
+git commit -m "Add continuous Forecast Desk hunt loop and diagnostics"
 ```
 
-Then implement continuous hunt loop and diagnostics:
+Phase I is demo-only authentication and WebSocket rehearsal. It should not start unless
+demo credential boundaries are explicit. Phase J is documentation-only live execution gate.
 
 ```text
-tools/forecast_desk_watch.py
-tools/forecast_desk_doctor.py
-health/status JSON
-freshness receipts
-lock file / single-instance guard
-bounded schedule
+kalshi/auth.py
+kalshi/websocket.py
+docs/runbooks/kalshi_demo.md
+docs/live_execution_gate.md
 ```
 
 ## Watch
