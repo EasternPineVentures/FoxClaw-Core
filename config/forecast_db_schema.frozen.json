@@ -1,0 +1,568 @@
+{
+  "artifact": "forecast_db_schema",
+  "fingerprint": "874408ceaca1c63ed98fe9eacb3f91a5144de9506e133b2d57da55d358c57377",
+  "generated": "2026-06-18T03:14:39Z",
+  "index_count": 3,
+  "schema": {
+    "indexes": [
+      {
+        "name": "idx_market_snapshots_market_time",
+        "sql": "CREATE INDEX idx_market_snapshots_market_time ON market_snapshots(market_id, observed_at)",
+        "table": "market_snapshots"
+      },
+      {
+        "name": "idx_orderbook_snapshots_market_time",
+        "sql": "CREATE INDEX idx_orderbook_snapshots_market_time ON orderbook_snapshots(market_id, observed_at)",
+        "table": "orderbook_snapshots"
+      },
+      {
+        "name": "idx_raw_payloads_endpoint_time",
+        "sql": "CREATE INDEX idx_raw_payloads_endpoint_time ON raw_payloads(endpoint, observed_at)",
+        "table": "raw_payloads"
+      }
+    ],
+    "schema_version": 1,
+    "tables": {
+      "event_snapshots": {
+        "columns": [
+          {
+            "default": null,
+            "name": "snapshot_id",
+            "notnull": false,
+            "pk": 1,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "venue",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "event_id",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "series_id",
+            "notnull": false,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "title",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "category",
+            "notnull": false,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "status",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "strike_date",
+            "notnull": false,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "settlement_sources_json",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "observed_at",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "raw_payload_hash",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          }
+        ]
+      },
+      "forecast_schema_meta": {
+        "columns": [
+          {
+            "default": null,
+            "name": "key",
+            "notnull": false,
+            "pk": 1,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "value",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          }
+        ]
+      },
+      "market_snapshots": {
+        "columns": [
+          {
+            "default": null,
+            "name": "snapshot_id",
+            "notnull": false,
+            "pk": 1,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "venue",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "market_id",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "event_id",
+            "notnull": false,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "series_id",
+            "notnull": false,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "title",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "subtitle",
+            "notnull": false,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "status",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "yes_bid",
+            "notnull": false,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "yes_ask",
+            "notnull": false,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "no_bid",
+            "notnull": false,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "no_ask",
+            "notnull": false,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "last_price",
+            "notnull": false,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "volume",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "open_interest",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "close_time",
+            "notnull": false,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "expiration_time",
+            "notnull": false,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "result",
+            "notnull": false,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "resolution_rule_text",
+            "notnull": false,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "settlement_sources_json",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "price_level_structure",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "observed_at",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "raw_payload_hash",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          }
+        ]
+      },
+      "orderbook_snapshots": {
+        "columns": [
+          {
+            "default": null,
+            "name": "snapshot_id",
+            "notnull": false,
+            "pk": 1,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "venue",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "market_id",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "observed_at",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "yes_bids_json",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "no_bids_json",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "best_yes_bid",
+            "notnull": false,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "best_yes_ask",
+            "notnull": false,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "best_no_bid",
+            "notnull": false,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "best_no_ask",
+            "notnull": false,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "yes_spread",
+            "notnull": false,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "no_spread",
+            "notnull": false,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "depth_yes_at_best",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "depth_no_at_best",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "is_tradeable",
+            "notnull": true,
+            "pk": 0,
+            "type": "INTEGER"
+          },
+          {
+            "default": null,
+            "name": "invalid_reason",
+            "notnull": false,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "raw_payload_hash",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          }
+        ]
+      },
+      "raw_payloads": {
+        "columns": [
+          {
+            "default": null,
+            "name": "raw_hash",
+            "notnull": false,
+            "pk": 1,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "venue",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "endpoint",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "request_json",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "response_json",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "archived_path",
+            "notnull": false,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "observed_at",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          }
+        ]
+      },
+      "series_snapshots": {
+        "columns": [
+          {
+            "default": null,
+            "name": "snapshot_id",
+            "notnull": false,
+            "pk": 1,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "venue",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "series_id",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "title",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "category",
+            "notnull": false,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "frequency",
+            "notnull": false,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "settlement_sources_json",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "rules_url",
+            "notnull": false,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "observed_at",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "raw_payload_hash",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          }
+        ]
+      },
+      "sync_cursors": {
+        "columns": [
+          {
+            "default": null,
+            "name": "cursor_key",
+            "notnull": false,
+            "pk": 1,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "cursor",
+            "notnull": false,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "updated_at",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          }
+        ]
+      }
+    }
+  },
+  "table_count": 7
+}

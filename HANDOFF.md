@@ -5,7 +5,7 @@ Read it before changing code, then verify with `git log --oneline -10` and the t
 
 Last updated: 2026-06-18
 Branch: `master`
-Version: `0.2.1`
+Version: `0.2.2`
 Working repo: `C:\Users\brend\dev\foxclaw-core`
 
 ## Current Lane
@@ -49,6 +49,18 @@ Done in this pass:
   `doctor`, `series`, `events`, `markets`, `inspect`, `orderbook`, `trades`.
 - `docs/kalshi_api_field_guide.md` added.
 - Offline Kalshi fixtures and tests added.
+- Phase B Forecast Desk snapshot ledger implemented.
+- `foxclaw/adapters/event_contracts/storage/` added with Forecast DB resolution, cloud-sync
+  path rejection, idempotent schema initialization, repository writes, raw-hash lineage,
+  sync cursors, and gzip JSONL raw archive helpers.
+- `tools/forecast_desk_sync.py` added for one-shot fixture/live read-only sync.
+- `tools/freeze_forecast_db_schema.py`, `config/forecast_db_schema.frozen.json`, and
+  `docs/forecast_db_schema.md` added as the schema freeze contract.
+- `.gitignore` corrected from `storage/` to `/storage/` so source packages named storage are
+  not hidden.
+- Phase B regression tests added for schema idempotence, raw archive round-trip,
+  normalized-row-to-raw lineage, no-duplicate fixture sync resume, frozen schema verification,
+  and OneDrive DB path rejection.
 
 ## Hard Rails
 
@@ -89,29 +101,44 @@ python tools/check_invariants.py -> green
 git diff --check           -> green
 ```
 
+Focused Phase B check before handoff update:
+
+```text
+python -m pytest tests\regression\test_forecast_storage_lineage.py tests\regression\test_forecast_db_schema_frozen.py -q
+-> 7 passed
+python tools\freeze_forecast_db_schema.py --check -> green
+fixture sync -> 1 series, 1 event, 1 market, 1 orderbook, 4 raw payload rows
+```
+
+Phase B full-suite result:
+
+```text
+python -m pytest -q        -> 143 passed
+python tools/check_invariants.py -> green
+git diff --check           -> green
+```
+
 ## Next Phase
 
-Continue to Phase B after Phase A is committed cleanly:
+Continue to Phase C after Phase B is committed cleanly:
 
 ```powershell
 python -m pytest -q
 python tools\check_invariants.py
 git diff --check
 git add .
-git commit -m "Add read-only Kalshi API Desk and market normalizers"
+git commit -m "Add Forecast Desk snapshot ledger and schema guard"
 ```
 
-Then implement the Forecast Desk snapshot ledger:
+Then implement the dossier and resolution pipeline:
 
 ```text
-foxclaw/adapters/event_contracts/storage/db.py
-foxclaw/adapters/event_contracts/storage/schema.py
-foxclaw/adapters/event_contracts/storage/repositories.py
-foxclaw/adapters/event_contracts/storage/raw_archive.py
-tools/forecast_desk_sync.py
-tools/freeze_forecast_db_schema.py
-config/forecast_db_schema.frozen.json
-docs/forecast_db_schema.md
+foxclaw/adapters/event_contracts/dossiers.py
+foxclaw/adapters/event_contracts/resolution.py
+foxclaw/adapters/event_contracts/policy.py
+foxclaw/adapters/event_contracts/contracts.py
+docs/forecast_receipt_contract.md
+docs/data_retention_and_privacy.md
 ```
 
 ## Watch

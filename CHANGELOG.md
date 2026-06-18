@@ -9,6 +9,26 @@ preserved as the `v1-legacy` archive. Milestone map: `0.x` builds toward launch,
 bump per completed overhaul phase; **`1.0.0`** is earned at Apollo-2 cutover when v2 runs the
 live track record and is demo-ready.
 
+## [0.2.2] - 2026-06-18
+### Added
+- **Forecast Desk Phase B: snapshot ledger and schema guard.** Added
+  `foxclaw/adapters/event_contracts/storage/` with Forecast Desk DB resolution, cloud-sync
+  path rejection, idempotent SQLite schema initialization, raw payload lineage, normalized
+  snapshot repositories, sync cursors, and gzip JSONL raw response archiving.
+- `tools/forecast_desk_sync.py` records read-only Kalshi fixture/live snapshots into a
+  node-local ledger while preserving raw hashes for series, events, markets, and order books.
+- `tools/freeze_forecast_db_schema.py`, `config/forecast_db_schema.frozen.json`, and
+  `docs/forecast_db_schema.md` freeze the schema contract for review and drift checks.
+- Regression tests cover schema idempotence, raw archive round-trip, normalized-row-to-raw
+  lineage, no-duplicate fixture sync resume, frozen schema verification, and OneDrive path
+  rejection.
+### Changed
+- `.gitignore` now ignores only a root `/storage/` runtime folder so source packages named
+  `storage` are not accidentally hidden.
+### Notes
+- Forecast Desk storage defaults to explicit path, then `FOXCLAW_FORECAST_DB`, then
+  `./data/forecast_desk.db`; it does not use OneDrive as a source of truth.
+
 ## [0.2.1] - 2026-06-18
 ### Added
 - **Forecast Desk Phase A: read-only Kalshi API Desk.** Added a credential-free Kalshi REST

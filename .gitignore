@@ -8,7 +8,7 @@
 *.db-shm
 *.db-wal
 data/
-storage/
+/storage/
 runtime_logs/
 runtime/machine_id.txt
 

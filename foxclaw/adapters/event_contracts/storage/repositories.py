@@ -1,0 +1,256 @@
+"""Adapter-local repositories for Forecast Desk snapshots."""
+
+from __future__ import annotations
+
+import hashlib
+import json
+import sqlite3
+from datetime import UTC, datetime
+from pathlib import Path
+from typing import Any, Mapping
+
+from foxclaw.adapters.event_contracts.markets import (
+    NormalizedEvent,
+    NormalizedMarket,
+    NormalizedOrderBook,
+    NormalizedSeries,
+    to_jsonable,
+)
+
+from .db import connect, resolve_forecast_db
+from .schema import initialize_schema
+
+
+class ForecastRepository:
+    def __init__(self, db_path: str | Path | None = None, *, project_root: str | Path | None = None) -> None:
+        self.db_path = resolve_forecast_db(db_path, project_root=project_root)
+
+    def init_db(self) -> None:
+        with connect(self.db_path) as conn:
+            initialize_schema(conn)
+
+    def record_raw_payload(
+        self,
+        *,
+        raw_hash: str,
+        venue: str,
+        endpoint: str,
+        request: Mapping[str, Any] | None,
+        response: Mapping[str, Any],
+        observed_at: datetime | None = None,
+        archived_path: str | Path | None = None,
+    ) -> None:
+        observed = _iso(observed_at)
+        with connect(self.db_path) as conn:
+            initialize_schema(conn)
+            conn.execute(
+                """
+                INSERT OR IGNORE INTO raw_payloads (
+                    raw_hash, venue, endpoint, request_json, response_json, archived_path, observed_at
+                ) VALUES (?, ?, ?, ?, ?, ?, ?)
+                """,
+                (
+                    raw_hash,
+                    venue,
+                    endpoint,
+                    _json(request or {}),
+                    _json(response),
+                    str(archived_path) if archived_path else None,
+                    observed,
+                ),
+            )
+            conn.commit()
+
+    def record_series(self, series: NormalizedSeries) -> str:
+        snapshot_id = _snapshot_id("series", series.series_id, series.raw_payload_hash)
+        with connect(self.db_path) as conn:
+            initialize_schema(conn)
+            conn.execute(
+                """
+                INSERT OR IGNORE INTO series_snapshots (
+                    snapshot_id, venue, series_id, title, category, frequency,
+                    settlement_sources_json, rules_url, observed_at, raw_payload_hash
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                """,
+                (
+                    snapshot_id,
+                    series.venue,
+                    series.series_id,
+                    series.title,
+                    series.category,
+                    series.frequency,
+                    _json(series.settlement_sources),
+                    series.rules_url,
+                    _iso(series.observed_at),
+                    series.raw_payload_hash,
+                ),
+            )
+            conn.commit()
+        return snapshot_id
+
+    def record_event(self, event: NormalizedEvent) -> str:
+        snapshot_id = _snapshot_id("event", event.event_id, event.raw_payload_hash)
+        with connect(self.db_path) as conn:
+            initialize_schema(conn)
+            conn.execute(
+                """
+                INSERT OR IGNORE INTO event_snapshots (
+                    snapshot_id, venue, event_id, series_id, title, category, status,
+                    strike_date, settlement_sources_json, observed_at, raw_payload_hash
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                """,
+                (
+                    snapshot_id,
+                    event.venue,
+                    event.event_id,
+                    event.series_id,
+                    event.title,
+                    event.category,
+                    event.status,
+                    _iso(event.strike_date) if event.strike_date else None,
+                    _json(event.settlement_sources),
+                    _iso(event.observed_at),
+                    event.raw_payload_hash,
+                ),
+            )
+            conn.commit()
+        return snapshot_id
+
+    def record_market(self, market: NormalizedMarket) -> str:
+        snapshot_id = _snapshot_id("market", market.market_id, market.raw_payload_hash)
+        with connect(self.db_path) as conn:
+            initialize_schema(conn)
+            conn.execute(
+                """
+                INSERT OR IGNORE INTO market_snapshots (
+                    snapshot_id, venue, market_id, event_id, series_id, title, subtitle, status,
+                    yes_bid, yes_ask, no_bid, no_ask, last_price, volume, open_interest,
+                    close_time, expiration_time, result, resolution_rule_text,
+                    settlement_sources_json, price_level_structure, observed_at, raw_payload_hash
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                """,
+                (
+                    snapshot_id,
+                    market.venue,
+                    market.market_id,
+                    market.event_id,
+                    market.series_id,
+                    market.title,
+                    market.subtitle,
+                    market.status,
+                    _dec(market.yes_bid),
+                    _dec(market.yes_ask),
+                    _dec(market.no_bid),
+                    _dec(market.no_ask),
+                    _dec(market.last_price),
+                    _dec(market.volume),
+                    _dec(market.open_interest),
+                    _iso(market.close_time) if market.close_time else None,
+                    _iso(market.expiration_time) if market.expiration_time else None,
+                    market.result,
+                    market.resolution_rule_text,
+                    _json(market.settlement_sources),
+                    market.price_level_structure,
+                    _iso(market.observed_at),
+                    market.raw_payload_hash,
+                ),
+            )
+            conn.commit()
+        return snapshot_id
+
+    def record_orderbook(self, book: NormalizedOrderBook) -> str:
+        snapshot_id = _snapshot_id("orderbook", book.market_id, book.raw_payload_hash)
+        with connect(self.db_path) as conn:
+            initialize_schema(conn)
+            conn.execute(
+                """
+                INSERT OR IGNORE INTO orderbook_snapshots (
+                    snapshot_id, venue, market_id, observed_at, yes_bids_json, no_bids_json,
+                    best_yes_bid, best_yes_ask, best_no_bid, best_no_ask, yes_spread, no_spread,
+                    depth_yes_at_best, depth_no_at_best, is_tradeable, invalid_reason,
+                    raw_payload_hash
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                """,
+                (
+                    snapshot_id,
+                    book.venue,
+                    book.market_id,
+                    _iso(book.observed_at),
+                    _json(to_jsonable(book.yes_bids)),
+                    _json(to_jsonable(book.no_bids)),
+                    _dec(book.best_yes_bid),
+                    _dec(book.best_yes_ask),
+                    _dec(book.best_no_bid),
+                    _dec(book.best_no_ask),
+                    _dec(book.yes_spread),
+                    _dec(book.no_spread),
+                    _dec(book.depth_yes_at_best),
+                    _dec(book.depth_no_at_best),
+                    1 if book.is_tradeable else 0,
+                    book.invalid_reason,
+                    book.raw_payload_hash,
+                ),
+            )
+            conn.commit()
+        return snapshot_id
+
+    def save_cursor(self, cursor_key: str, cursor: str | None) -> None:
+        with connect(self.db_path) as conn:
+            initialize_schema(conn)
+            conn.execute(
+                """
+                INSERT OR REPLACE INTO sync_cursors(cursor_key, cursor, updated_at)
+                VALUES (?, ?, ?)
+                """,
+                (cursor_key, cursor, _iso(None)),
+            )
+            conn.commit()
+
+    def load_cursor(self, cursor_key: str) -> str | None:
+        with connect(self.db_path) as conn:
+            initialize_schema(conn)
+            row = conn.execute(
+                "SELECT cursor FROM sync_cursors WHERE cursor_key = ?",
+                (cursor_key,),
+            ).fetchone()
+        if row is None:
+            return None
+        return row["cursor"]
+
+    def counts(self) -> dict[str, int]:
+        tables = (
+            "raw_payloads",
+            "series_snapshots",
+            "event_snapshots",
+            "market_snapshots",
+            "orderbook_snapshots",
+            "sync_cursors",
+        )
+        with connect(self.db_path) as conn:
+            initialize_schema(conn)
+            return {table: int(conn.execute(f"SELECT COUNT(*) FROM {table}").fetchone()[0]) for table in tables}
+
+    def row_by_id(self, table: str, snapshot_id: str) -> sqlite3.Row | None:
+        with connect(self.db_path) as conn:
+            initialize_schema(conn)
+            return conn.execute(f"SELECT * FROM {table} WHERE snapshot_id = ?", (snapshot_id,)).fetchone()
+
+
+def _snapshot_id(kind: str, subject: str, raw_hash: str) -> str:
+    payload = f"{kind}\n{subject}\n{raw_hash}".encode("utf-8")
+    return "sha256:" + hashlib.sha256(payload).hexdigest()
+
+
+def _json(value: Any) -> str:
+    return json.dumps(value, sort_keys=True, separators=(",", ":"), default=str)
+
+
+def _iso(value: datetime | None) -> str:
+    dt = (value or datetime.now(UTC)).astimezone(UTC)
+    return dt.isoformat().replace("+00:00", "Z")
+
+
+def _dec(value: Any) -> str | None:
+    if value is None:
+        return None
+    return format(value, "f")
