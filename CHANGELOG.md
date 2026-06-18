@@ -9,6 +9,36 @@ preserved as the `v1-legacy` archive. Milestone map: `0.x` builds toward launch,
 bump per completed overhaul phase; **`1.0.0`** is earned at Apollo-2 cutover when v2 runs the
 live track record and is demo-ready.
 
+## [0.1.5] — 2026-06-17
+### Added
+- **Engine gate + scoring ported (v0.2.0 Pass 2 tail), decomposed on the way in** — the
+  *neutral* decision logic into `foxclaw/engine/`, the market framing into `adapters/market/`:
+  - `engine/score.py` ← scoreboard grader from `tools/setup_performance_summary.py`
+    (`trust_tier`, `composite_score`, `decision_tier`), renamed to neutral terms
+    (success_rate / reward_factor / mean_reward — no symbol/PnL identifiers).
+  - `engine/gate.py` ← the edge authority from `tools/pre_decision_gate.py` (`evaluate` →
+    `GateVerdict`), keyed by an **opaque subject**; safe `observe` fallback on
+    missing/stale scoreboard or unknown subject; applies the min-N boost-suppression.
+  - `adapters/market/setup.py` — the `source:symbol:side` key construction (market vocab
+    stays in the adapter, invariant #4).
+- **P9 RESOLVED — one owner of the decision-tier vocabulary:** new `engine/tiers.py` owns the
+  tier set (`block/reduce/observe/allow/allow_boosted`), the `0/.5/.75/1/1.2` multiplier map,
+  and the boost-suppression rule. `edge.decision_label`, `engine/score`, and `engine/gate` all
+  defer to it instead of re-spelling the strings/multipliers — invariant #3 ("edge enters
+  `final` exactly once") made literal at the code level. Two graders remain by design (edge =
+  posterior probability, scoreboard = composite score); the gate *applies* the tier, never
+  re-grades. See `docs/decisions.md` (2026-06-17 "P9 RESOLVED").
+- **29 new unit tests** (`tests/unit/test_gate_score.py`): the canonical multiplier map,
+  fallback-to-cautious on unknown tiers, boost-suppression shape; trust-tier thresholds,
+  shrinkage to neutral on thin n, the decision-tier ladder; gate fallbacks, block-holds-at-0,
+  boost suppression/threshold, and that the gate does not re-grade. Full suite green (91).
+### Notes
+- Invariant guard green over `engine/` after the port (#4 domain-neutral, #6 pure stdlib) —
+  proof the new `tiers`/`score`/`gate` carry no market identifiers. **Still owed for v0.2.0**
+  (per `docs/engine_port_plan.md`): the market scoreboard *builder* adapter (DB read +
+  corruption filters = invariant #8, via `store/db.resolve_db` not a hardcoded path), and the
+  Pass-3 regression test of the full `evidence → edge → gate` chain.
+
 ## [0.1.4] — 2026-06-17
 ### Added
 - **Pure engine trio ported (v0.2.0 Pass 2)** into `foxclaw/engine/`, the first decision

@@ -9,6 +9,25 @@ Format: **what** · why · consequences. Newest first.
 
 ---
 
+### 2026-06-17 · P9 RESOLVED — one owner for the decision-tier vocabulary (`engine.tiers`)
+**Decision:** the tier set `block / reduce / observe / allow / allow_boosted`, its
+`0/.5/.75/1/1.2` multiplier map, and the min-N boost-suppression rule now live in **exactly
+one place**, `foxclaw/engine/tiers.py`. The three former owners all defer to it:
+`edge.decision_label` (the *shadow* edge grader), `engine/score.decision_tier` (the
+*scoreboard* grader, ported from `setup_performance_summary._decision_label`), and
+`engine/gate.evaluate` (the *authority*, ported from `pre_decision_gate`) import the tier
+names + multipliers rather than re-spelling them. **Why:** three independent definitions of
+one vocabulary is the code-level form of the multi-owner edge hazard invariant #3 ("edge
+enters `final` exactly once") exists to prevent — they can drift, and "what does *boost*
+mean / size?" gets answered three times. **Two graders remain by design** (edge grades from
+a posterior probability, the scoreboard from a composite score) — legitimate, since they map
+evidence onto *one* shared vocabulary; the gate **applies** the chosen tier and never
+re-grades. **Consequences:** the gate + scoring port (`engine/gate.py`, `engine/score.py`)
+was decomposed on the way in — neutral logic in `engine/`, the market `source:symbol:side`
+key in `adapters/market/setup.py` (invariant #4). Still pending for engine-phase completion
+(v0.2.0): the market scoreboard *builder* adapter (DB read + corruption filters = invariant
+#8) and the Pass-3 regression test. Strikes pin P9.
+
 ### 2026-06-16 · Boost suspicion RESOLVED — the 1.2× boost earns its keep
 **Finding (`tools/gate_multiplier_analysis.py`):** investigated the gate_discrimination
 hint that `allow_boosted` underperformed `allow`. Walk-forward, varying the boost

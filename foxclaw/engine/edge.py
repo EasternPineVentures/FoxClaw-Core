@@ -35,6 +35,8 @@ import math
 from statistics import median
 from typing import Iterable
 
+from .tiers import ALLOW, ALLOW_BOOSTED, BLOCK, OBSERVE, REDUCE
+
 
 # ── Pure-Python regularized incomplete beta (Beta CDF) and its inverse ──────────
 # Lets us compute P(success_prob > threshold) and posterior percentiles without
@@ -360,23 +362,27 @@ class BayesianEdge:
         return raw
 
     def decision_label(self) -> str:
-        """Discrete label compatible with the existing gate vocabulary, so this
-        can shadow the current scoreboard decision for apples-to-apples logging.
+        """Discrete tier from the posterior — the *shadow* edge grader. Draws from the
+        single tier vocabulary in ``engine.tiers`` (resolves pin P9) so it shares one
+        definition with the scoreboard grader and the gate; it can therefore shadow the
+        live scoreboard decision for apples-to-apples logging. The thresholds here map
+        the posterior probability onto that shared vocabulary; the vocabulary itself is
+        owned in one place.
         """
         if self.effective_n < 3:
-            return "observe"
+            return OBSERVE
         if self.expected_value(conservative=True) < self.catastrophe_expected_value:
-            return "block"
+            return BLOCK
         p = self.probability_of_edge()
         if p < 0.50:
-            return "block"
+            return BLOCK
         if p < 0.60:
-            return "reduce"
+            return REDUCE
         if p >= 0.85 and self.effective_n >= 10:
-            return "allow_boosted"
+            return ALLOW_BOOSTED
         if p < 0.70:
-            return "observe"
-        return "allow"
+            return OBSERVE
+        return ALLOW
 
     def verdict(self, *, method: str = "min") -> EdgeVerdict:
         return EdgeVerdict(

@@ -208,6 +208,17 @@ re-create three competing tier definitions (invariant #3).
 `evidence → edge estimate → gate decision → receipt-compatible output`, then bump to
 **v0.2.0** with a CHANGELOG entry.
 
+> **Update 2026-06-17 (Pass 2 tail done — v0.1.5):** the **neutral** halves of gate + scoring
+> are ported and **P9 is resolved**. `engine/tiers.py` now owns the tier vocabulary +
+> multipliers + boost-suppression; `engine/score.py` (trust_tier / composite_score /
+> decision_tier) and `engine/gate.py` (the authority, keyed by an opaque subject) defer to it,
+> as does `edge.decision_label`. The market `source:symbol:side` key moved to
+> `adapters/market/setup.py`. 29 new unit tests (91 total green); invariant guard green over
+> `engine/`. **Still owed for v0.2.0:** (1) the market scoreboard *builder* adapter — DB read +
+> the corruption filters (`RETURN_SANITY_CAP`, entry-outlier vs symbol median = invariant #8)
+> + the SQL, using `store/db.resolve_db` not the hardcoded `data/grove_core.db` (P5); (2) the
+> Pass-3 regression test of the full chain.
+
 ---
 
 See `docs/deferred.md` (P1, P2, P3), `docs/architecture.md` (target layout + port map),

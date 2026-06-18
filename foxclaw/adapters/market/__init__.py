@@ -5,5 +5,6 @@ of a well-formed claim, consumed by the domain-neutral engine.trust.Trustworthin
 """
 
 from .claims import market_claim_well_formed
+from .setup import setup_key
 
-__all__ = ["market_claim_well_formed"]
+__all__ = ["market_claim_well_formed", "setup_key"]
