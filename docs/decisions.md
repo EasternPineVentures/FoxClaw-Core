@@ -9,6 +9,21 @@ Format: **what** · why · consequences. Newest first.
 
 ---
 
+### 2026-06-17 · Engine phase complete — the market chain lives in an adapter, not the core
+**Decision:** the translation from market track record to a sized decision lives entirely in
+`foxclaw/adapters/market/scoreboard.py`; `engine/` only ever sees neutral terms. The adapter
+reads closed paper outcomes **through the store** (`PaperOutcomeStore.get_closed_outcomes_with_source`,
+never a hardcoded DB path), applies the corruption filters that encode invariant #8
+(`RETURN_SANITY_CAP`, entry-outlier-vs-symbol-median, source exclusion, `raw_events` dedup),
+aggregates per `source:symbol:side`, and hands the engine only `subject / success_rate /
+reward_factor / sample_size / Observation(success, magnitude, age)`. `assess_setup` runs the
+whole chain — outcomes → observations → `engine.edge` → `engine.score` (tier) → `engine.gate`
+(multiplier) → one receipt-compatible verdict. **Why:** keep the decision math reusable across
+domains (invariant #4) and keep DB access in the store, so a mis-parsed price can never reach
+the engine *or* fake a track record. **Consequences:** completes the v0.2.0 engine phase
+(edge + trust + gate/score + P9 + the market chain); the invariant guard stays green because
+no market vocabulary crosses into `engine/`. Next: ingest/parse + decide, then shadow-parity.
+
 ### 2026-06-17 · P9 RESOLVED — one owner for the decision-tier vocabulary (`engine.tiers`)
 **Decision:** the tier set `block / reduce / observe / allow / allow_boosted`, its
 `0/.5/.75/1/1.2` multiplier map, and the min-N boost-suppression rule now live in **exactly

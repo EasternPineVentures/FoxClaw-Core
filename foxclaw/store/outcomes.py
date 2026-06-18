@@ -608,6 +608,51 @@ class PaperOutcomeStore:
             ).fetchall()
         return [record_from_row(row) for row in rows]
 
+    def get_closed_outcomes_with_source(
+        self, *, since: str | None = None
+    ) -> list[dict[str, Any]]:
+        """Closed paper outcomes joined to their journal's source, for scoreboard builders.
+
+        Pure data access (the store's job): returns one row per closed outcome with the
+        originating ``source_id`` / ``source_type`` and, when ``raw_events`` carries it, the
+        ``duplicate_of_event_id`` marker — so a market adapter can apply its own corruption
+        / dedup filters and per-setup aggregation without reaching into SQL itself. No market
+        judgement is made here; that lives in ``adapters/market``.
+        """
+        self.init_db()
+        with connect(self.db_path) as conn:
+            conn.row_factory = sqlite3.Row
+            has_raw = conn.execute(
+                "SELECT 1 FROM sqlite_master WHERE type='table' AND name='raw_events'"
+            ).fetchone() is not None
+            duplicate_select = (
+                "r.duplicate_of_event_id AS duplicate_of_event_id"
+                if has_raw else "NULL AS duplicate_of_event_id"
+            )
+            raw_join = "LEFT JOIN raw_events r ON r.event_id = j.event_id" if has_raw else ""
+            time_filter = "AND o.exit_time >= :since" if since else ""
+            rows = conn.execute(
+                f"""
+                SELECT
+                    j.source_id   AS source_id,
+                    j.source_type AS source_type,
+                    o.symbol      AS symbol,
+                    o.side        AS side,
+                    o.entry_price AS entry_price,
+                    o.exit_price  AS exit_price,
+                    o.pnl_usd     AS pnl_usd,
+                    o.exit_reason AS exit_reason,
+                    o.exit_time   AS exit_time,
+                    {duplicate_select}
+                FROM paper_outcomes o
+                JOIN paper_journal j ON j.journal_id = o.journal_id
+                {raw_join}
+                WHERE 1=1 {time_filter}
+                """,
+                {"since": since} if since else {},
+            ).fetchall()
+        return [record_from_row(row) for row in rows]
+
     def simulate_exits(
         self,
         current_prices_dict: dict[str, float],

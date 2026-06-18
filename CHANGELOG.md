@@ -9,6 +9,31 @@ preserved as the `v1-legacy` archive. Milestone map: `0.x` builds toward launch,
 bump per completed overhaul phase; **`1.0.0`** is earned at Apollo-2 cutover when v2 runs the
 live track record and is demo-ready.
 
+## [0.2.0] — 2026-06-17
+### Added
+- **Engine phase complete — the market scoreboard *builder* adapter + the full decision
+  chain** (v0.2.0 Pass 3). `foxclaw/adapters/market/scoreboard.py` is the customs border:
+  market vocabulary (symbol/side/entry/exit/PnL/source_id) and the corruption filters stay
+  here; only neutral terms cross into `engine/`.
+  - **Full chain wired** (`assess_setup`): store paper outcomes → adapter builds neutral
+    observations + per-subject aggregates → `engine.edge` estimates the edge → `engine.score`
+    grades a tier → `engine.gate` applies the multiplier → one receipt-compatible verdict.
+  - **Corruption filters = invariant #8 in code** (`clean_rows`): implausible single-trade
+    returns (`RETURN_SANITY_CAP`), entry-price outliers vs the robust per-symbol median
+    (`ENTRY_OUTLIER_RATIO`), excluded price/test sources, and `raw_events` duplicate dedup —
+    so a mis-parsed price can't fake a track record.
+  - **DB access delegated to the store** via new `PaperOutcomeStore.get_closed_outcomes_with_source`
+    (outcomes joined to their journal's source), never a hardcoded path.
+- **9 regression tests** (`tests/regression/test_market_scoreboard_adapter.py`): seeded
+  fixture DB → both setups graded (winner boosts, catastrophe blocks), full-chain
+  `assess_setup` (boost ×1.2 / block →0 / unknown →observe), neutral-observation shape, and
+  each corruption/dedup filter. Full suite **100 green**.
+### Notes
+- Invariant guard green: the adapter holds all market vocabulary, so `engine/` stays
+  domain-neutral (#4) and pure stdlib (#6). This completes the engine phase the v0.2.0 minor
+  was reserved for (edge + trust + gate/score + P9 + the market chain). Next: ingest/parse +
+  decide, then shadow-parity toward the A2 cutover (v1.0).
+
 ## [0.1.5] — 2026-06-17
 ### Added
 - **Engine gate + scoring ported (v0.2.0 Pass 2 tail), decomposed on the way in** — the

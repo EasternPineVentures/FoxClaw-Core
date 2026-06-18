@@ -6,40 +6,37 @@
 > then `git log --oneline -10`. When you stop: update the **Now / Next / Watch** block and
 > the timestamp before you run out of juice.
 
-**Last updated:** 2026-06-17 · **Branch:** `master` · **Version:** `0.1.5` · **Tests:** 91 green
-**Uncommitted:** yes — the gate+score+P9 port is staged in the working tree, not yet committed.
+**Last updated:** 2026-06-17 · **Branch:** `master` · **Version:** `0.2.0` · **Tests:** 100 green
 
 ---
 
 ## ▶ NOW (the active task)
 
-**Engine port — finish Pass 2 / start Pass 3.** The neutral gate + scoring + P9 are DONE in the
-working tree (see below). Remaining to earn **v0.2.0**:
+**Engine phase is COMPLETE (v0.2.0).** The next phase is the **front of the pipeline**:
+ingest / parse → decide, so live evidence can flow into the engine chain that now exists.
 
-1. **Market scoreboard *builder* adapter** — port the DB-reading half of v1
-   `tools/setup_performance_summary.py` to `adapters/market/scoreboard.py`: read paper_outcomes
-   (prefer via `store/`), apply the **corruption filters** (`RETURN_SANITY_CAP`,
-   entry-outlier-vs-symbol-median = **invariant #8 in code**), build the `setup_key`, compute
-   success_rate/reward_factor/mean_reward, and call `engine.score`. Use `store/db.resolve_db`,
-   **not** hardcoded `data/grove_core.db` (P5). Needs a fixture DB to test.
-2. **Pass-3 regression test** — prove the chain `evidence → edge → gate → receipt-compatible
-   output` end to end.
-3. Bump **v0.2.0** + CHANGELOG.
+1. **ingest / parse** — port the v1 intake/parse path into `adapters/` + `store/` (raw events
+   → parse attempts → accepted candidates → decision receipts). The receipt-spine store tables
+   already exist; this is the producer side. v1 source: `OneDrive/Desktop/FoxClaw/tools/raw_parser.py`
+   and the parse/candidate modules (survey first, like the engine port — classify before copying).
+2. **decide** — the orchestrator that ties parse → `engine` (`adapters/market.assess_setup` is
+   the reference chain) → a written decision receipt. This is where the brain runs a real input
+   end to end.
+3. Then **shadow-parity** against the live A2 `grove_core.db` (Phase 3) → v1.0 at cutover.
 
-> Source (v1, read-only): `OneDrive/Desktop/FoxClaw/tools/setup_performance_summary.py`
-> (the `build_scoreboard` / `_return_fraction` / corruption-filter half — the scoring math
-> `_score_setup`/`_trust_tier`/`_decision_label` is already ported to `engine/score.py`).
+> ⚠️ **A2 boundary (invariant #2):** A2 runs the live organism on v1 and must not stop. All of
+> the above is A1 build work; cutover is a later, deliberate step (pin P7).
 
-## ✅ DONE THIS PASS (uncommitted, v0.1.5)
+## ✅ DONE — engine phase (v0.2.0)
 
 - **P9 resolved:** `engine/tiers.py` is the single owner of the tier vocab + multipliers +
   boost-suppression. `edge.decision_label`, `engine/score`, `engine/gate` all defer to it.
-- `engine/score.py` (neutral grader), `engine/gate.py` (neutral authority, opaque subject),
-  `adapters/market/setup.py` (the `source:symbol:side` key).
-- 29 new tests (`tests/unit/test_gate_score.py`); 91 total green; invariant guard green.
-- Docs updated: `decisions.md` (P9 RESOLVED), `deferred.md` (P9 struck), `engine_port_plan.md`,
-  CHANGELOG, VERSION→0.1.5.
-- **Next action if resuming:** `git add -A && git commit` this, then start the builder adapter.
+- `engine/score.py` (neutral grader) + `engine/gate.py` (neutral authority, opaque subject).
+- **Market scoreboard adapter** `adapters/market/scoreboard.py`: reads outcomes via the store
+  (`get_closed_outcomes_with_source`), corruption filters (invariant #8), and the full chain
+  `assess_setup` (outcomes → observations → edge → score-tier → gate-multiplier → verdict).
+- 38 new tests across this + the prior pass; **100 total green**; invariant guard green.
+- The complete decision spine now exists: `evidence → edge → gate → receipt-compatible output`.
 
 ## 👀 WATCH (don't trip these)
 
@@ -56,7 +53,7 @@ working tree (see below). Remaining to earn **v0.2.0**:
 ## Where things are
 
 - **Plan of record:** `docs/engine_port_plan.md` (per-module classification + port recipes).
-- **Pins (deferred decisions):** `docs/deferred.md` — open: P1, P2, P4–P9.
+- **Pins (deferred decisions):** `docs/deferred.md` — open: P1, P2, P4–P8 (P3 + P9 resolved).
 - **Decisions already made:** `docs/decisions.md`.
 - **Hard rules:** `docs/invariants.md`. **Target layout:** `docs/architecture.md`.
 - **Phase plan:** `docs/foxclaw_v2_overhaul_plan.md`. **Keep/cut call:** `docs/foxclaw_v2_inventory.md`.
@@ -69,8 +66,9 @@ working tree (see below). Remaining to earn **v0.2.0**:
 - ✅ Engine pure trio: `edge`, `trust/reliability`, `trust/trustworthiness`
   (+ market-claim split to `adapters/market/claims.py`).
 - ✅ Engine gate + score (neutral) + P9 resolved (`engine/tiers.py`).
-- ⏳ Market scoreboard *builder* adapter + Pass-3 regression → v0.2.0  ← **you are here**.
-- ⬜ ingest/parse, decide (full engine chain), then shadow-parity → v1.0 at A2 cutover.
+- ✅ Market scoreboard adapter + full chain (`assess_setup`) + regression → **v0.2.0**.
+- ⏳ ingest/parse → decide (front of the pipeline)  ← **you are here**.
+- ⬜ shadow-parity against A2 `grove_core.db`, then v1.0 at A2 cutover.
 
 ## Resume / stop checklist
 

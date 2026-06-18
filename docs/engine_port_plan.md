@@ -208,6 +208,15 @@ re-create three competing tier definitions (invariant #3).
 `evidence → edge estimate → gate decision → receipt-compatible output`, then bump to
 **v0.2.0** with a CHANGELOG entry.
 
+> **Update 2026-06-17 (Pass 3 done — v0.2.0, engine phase complete):** the market scoreboard
+> *builder* adapter landed at `foxclaw/adapters/market/scoreboard.py`, completing the engine
+> phase. It reads closed outcomes via the store (`PaperOutcomeStore.get_closed_outcomes_with_source`,
+> not a hardcoded path), applies the corruption filters (invariant #8), and wires the full
+> chain `outcomes → neutral observations → engine.edge → engine.score → engine.gate →
+> receipt-compatible verdict` (`assess_setup`). 9 regression tests (`tests/regression/
+> test_market_scoreboard_adapter.py`); 100 total green; invariant guard green (all market vocab
+> stays in the adapter). Both v0.2.0 debts from the v0.1.5 update below are now paid.
+
 > **Update 2026-06-17 (Pass 2 tail done — v0.1.5):** the **neutral** halves of gate + scoring
 > are ported and **P9 is resolved**. `engine/tiers.py` now owns the tier vocabulary +
 > multipliers + boost-suppression; `engine/score.py` (trust_tier / composite_score /
