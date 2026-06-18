@@ -32,6 +32,7 @@ from .pricing import (  # noqa: E402
     yes_price_to_implied_probability,
 )
 from .resolution import assess_resolution_quality, record_resolution  # noqa: E402
+from .scoring import assess_forecast  # noqa: E402
 from .venues import VENUES, Venue, get_venue  # noqa: E402
 
 __all__ = [
@@ -56,6 +57,7 @@ __all__ = [
     "assess_resolution_quality",
     "record_resolution",
     "assess_event_contract_policy",
+    "assess_forecast",
     # venues
     "get_venue",
     "VENUES",

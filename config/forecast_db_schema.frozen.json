@@ -1,10 +1,15 @@
 {
   "artifact": "forecast_db_schema",
-  "fingerprint": "874408ceaca1c63ed98fe9eacb3f91a5144de9506e133b2d57da55d358c57377",
-  "generated": "2026-06-18T03:14:39Z",
-  "index_count": 3,
+  "fingerprint": "27585d1dda5c871a17ffb2e25d5932e6821bd3465bc39390cd826fd0c3fee176",
+  "generated": "2026-06-18T03:22:19Z",
+  "index_count": 4,
   "schema": {
     "indexes": [
+      {
+        "name": "idx_forecast_receipts_market_time",
+        "sql": "CREATE INDEX idx_forecast_receipts_market_time ON forecast_receipts(market_id, created_at)",
+        "table": "forecast_receipts"
+      },
       {
         "name": "idx_market_snapshots_market_time",
         "sql": "CREATE INDEX idx_market_snapshots_market_time ON market_snapshots(market_id, observed_at)",
@@ -21,7 +26,7 @@
         "table": "raw_payloads"
       }
     ],
-    "schema_version": 1,
+    "schema_version": 2,
     "tables": {
       "event_snapshots": {
         "columns": [
@@ -98,6 +103,157 @@
           {
             "default": null,
             "name": "raw_payload_hash",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          }
+        ]
+      },
+      "forecast_receipts": {
+        "columns": [
+          {
+            "default": null,
+            "name": "receipt_id",
+            "notnull": false,
+            "pk": 1,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "market_id",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "side",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "verdict",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "independent_probability",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "market_probability",
+            "notnull": false,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "costs_total",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "usable_edge",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "minimum_usable_edge",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "evidence_quality",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "dossier_hash",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "engine_subject",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "engine_tier",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "gate_multiplier",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "raw_commitment",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "adjusted_commitment",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "reason",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "code_version",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "mode",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "receipt_json",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "created_at",
             "notnull": true,
             "pk": 0,
             "type": "TEXT"
@@ -564,5 +720,5 @@
       }
     }
   },
-  "table_count": 7
+  "table_count": 8
 }

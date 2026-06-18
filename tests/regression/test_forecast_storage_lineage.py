@@ -47,7 +47,7 @@ def test_forecast_schema_initializes_idempotently(tmp_path):
         }
     finally:
         conn.close()
-    assert version == 1
+    assert version == 2
     assert {"raw_payloads", "market_snapshots", "orderbook_snapshots", "sync_cursors"} <= tables
 
 

@@ -9,6 +9,25 @@ preserved as the `v1-legacy` archive. Milestone map: `0.x` builds toward launch,
 bump per completed overhaul phase; **`1.0.0`** is earned at Apollo-2 cutover when v2 runs the
 live track record and is demo-ready.
 
+## [0.2.4] - 2026-06-18
+### Added
+- **Forecast Desk Phase D: neutral-engine bridge and forecast receipts.** Added
+  `assess_forecast`, which takes a normalized market, public dossier, independent
+  probability, and explicit costs, then produces a paper-only `ForecastReceipt`.
+- Forecast receipt sizing keeps the edge single-owner rule: usable edge becomes the raw
+  commitment exactly once, while neutral `engine.score` / `engine.gate` grade evidence
+  quality and sample strength.
+- `forecast_receipts` persistence was added to the Forecast Desk ledger, with schema version
+  bumped to 2 and frozen schema artifacts refreshed.
+- Regression tests cover the 95%-at-98c rejection, an attractive 62%-at-43c paper candidate,
+  market-price separation from the independent probability, cost-eliminated edge rejection,
+  and persisted paper-only receipts.
+- Added small calibration helpers for Brier score and log loss.
+### Notes
+- Market price never mutates the independent probability. The adapter computes market
+  implied probability and usable edge at the border, then hands neutral commitment/quality
+  terms to the engine.
+
 ## [0.2.3] - 2026-06-18
 ### Added
 - **Forecast Desk Phase C: public-evidence dossiers and resolution-quality gate.** Added

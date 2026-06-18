@@ -7,7 +7,7 @@ import json
 import sqlite3
 from typing import Any
 
-FORECAST_SCHEMA_VERSION = 1
+FORECAST_SCHEMA_VERSION = 2
 
 
 def initialize_schema(conn: sqlite3.Connection) -> None:
@@ -107,6 +107,30 @@ def initialize_schema(conn: sqlite3.Connection) -> None:
             FOREIGN KEY(raw_payload_hash) REFERENCES raw_payloads(raw_hash)
         );
 
+        CREATE TABLE IF NOT EXISTS forecast_receipts (
+            receipt_id TEXT PRIMARY KEY,
+            market_id TEXT NOT NULL,
+            side TEXT NOT NULL,
+            verdict TEXT NOT NULL,
+            independent_probability TEXT NOT NULL,
+            market_probability TEXT,
+            costs_total TEXT NOT NULL,
+            usable_edge TEXT NOT NULL,
+            minimum_usable_edge TEXT NOT NULL,
+            evidence_quality TEXT NOT NULL,
+            dossier_hash TEXT NOT NULL,
+            engine_subject TEXT NOT NULL,
+            engine_tier TEXT NOT NULL,
+            gate_multiplier TEXT NOT NULL,
+            raw_commitment TEXT NOT NULL,
+            adjusted_commitment TEXT NOT NULL,
+            reason TEXT NOT NULL,
+            code_version TEXT NOT NULL,
+            mode TEXT NOT NULL,
+            receipt_json TEXT NOT NULL,
+            created_at TEXT NOT NULL
+        );
+
         CREATE TABLE IF NOT EXISTS sync_cursors (
             cursor_key TEXT PRIMARY KEY,
             cursor TEXT,
@@ -119,6 +143,8 @@ def initialize_schema(conn: sqlite3.Connection) -> None:
             ON orderbook_snapshots(market_id, observed_at);
         CREATE INDEX IF NOT EXISTS idx_raw_payloads_endpoint_time
             ON raw_payloads(endpoint, observed_at);
+        CREATE INDEX IF NOT EXISTS idx_forecast_receipts_market_time
+            ON forecast_receipts(market_id, created_at);
         """
     )
     conn.execute(

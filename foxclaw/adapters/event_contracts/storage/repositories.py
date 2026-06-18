@@ -9,7 +9,9 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any, Mapping
 
+from foxclaw.adapters.event_contracts.contracts import ForecastReceipt
 from foxclaw.adapters.event_contracts.markets import (
+    dumps_json,
     NormalizedEvent,
     NormalizedMarket,
     NormalizedOrderBook,
@@ -224,6 +226,7 @@ class ForecastRepository:
             "event_snapshots",
             "market_snapshots",
             "orderbook_snapshots",
+            "forecast_receipts",
             "sync_cursors",
         )
         with connect(self.db_path) as conn:
@@ -234,6 +237,47 @@ class ForecastRepository:
         with connect(self.db_path) as conn:
             initialize_schema(conn)
             return conn.execute(f"SELECT * FROM {table} WHERE snapshot_id = ?", (snapshot_id,)).fetchone()
+
+    def record_forecast_receipt(self, receipt: ForecastReceipt) -> str:
+        receipt_id = _snapshot_id("forecast_receipt", receipt.market_id, dumps_json(receipt))
+        with connect(self.db_path) as conn:
+            initialize_schema(conn)
+            conn.execute(
+                """
+                INSERT OR IGNORE INTO forecast_receipts (
+                    receipt_id, market_id, side, verdict, independent_probability,
+                    market_probability, costs_total, usable_edge, minimum_usable_edge,
+                    evidence_quality, dossier_hash, engine_subject, engine_tier,
+                    gate_multiplier, raw_commitment, adjusted_commitment, reason,
+                    code_version, mode, receipt_json, created_at
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                """,
+                (
+                    receipt_id,
+                    receipt.market_id,
+                    receipt.side,
+                    receipt.verdict,
+                    _dec(receipt.independent_probability),
+                    _dec(receipt.market_probability),
+                    _dec(receipt.costs_total),
+                    _dec(receipt.usable_edge),
+                    _dec(receipt.minimum_usable_edge),
+                    _dec(receipt.evidence_quality),
+                    receipt.dossier_hash,
+                    receipt.engine_subject,
+                    receipt.engine_tier,
+                    _dec(receipt.gate_multiplier),
+                    _dec(receipt.raw_commitment),
+                    _dec(receipt.adjusted_commitment),
+                    receipt.reason,
+                    receipt.code_version,
+                    receipt.mode,
+                    dumps_json(receipt),
+                    _iso(receipt.created_at),
+                ),
+            )
+            conn.commit()
+        return receipt_id
 
 
 def _snapshot_id(kind: str, subject: str, raw_hash: str) -> str:

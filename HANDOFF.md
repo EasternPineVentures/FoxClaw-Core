@@ -5,7 +5,7 @@ Read it before changing code, then verify with `git log --oneline -10` and the t
 
 Last updated: 2026-06-18
 Branch: `master`
-Version: `0.2.3`
+Version: `0.2.4`
 Working repo: `C:\Users\brend\dev\foxclaw-core`
 
 ## Current Lane
@@ -69,6 +69,16 @@ Done in this pass:
 - Duplicate reporting collapses by independence group, stable dossier hashes are produced,
   and missing settlement sources block paper entry.
 - `docs/forecast_receipt_contract.md` and `docs/data_retention_and_privacy.md` added.
+- Phase D Forecast Desk neutral-engine bridge implemented.
+- `assess_forecast` now turns normalized market + public dossier + independent probability
+  + explicit costs into a paper-only `ForecastReceipt`.
+- The usable edge enters sizing exactly once as raw commitment; neutral score/gate grade
+  evidence quality and sample strength.
+- Forecast receipt persistence added to the Forecast Desk ledger; schema version is now 2
+  and frozen schema artifacts were refreshed.
+- Regression tests cover 95% at 98c rejection, 62% at 43c paper candidate, market-price
+  separation from independent probability, cost-eliminated edge rejection, and persisted
+  paper-only receipts.
 
 ## Hard Rails
 
@@ -143,26 +153,46 @@ python tools/check_invariants.py -> green
 git diff --check           -> green
 ```
 
+Focused Phase D check before handoff update:
+
+```text
+python -m pytest tests\regression\test_forecast_full_chain.py tests\regression\test_forecast_storage_lineage.py tests\regression\test_forecast_db_schema_frozen.py -q
+-> 12 passed
+python tools\freeze_forecast_db_schema.py --check -> green
+python -m pytest tests\unit\test_forecast_calibration.py -q
+-> 2 passed
+```
+
+Phase D full-suite result:
+
+```text
+python -m pytest -q        -> 161 passed
+python tools/check_invariants.py -> green
+git diff --check           -> green
+```
+
 ## Next Phase
 
-Continue to Phase D after Phase C is committed cleanly:
+Continue to Phase E after Phase D is committed cleanly:
 
 ```powershell
 python -m pytest -q
 python tools\check_invariants.py
 git diff --check
 git add .
-git commit -m "Build public-evidence dossiers and resolution-quality gate"
+git commit -m "Wire Forecast Desk into the neutral decision chain"
 ```
 
-Then wire normalized markets and dossiers into the neutral engine:
+Then implement the paper simulator and replay:
 
 ```text
-foxclaw/adapters/event_contracts/scoring.py
-foxclaw/adapters/event_contracts/calibration.py
-extend pricing.py carefully
-forecast receipt repository
-tests/regression/test_forecast_full_chain.py
+foxclaw/adapters/event_contracts/paper.py
+foxclaw/adapters/event_contracts/costs.py
+foxclaw/adapters/event_contracts/kalshi/fees.py
+tools/forecast_desk_replay.py
+docs/paper_simulation_methodology.md
+tests/unit/test_paper_simulation.py
+tests/regression/test_forecast_replay_no_lookahead.py
 ```
 
 ## Watch

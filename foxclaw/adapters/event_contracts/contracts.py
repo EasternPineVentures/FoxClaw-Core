@@ -125,5 +125,58 @@ class EventContractPolicyVerdict:
     reasons: tuple[str, ...]
 
 
+@dataclass(frozen=True)
+class ForecastReceipt:
+    market_id: str
+    side: str
+    verdict: str
+    independent_probability: Decimal
+    market_probability: Decimal | None
+    costs_total: Decimal
+    usable_edge: Decimal
+    minimum_usable_edge: Decimal
+    evidence_quality: Decimal
+    dossier_hash: str
+    engine_subject: str
+    engine_tier: str
+    gate_multiplier: Decimal
+    raw_commitment: Decimal
+    adjusted_commitment: Decimal
+    reason: str
+    code_version: str
+    created_at: datetime
+    mode: str = "PAPER"
+    can_submit_order: bool = False
+    can_move_funds: bool = False
+    live_execution_allowed: bool = False
+
+    def __post_init__(self) -> None:
+        if self.side not in {"yes", "no", "none"}:
+            raise ValueError("side must be yes, no, or none")
+        if self.verdict not in {"reject", "watch", "paper"}:
+            raise ValueError("verdict must be reject, watch, or paper")
+        for label in (
+            "independent_probability",
+            "costs_total",
+            "usable_edge",
+            "minimum_usable_edge",
+            "evidence_quality",
+            "gate_multiplier",
+            "raw_commitment",
+            "adjusted_commitment",
+        ):
+            value = getattr(self, label)
+            if not isinstance(value, Decimal) or not value.is_finite():
+                raise TypeError(f"{label} must be finite Decimal")
+        if self.market_probability is not None and (
+            not isinstance(self.market_probability, Decimal) or not self.market_probability.is_finite()
+        ):
+            raise TypeError("market_probability must be finite Decimal or None")
+        if self.can_submit_order or self.can_move_funds or self.live_execution_allowed:
+            raise ValueError("forecast receipts are paper-only and cannot authorize live action")
+        if self.mode != "PAPER":
+            raise ValueError("forecast receipts are PAPER mode in this authority phase")
+
+
 def utc_now() -> datetime:
     return datetime.now(UTC).replace(microsecond=0)
