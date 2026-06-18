@@ -26,7 +26,7 @@ def _load(name: str):
     return json.loads((FIXTURES / name).read_text(encoding="utf-8"))
 
 
-def _forecast():
+def _forecast(*, created_at: datetime | None = None):
     market = replace(normalize_market(_load("market_detail.json")["market"]), yes_ask=Decimal("0.4300"), no_ask=None)
     dossier = build_dossier(
         market,
@@ -40,11 +40,14 @@ def _forecast():
             }
         ],
     )
-    return assess_forecast(
+    receipt = assess_forecast(
         market=market,
         dossier=dossier,
         independent_probability=Decimal("0.6200"),
     )
+    if created_at is not None:
+        return replace(receipt, created_at=created_at)
+    return receipt
 
 
 def test_paper_entry_uses_executable_ask_not_midpoint_and_respects_depth():
@@ -65,7 +68,7 @@ def test_paper_entry_uses_executable_ask_not_midpoint_and_respects_depth():
 def test_paper_settlement_computes_net_result_after_costs():
     book = normalize_orderbook(_load("orderbook.json"), market_id="KXJOBLESS-26JUN18-T250")
     position = simulate_paper_entry(
-        forecast=_forecast(),
+        forecast=_forecast(created_at=datetime(2026, 6, 18, 12, 0, tzinfo=UTC)),
         orderbook=book,
         requested_contracts=Decimal("7.00"),
     )
@@ -84,7 +87,7 @@ def test_paper_settlement_computes_net_result_after_costs():
 def test_replay_manifest_is_paper_labeled():
     book = normalize_orderbook(_load("orderbook.json"), market_id="KXJOBLESS-26JUN18-T250")
     position = simulate_paper_entry(
-        forecast=_forecast(),
+        forecast=_forecast(created_at=datetime(2026, 6, 18, 12, 0, tzinfo=UTC)),
         orderbook=book,
         requested_contracts=Decimal("1.00"),
     )
@@ -102,7 +105,7 @@ def test_replay_manifest_is_paper_labeled():
 def test_replay_rejects_future_leakage():
     book = normalize_orderbook(_load("orderbook.json"), market_id="KXJOBLESS-26JUN18-T250")
     position = simulate_paper_entry(
-        forecast=_forecast(),
+        forecast=_forecast(created_at=datetime(2026, 6, 18, 12, 0, tzinfo=UTC)),
         orderbook=book,
         requested_contracts=Decimal("1.00"),
     )

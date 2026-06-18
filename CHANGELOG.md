@@ -9,6 +9,22 @@ preserved as the `v1-legacy` archive. Milestone map: `0.x` builds toward launch,
 bump per completed overhaul phase; **`1.0.0`** is earned at Apollo-2 cutover when v2 runs the
 live track record and is demo-ready.
 
+## [0.4.7] - 2026-06-18
+### Added
+- **Apollo Mesh V0.** Added local signed node events, HMAC-SHA256 canonical event sealing,
+  local identity loading/creation, and append-only inbox/outbox logs.
+- Added `tools/apollo_mesh.py` with `init`, `heartbeat`, `handoff`, `receive`, and `inbox`
+  commands for A1/A2 structured node communication.
+- Added `docs/apollo_mesh_v0.md` and linked it from the A1/A2 coordination docs.
+- Tests cover event verification, tamper failure, forbidden command/secret fields,
+  authority locks, idempotent local logs, and CLI round trips.
+### Fixed
+- Pinned paper-simulation settlement fixtures to deterministic forecast timestamps so the
+  no-lookahead guard does not fail after the wall clock passes the fixture resolution time.
+### Notes
+- This is local-first and transport-neutral. Nostr/private relay transport can be added as
+  an adapter after A1/A2 prove the event contract locally.
+
 ## [0.4.6] - 2026-06-18
 ### Added
 - **Redshift Paper Boundary V1.** Added context-only FoxClaw decision exports,

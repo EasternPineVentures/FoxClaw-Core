@@ -34,6 +34,8 @@ Coordination rules:
 - Commit each completed slice separately.
 - Use `tools\apollo_node_brief.py` to send a current node receipt before handing work to
   the other workstation.
+- Use `tools\apollo_mesh.py` for signed local heartbeat, handoff, question, alert, and
+  context events before relay transport exists.
 - Push only when the slice is ready for the other workstation to pull.
 - Avoid editing the same files on both machines at the same time.
 - Before switching machines, run `git status --short --branch` and leave the tree clean or
@@ -55,8 +57,8 @@ foxclaw-core git repo from two VSCode workstations.
 Current target repo clones:
 - A1 path: C:\Users\brend\dev\foxclaw-core
 - A2 path: C:\Users\fox1i\Desktop\FoxClaw-Core-master
-- Expected version after pull: 0.4.6 or newer
-- Expected recent commit: Add Redshift paper boundary handshake
+- Expected version after pull: 0.4.7 or newer
+- Expected recent commit: Add Apollo Mesh V0 local signed events
 
 The old A2 FoxClaw repo is still treated as the running legacy/reference system. Do not
 delete, rename, move, or rewrite it. Start read-only.
@@ -95,6 +97,8 @@ Two-workstation rules:
 - Commit each finished slice separately.
 - Use `python tools\apollo_node_brief.py --node-id A2 --peer-node A1 --json` when handing
   status back.
+- Use `python tools\apollo_mesh.py --node-id A2 --json heartbeat --message "A2 online"` to
+  prove the structured mesh event layer.
 - Keep the tree clean before handing work between A1 and A2.
 - Do not edit the same files on both machines at once.
 - If the other clone has uncommitted changes, stop and clarify before overlapping.
@@ -106,6 +110,8 @@ Strategic direction:
   evidence handling, not from carrying old code forward.
 - Redshift now has a first paper-execution receipt handshake fixture; FoxClaw remains the
   decision matrix.
+- Apollo Mesh V0 provides signed local node events; use it for fast A1/A2 heartbeat,
+  handoff, question, alert, and context packets.
 ```
 
 ## Which Planning Option To Choose
@@ -128,7 +134,7 @@ shadow the old repo.
 
 As of this brief:
 
-- `foxclaw-core` version is `0.4.6`.
+- `foxclaw-core` version is `0.4.7`.
 - The active lane is Forecast Desk / Kalshi-first event-contract intelligence.
 - The core engine remains domain-neutral.
 - Forecast Desk is read-only and paper-only.
@@ -137,8 +143,10 @@ As of this brief:
 - Progress and Redshift paper-boundary docs exist for deciding what moves next.
 - `tools/redshift_paper_boundary.py --fixture --json` proves the first FoxClaw decision
   -> Redshift paper execution -> Redshift outcome receipt handshake.
+- `tools/apollo_mesh.py` provides Apollo Mesh V0 local signed events with append-only
+  inbox/outbox logs.
 - Forecast DB schema is version `3`.
-- Latest local verification: `python -m pytest -q` passed with `192 passed`.
+- Latest local verification: `python -m pytest -q` passed with `207 passed`.
 
 ## What A2 Should Not Do Yet
 

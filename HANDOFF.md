@@ -5,7 +5,7 @@ Read it before changing code, then verify with `git log --oneline -10` and the t
 
 Last updated: 2026-06-18
 Branch: `master`
-Version: `0.4.6`
+Version: `0.4.7`
 Working repo: `C:\Users\brend\dev\foxclaw-core`
 
 ## Current Lane
@@ -138,6 +138,14 @@ Done in this pass:
   ForecastReceipt -> Redshift paper execution -> Redshift paper outcome receipt chain.
 - Tests prove Redshift cannot mutate FoxClaw decision fields, carry live order/account IDs,
   overfill paper size, introduce capital effect, or gain live authority.
+- Apollo Mesh V0 implemented.
+- `foxclaw.nodes.mesh` provides local signed node events using canonical JSON plus
+  HMAC-SHA256, with hard false authority locks and content filtering for commands/secrets.
+- `foxclaw.nodes.mesh_store` provides append-only local inbox/outbox JSONL logs under
+  gitignored `data/`.
+- `tools/apollo_mesh.py` adds `init`, `heartbeat`, `handoff`, `receive`, and `inbox`
+  commands for A1/A2 structured node communication.
+- `docs/apollo_mesh_v0.md` documents the local-first mesh contract and the later relay path.
 
 ## Hard Rails
 
@@ -367,6 +375,23 @@ python tools\check_invariants.py -> green
 git diff --check           -> green
 ```
 
+Focused Apollo Mesh V0 check before handoff update:
+
+```text
+python -m pytest tests\unit\test_apollo_mesh_events.py tests\regression\test_apollo_mesh_cli.py -q
+-> 8 passed
+python tools\apollo_mesh.py --mesh-dir <temp> --node-id A1 --fixture --json handoff --to-node A2 --summary "Apollo Mesh V0 local signed events are ready" --current-slice "apollo mesh v0" --next-request "pull, run apollo mesh tests, and send A2 heartbeat"
+-> signed handoff.note event emitted, authority false
+```
+
+Apollo Mesh V0 full-suite result:
+
+```text
+python -m pytest -q        -> 207 passed
+python tools\check_invariants.py -> green
+git diff --check           -> green
+```
+
 ## Next Phase
 
 Next safe work:
@@ -377,6 +402,8 @@ Next safe work:
   inventory described in `docs/a2_migration_context.md`.
 - Use `python tools\apollo_node_brief.py --node-id A1 --peer-node A2` before handing
   active work from A1 to A2, and the reverse command before handing status back.
+- Use `python tools\apollo_mesh.py --node-id A2 --json heartbeat --message "A2 online"`
+  after A2 pulls this version, then paste the signed heartbeat back to A1.
 - Have A2 compare the Redshift Paper Boundary V1 fields against the old paper runtime
   inventory, then decide what maps, what gets cut, and what remains Redshift-only.
 - Add source-specific import adapters only after their trust and privacy boundaries are

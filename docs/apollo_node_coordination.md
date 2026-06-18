@@ -7,6 +7,8 @@ receipts. A node brief is not authority, not runtime state, and not a shared dat
 is a signed-in-practice operator packet: current repo truth, current slice, next request,
 blockers, and the rails that stay locked.
 
+For structured node-to-node events, use Apollo Mesh V0 in `docs/apollo_mesh_v0.md`.
+
 ## Nodes
 
 - A1: `C:\Users\brend\dev\foxclaw-core`
@@ -43,6 +45,23 @@ python tools\apollo_node_brief.py --node-id A1 --peer-node A2 --write .\data\apo
 
 `data/` is gitignored. Packet files are local operator artifacts unless deliberately pasted
 into a handoff or issue.
+
+## Mesh Tool
+
+Generate a signed local mesh heartbeat:
+
+```powershell
+python tools\apollo_mesh.py --node-id A1 --json heartbeat --message alive
+```
+
+Generate a signed local mesh handoff:
+
+```powershell
+python tools\apollo_mesh.py --node-id A1 --json handoff --to-node A2 `
+  --summary "Slice complete" `
+  --current-slice "apollo mesh v0" `
+  --next-request "pull and send A2 heartbeat"
+```
 
 ## Required Brief Contents
 
