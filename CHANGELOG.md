@@ -9,6 +9,24 @@ preserved as the `v1-legacy` archive. Milestone map: `0.x` builds toward launch,
 bump per completed overhaul phase; **`1.0.0`** is earned at Apollo-2 cutover when v2 runs the
 live track record and is demo-ready.
 
+## [0.3.0] - 2026-06-18
+### Added
+- **Forecast Desk Phase E: cost-aware paper simulator and replay.** Added executable
+  top-of-book paper fills, depth-aware partial fills, versioned cost/fee receipts, settlement
+  outcomes, and a replay no-lookahead guard.
+- `paper.py` now produces paper-only `PaperPosition` and `PaperOutcome` receipts using
+  YES/NO ask prices inferred from the bid-only book; midpoint is not used by default.
+- `costs.py` and `kalshi/fees.py` add explicit cost and fee-model versions. The Kalshi fee
+  default is explicit zero until a reviewed schedule is supplied.
+- `tools/forecast_desk_replay.py` writes a deterministic paper replay manifest.
+- `docs/paper_simulation_methodology.md` documents entry pricing, depth, fees, settlement,
+  and no-lookahead rules.
+- Tests cover partial fills, settlement economics, paper labels, no-lookahead rejection, and
+  versioned cost/fee validation.
+### Notes
+- This minor bump marks the first complete read-only-to-paper chain: public market snapshot,
+  public dossier, forecast receipt, executable paper fill, and settlement replay.
+
 ## [0.2.4] - 2026-06-18
 ### Added
 - **Forecast Desk Phase D: neutral-engine bridge and forecast receipts.** Added

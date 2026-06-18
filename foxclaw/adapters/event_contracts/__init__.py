@@ -24,6 +24,7 @@ DEFAULT_AUTHORITY_LEVEL: Final = "A4_prohibited"
 from .eligibility import Eligibility, assess_eligibility  # noqa: E402
 from .dossiers import assess_evidence_eligibility, build_dossier  # noqa: E402
 from .policy import assess_event_contract_policy  # noqa: E402
+from .paper import PaperOutcome, PaperPosition, replay_positions, simulate_paper_entry  # noqa: E402
 from .pricing import (  # noqa: E402
     edge_gap,
     favored_side,
@@ -58,6 +59,10 @@ __all__ = [
     "record_resolution",
     "assess_event_contract_policy",
     "assess_forecast",
+    "PaperPosition",
+    "PaperOutcome",
+    "simulate_paper_entry",
+    "replay_positions",
     # venues
     "get_venue",
     "VENUES",

@@ -5,7 +5,7 @@ Read it before changing code, then verify with `git log --oneline -10` and the t
 
 Last updated: 2026-06-18
 Branch: `master`
-Version: `0.2.4`
+Version: `0.3.0`
 Working repo: `C:\Users\brend\dev\foxclaw-core`
 
 ## Current Lane
@@ -79,6 +79,14 @@ Done in this pass:
 - Regression tests cover 95% at 98c rejection, 62% at 43c paper candidate, market-price
   separation from independent probability, cost-eliminated edge rejection, and persisted
   paper-only receipts.
+- Phase E cost-aware paper simulator and replay implemented.
+- `paper.py` now produces executable-top paper fills, depth-aware partial fills, and
+  settlement outcomes; midpoint is not used by default.
+- `costs.py` and `kalshi/fees.py` add versioned cost/fee receipts, with explicit-zero Kalshi
+  fee default until a reviewed schedule is supplied.
+- `tools/forecast_desk_replay.py` and `docs/paper_simulation_methodology.md` added.
+- Tests cover partial fills, settlement economics, paper labels, no-lookahead rejection, and
+  versioned cost/fee validation.
 
 ## Hard Rails
 
@@ -171,28 +179,47 @@ python tools/check_invariants.py -> green
 git diff --check           -> green
 ```
 
+Focused Phase E check before handoff update:
+
+```text
+python -m pytest tests\unit\test_paper_simulation.py tests\regression\test_forecast_replay_no_lookahead.py -q
+-> 5 passed
+python -m pytest tests\unit\test_forecast_costs.py -q
+-> 2 passed
+python tools\forecast_desk_replay.py --fixture --json -> paper manifest, no authority
+```
+
+Phase E full-suite result:
+
+```text
+python -m pytest -q        -> 168 passed
+python tools/check_invariants.py -> green
+git diff --check           -> green
+```
+
 ## Next Phase
 
-Continue to Phase E after Phase D is committed cleanly:
+Continue to Phase F after Phase E is committed cleanly:
 
 ```powershell
 python -m pytest -q
 python tools\check_invariants.py
 git diff --check
 git add .
-git commit -m "Wire Forecast Desk into the neutral decision chain"
+git commit -m "Add cost-aware event-contract paper simulator and replay"
 ```
 
-Then implement the paper simulator and replay:
+Then implement scoreboard, calibration, and self-funding:
 
 ```text
-foxclaw/adapters/event_contracts/paper.py
-foxclaw/adapters/event_contracts/costs.py
-foxclaw/adapters/event_contracts/kalshi/fees.py
-tools/forecast_desk_replay.py
-docs/paper_simulation_methodology.md
-tests/unit/test_paper_simulation.py
-tests/regression/test_forecast_replay_no_lookahead.py
+foxclaw/adapters/event_contracts/self_funding.py
+tools/forecast_desk_scoreboard.py
+tools/forecast_desk_self_funding.py
+config/self_funding_standard.json
+docs/forecast_calibration.md
+docs/self_funding_standard.md
+tests/unit/test_self_funding.py
+tests/regression/test_self_funding_claim_gate.py
 ```
 
 ## Watch
