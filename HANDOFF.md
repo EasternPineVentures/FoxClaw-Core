@@ -5,7 +5,7 @@ Read it before changing code, then verify with `git log --oneline -10` and the t
 
 Last updated: 2026-06-18
 Branch: `master`
-Version: `0.2.2`
+Version: `0.2.3`
 Working repo: `C:\Users\brend\dev\foxclaw-core`
 
 ## Current Lane
@@ -61,6 +61,14 @@ Done in this pass:
 - Phase B regression tests added for schema idempotence, raw archive round-trip,
   normalized-row-to-raw lineage, no-duplicate fixture sync resume, frozen schema verification,
   and OneDrive DB path rejection.
+- Phase C dossier and resolution-quality pipeline implemented.
+- `contracts.py`, `dossiers.py`, `resolution.py`, and `policy.py` now provide public-evidence
+  eligibility verdicts, accepted evidence items, dossiers, resolution-quality verdicts,
+  resolution receipts, and event-contract policy verdicts.
+- Nonpublic/insider/hacked/classified/private/access-bypassed evidence is rejected at intake.
+- Duplicate reporting collapses by independence group, stable dossier hashes are produced,
+  and missing settlement sources block paper entry.
+- `docs/forecast_receipt_contract.md` and `docs/data_retention_and_privacy.md` added.
 
 ## Hard Rails
 
@@ -118,27 +126,43 @@ python tools/check_invariants.py -> green
 git diff --check           -> green
 ```
 
+Focused Phase C check before handoff update:
+
+```text
+python -m pytest tests\unit\test_event_dossiers.py tests\unit\test_resolution_rules.py tests\regression\test_event_contract_authority_boundaries.py -q
+-> 11 passed
+python -m pytest tests\unit\test_event_contracts.py -q
+-> 17 passed
+```
+
+Phase C full-suite result:
+
+```text
+python -m pytest -q        -> 154 passed
+python tools/check_invariants.py -> green
+git diff --check           -> green
+```
+
 ## Next Phase
 
-Continue to Phase C after Phase B is committed cleanly:
+Continue to Phase D after Phase C is committed cleanly:
 
 ```powershell
 python -m pytest -q
 python tools\check_invariants.py
 git diff --check
 git add .
-git commit -m "Add Forecast Desk snapshot ledger and schema guard"
+git commit -m "Build public-evidence dossiers and resolution-quality gate"
 ```
 
-Then implement the dossier and resolution pipeline:
+Then wire normalized markets and dossiers into the neutral engine:
 
 ```text
-foxclaw/adapters/event_contracts/dossiers.py
-foxclaw/adapters/event_contracts/resolution.py
-foxclaw/adapters/event_contracts/policy.py
-foxclaw/adapters/event_contracts/contracts.py
-docs/forecast_receipt_contract.md
-docs/data_retention_and_privacy.md
+foxclaw/adapters/event_contracts/scoring.py
+foxclaw/adapters/event_contracts/calibration.py
+extend pricing.py carefully
+forecast receipt repository
+tests/regression/test_forecast_full_chain.py
 ```
 
 ## Watch

@@ -22,6 +22,8 @@ USES_NONPUBLIC_INFORMATION: Final = False  # invariant #11 — public evidence o
 DEFAULT_AUTHORITY_LEVEL: Final = "A4_prohibited"
 
 from .eligibility import Eligibility, assess_eligibility  # noqa: E402
+from .dossiers import assess_evidence_eligibility, build_dossier  # noqa: E402
+from .policy import assess_event_contract_policy  # noqa: E402
 from .pricing import (  # noqa: E402
     edge_gap,
     favored_side,
@@ -29,6 +31,7 @@ from .pricing import (  # noqa: E402
     usable_edge,
     yes_price_to_implied_probability,
 )
+from .resolution import assess_resolution_quality, record_resolution  # noqa: E402
 from .venues import VENUES, Venue, get_venue  # noqa: E402
 
 __all__ = [
@@ -47,6 +50,12 @@ __all__ = [
     # eligibility (always read-only/paper-only)
     "assess_eligibility",
     "Eligibility",
+    # dossiers / resolution / policy
+    "assess_evidence_eligibility",
+    "build_dossier",
+    "assess_resolution_quality",
+    "record_resolution",
+    "assess_event_contract_policy",
     # venues
     "get_venue",
     "VENUES",

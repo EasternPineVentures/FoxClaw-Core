@@ -9,6 +9,24 @@ preserved as the `v1-legacy` archive. Milestone map: `0.x` builds toward launch,
 bump per completed overhaul phase; **`1.0.0`** is earned at Apollo-2 cutover when v2 runs the
 live track record and is demo-ready.
 
+## [0.2.3] - 2026-06-18
+### Added
+- **Forecast Desk Phase C: public-evidence dossiers and resolution-quality gate.** Added
+  frozen contracts for evidence eligibility, accepted evidence items, dossiers, resolution
+  quality verdicts, resolution receipts, and event-contract policy verdicts.
+- `dossiers.py` now rejects nonpublic/insider/hacked/classified/private/access-bypassed
+  evidence before intake, collapses duplicate reporting by independence group, records
+  rejected evidence verdicts, and produces stable dossier hashes.
+- `resolution.py` now scores rule/source clarity and blocks paper entry when settlement
+  sources or rule text are missing.
+- `policy.py` keeps event-contract paper/public verdicts behind hard false authority fields.
+- `docs/forecast_receipt_contract.md` and `docs/data_retention_and_privacy.md` document the
+  receipt and privacy boundaries.
+### Notes
+- LLM or prose fields cannot override banned evidence classifications.
+- Missing settlement source blocks paper entry; ambiguous markets can be watched but not
+  treated as clean paper candidates.
+
 ## [0.2.2] - 2026-06-18
 ### Added
 - **Forecast Desk Phase B: snapshot ledger and schema guard.** Added
