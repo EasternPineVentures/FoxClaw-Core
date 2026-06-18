@@ -5,7 +5,7 @@ Read it before changing code, then verify with `git log --oneline -10` and the t
 
 Last updated: 2026-06-18
 Branch: `master`
-Version: `0.4.1`
+Version: `0.4.2`
 Working repo: `C:\Users\brend\dev\foxclaw-core`
 
 ## Current Lane
@@ -20,6 +20,7 @@ Company posture:
 
 - This repo is the clean migration target and public-ready work surface.
 - Git is the handoff path.
+- A2 is a pull/deploy target for this work; it was not touched from this repo pass.
 - OneDrive is not an authoritative runtime or database source.
 - The old OneDrive FoxClaw checkout is reference-only unless a task explicitly says
   otherwise.
@@ -104,6 +105,16 @@ Done in this pass:
 - `tools/forecast_desk_doctor.py` reports paper-only health and all standard silence reasons.
 - `tools/forecast_desk_watch.py --once` writes status JSON with a freshness receipt and
   releases its lock file.
+- Trusted Evidence Intake V1 implemented.
+- `intake.py` adds trusted submitter, evidence packet, and intake validation contracts:
+  trusted people can submit context, but cannot set probability, side, verdict, publication,
+  paper entry, orders, funds movement, or execution authority.
+- `tools/forecast_evidence_intake.py` writes fixture or manual trusted evidence packets plus
+  validation receipts into the Forecast Desk ledger.
+- Forecast DB schema version is now 3 with `trusted_evidence_packets` and
+  `trusted_evidence_validations`; frozen schema artifacts were refreshed.
+- `docs/trusted_evidence_intake.md` documents the trust-to-submit, not trust-to-decide
+  boundary, including football evidence and Redshift context-only usage.
 
 ## Hard Rails
 
@@ -265,17 +276,33 @@ python tools/check_invariants.py -> green
 git diff --check           -> green
 ```
 
+Focused Trusted Evidence Intake V1 check before handoff update:
+
+```text
+python -m pytest tests\unit\test_trusted_evidence_intake.py tests\regression\test_trusted_evidence_intake_cli.py tests\regression\test_forecast_db_schema_frozen.py tests\regression\test_forecast_storage_lineage.py -q
+-> 14 passed
+python tools\freeze_forecast_db_schema.py --check -> green
+python tools\forecast_evidence_intake.py --fixture --db <temp> --json
+-> accepted context-only evidence receipt, no authority
+```
+
+Trusted Evidence Intake V1 full-suite result:
+
+```text
+python -m pytest -q        -> 187 passed
+python tools\check_invariants.py -> green
+git diff --check           -> green; CRLF normalization warnings only on generated schema docs
+```
+
 ## Next Phase
 
-Continue to Phase I/J only after deciding whether to enter demo-auth work:
+Next safe work:
 
-```powershell
-python -m pytest -q
-python tools\check_invariants.py
-git diff --check
-git add .
-git commit -m "Add continuous Forecast Desk hunt loop and diagnostics"
-```
+- Add a private trusted-roster/auth boundary if this intake becomes multi-user instead of
+  operator-run.
+- Add source-specific import adapters only after their trust and privacy boundaries are
+  explicit.
+- Continue to Phase I/J only after deciding whether to enter demo-auth work.
 
 Phase I is demo-only authentication and WebSocket rehearsal. It should not start unless
 demo credential boundaries are explicit. Phase J is documentation-only live execution gate.

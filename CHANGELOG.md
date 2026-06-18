@@ -9,6 +9,22 @@ preserved as the `v1-legacy` archive. Milestone map: `0.x` builds toward launch,
 bump per completed overhaul phase; **`1.0.0`** is earned at Apollo-2 cutover when v2 runs the
 live track record and is demo-ready.
 
+## [0.4.2] - 2026-06-18
+### Added
+- **Trusted Evidence Intake V1.** Added context-only trusted submitter, evidence packet,
+  and validation contracts for Forecast Desk dossiers.
+- `tools/forecast_evidence_intake.py` can write deterministic fixture or manual trusted
+  evidence packets and validation receipts into the Forecast Desk ledger.
+- Forecast DB schema version `3` adds `trusted_evidence_packets` and
+  `trusted_evidence_validations`, with frozen schema artifacts refreshed.
+- `docs/trusted_evidence_intake.md` documents the trust-to-submit, not trust-to-decide
+  boundary, including the Redshift context-only lane and football evidence use case.
+- Tests cover authority-field rejection, nonpublic validation rejection, duplicate evidence
+  handling, CLI persistence, and all intake authority flags remaining false.
+### Notes
+- Trusted contributors can feed the matrix. They cannot set probabilities, publish,
+  enter paper positions, submit orders, move funds, or authorize execution.
+
 ## [0.4.1] - 2026-06-18
 ### Added
 - **Forecast Desk Phase H: continuous hunt loop scaffold and diagnostics.** Added

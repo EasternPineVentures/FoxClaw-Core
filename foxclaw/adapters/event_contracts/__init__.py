@@ -23,6 +23,16 @@ DEFAULT_AUTHORITY_LEVEL: Final = "A4_prohibited"
 
 from .eligibility import Eligibility, assess_eligibility  # noqa: E402
 from .dossiers import assess_evidence_eligibility, build_dossier  # noqa: E402
+from .intake import (  # noqa: E402
+    CONTEXT_ONLY_AUTHORITY,
+    EvidencePacket,
+    IntakeValidation,
+    SUBMIT_EVIDENCE_CAPABILITY,
+    TrustedSubmitter,
+    packet_to_dossier_evidence,
+    submit_evidence_packet,
+    validate_evidence_packet,
+)
 from .policy import assess_event_contract_policy  # noqa: E402
 from .paper import PaperOutcome, PaperPosition, replay_positions, simulate_paper_entry  # noqa: E402
 from .pricing import (  # noqa: E402
@@ -57,6 +67,14 @@ __all__ = [
     # dossiers / resolution / policy
     "assess_evidence_eligibility",
     "build_dossier",
+    "SUBMIT_EVIDENCE_CAPABILITY",
+    "CONTEXT_ONLY_AUTHORITY",
+    "TrustedSubmitter",
+    "EvidencePacket",
+    "IntakeValidation",
+    "submit_evidence_packet",
+    "validate_evidence_packet",
+    "packet_to_dossier_evidence",
     "assess_resolution_quality",
     "record_resolution",
     "assess_event_contract_policy",

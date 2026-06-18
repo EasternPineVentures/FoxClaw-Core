@@ -7,7 +7,7 @@ import json
 import sqlite3
 from typing import Any
 
-FORECAST_SCHEMA_VERSION = 2
+FORECAST_SCHEMA_VERSION = 3
 
 
 def initialize_schema(conn: sqlite3.Connection) -> None:
@@ -131,6 +131,53 @@ def initialize_schema(conn: sqlite3.Connection) -> None:
             created_at TEXT NOT NULL
         );
 
+        CREATE TABLE IF NOT EXISTS trusted_evidence_packets (
+            packet_id TEXT PRIMARY KEY,
+            submitter_id TEXT NOT NULL,
+            trust_tier TEXT NOT NULL,
+            market_id TEXT NOT NULL,
+            source_id TEXT NOT NULL,
+            title TEXT NOT NULL,
+            url TEXT NOT NULL,
+            source_type TEXT NOT NULL,
+            source_classification TEXT NOT NULL,
+            claims_json TEXT NOT NULL,
+            independence_group TEXT NOT NULL,
+            public_information_only_claimed INTEGER NOT NULL,
+            authority_level TEXT NOT NULL,
+            can_set_probability INTEGER NOT NULL,
+            can_publish INTEGER NOT NULL,
+            can_enter_paper INTEGER NOT NULL,
+            can_submit_order INTEGER NOT NULL,
+            can_move_funds INTEGER NOT NULL,
+            live_execution_allowed INTEGER NOT NULL,
+            status TEXT NOT NULL,
+            packet_json TEXT NOT NULL,
+            raw_payload_hash TEXT NOT NULL,
+            submitted_at TEXT NOT NULL
+        );
+
+        CREATE TABLE IF NOT EXISTS trusted_evidence_validations (
+            validation_id TEXT PRIMARY KEY,
+            packet_id TEXT NOT NULL,
+            market_id TEXT NOT NULL,
+            source_id TEXT NOT NULL,
+            status TEXT NOT NULL,
+            accepted_for_dossier INTEGER NOT NULL,
+            public_information_only INTEGER NOT NULL,
+            duplicate_key TEXT NOT NULL,
+            reasons_json TEXT NOT NULL,
+            can_authorize_execution INTEGER NOT NULL,
+            can_publish INTEGER NOT NULL,
+            can_enter_paper INTEGER NOT NULL,
+            can_submit_order INTEGER NOT NULL,
+            can_move_funds INTEGER NOT NULL,
+            live_execution_allowed INTEGER NOT NULL,
+            validation_json TEXT NOT NULL,
+            validated_at TEXT NOT NULL,
+            FOREIGN KEY(packet_id) REFERENCES trusted_evidence_packets(packet_id)
+        );
+
         CREATE TABLE IF NOT EXISTS sync_cursors (
             cursor_key TEXT PRIMARY KEY,
             cursor TEXT,
@@ -145,6 +192,12 @@ def initialize_schema(conn: sqlite3.Connection) -> None:
             ON raw_payloads(endpoint, observed_at);
         CREATE INDEX IF NOT EXISTS idx_forecast_receipts_market_time
             ON forecast_receipts(market_id, created_at);
+        CREATE INDEX IF NOT EXISTS idx_trusted_evidence_packets_market_time
+            ON trusted_evidence_packets(market_id, submitted_at);
+        CREATE INDEX IF NOT EXISTS idx_trusted_evidence_packets_submitter_time
+            ON trusted_evidence_packets(submitter_id, submitted_at);
+        CREATE INDEX IF NOT EXISTS idx_trusted_evidence_validations_packet
+            ON trusted_evidence_validations(packet_id);
         """
     )
     conn.execute(

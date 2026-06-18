@@ -1,8 +1,8 @@
 {
   "artifact": "forecast_db_schema",
-  "fingerprint": "27585d1dda5c871a17ffb2e25d5932e6821bd3465bc39390cd826fd0c3fee176",
-  "generated": "2026-06-18T03:22:19Z",
-  "index_count": 4,
+  "fingerprint": "daf41a145f4c9e8d910ed33bbb95c91132c7ec2b6e32905f1381c0ba6fc9263b",
+  "generated": "2026-06-18T03:45:26Z",
+  "index_count": 7,
   "schema": {
     "indexes": [
       {
@@ -24,9 +24,24 @@
         "name": "idx_raw_payloads_endpoint_time",
         "sql": "CREATE INDEX idx_raw_payloads_endpoint_time ON raw_payloads(endpoint, observed_at)",
         "table": "raw_payloads"
+      },
+      {
+        "name": "idx_trusted_evidence_packets_market_time",
+        "sql": "CREATE INDEX idx_trusted_evidence_packets_market_time ON trusted_evidence_packets(market_id, submitted_at)",
+        "table": "trusted_evidence_packets"
+      },
+      {
+        "name": "idx_trusted_evidence_packets_submitter_time",
+        "sql": "CREATE INDEX idx_trusted_evidence_packets_submitter_time ON trusted_evidence_packets(submitter_id, submitted_at)",
+        "table": "trusted_evidence_packets"
+      },
+      {
+        "name": "idx_trusted_evidence_validations_packet",
+        "sql": "CREATE INDEX idx_trusted_evidence_validations_packet ON trusted_evidence_validations(packet_id)",
+        "table": "trusted_evidence_validations"
       }
     ],
-    "schema_version": 2,
+    "schema_version": 3,
     "tables": {
       "event_snapshots": {
         "columns": [
@@ -717,8 +732,296 @@
             "type": "TEXT"
           }
         ]
+      },
+      "trusted_evidence_packets": {
+        "columns": [
+          {
+            "default": null,
+            "name": "packet_id",
+            "notnull": false,
+            "pk": 1,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "submitter_id",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "trust_tier",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "market_id",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "source_id",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "title",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "url",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "source_type",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "source_classification",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "claims_json",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "independence_group",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "public_information_only_claimed",
+            "notnull": true,
+            "pk": 0,
+            "type": "INTEGER"
+          },
+          {
+            "default": null,
+            "name": "authority_level",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "can_set_probability",
+            "notnull": true,
+            "pk": 0,
+            "type": "INTEGER"
+          },
+          {
+            "default": null,
+            "name": "can_publish",
+            "notnull": true,
+            "pk": 0,
+            "type": "INTEGER"
+          },
+          {
+            "default": null,
+            "name": "can_enter_paper",
+            "notnull": true,
+            "pk": 0,
+            "type": "INTEGER"
+          },
+          {
+            "default": null,
+            "name": "can_submit_order",
+            "notnull": true,
+            "pk": 0,
+            "type": "INTEGER"
+          },
+          {
+            "default": null,
+            "name": "can_move_funds",
+            "notnull": true,
+            "pk": 0,
+            "type": "INTEGER"
+          },
+          {
+            "default": null,
+            "name": "live_execution_allowed",
+            "notnull": true,
+            "pk": 0,
+            "type": "INTEGER"
+          },
+          {
+            "default": null,
+            "name": "status",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "packet_json",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "raw_payload_hash",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "submitted_at",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          }
+        ]
+      },
+      "trusted_evidence_validations": {
+        "columns": [
+          {
+            "default": null,
+            "name": "validation_id",
+            "notnull": false,
+            "pk": 1,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "packet_id",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "market_id",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "source_id",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "status",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "accepted_for_dossier",
+            "notnull": true,
+            "pk": 0,
+            "type": "INTEGER"
+          },
+          {
+            "default": null,
+            "name": "public_information_only",
+            "notnull": true,
+            "pk": 0,
+            "type": "INTEGER"
+          },
+          {
+            "default": null,
+            "name": "duplicate_key",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "reasons_json",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "can_authorize_execution",
+            "notnull": true,
+            "pk": 0,
+            "type": "INTEGER"
+          },
+          {
+            "default": null,
+            "name": "can_publish",
+            "notnull": true,
+            "pk": 0,
+            "type": "INTEGER"
+          },
+          {
+            "default": null,
+            "name": "can_enter_paper",
+            "notnull": true,
+            "pk": 0,
+            "type": "INTEGER"
+          },
+          {
+            "default": null,
+            "name": "can_submit_order",
+            "notnull": true,
+            "pk": 0,
+            "type": "INTEGER"
+          },
+          {
+            "default": null,
+            "name": "can_move_funds",
+            "notnull": true,
+            "pk": 0,
+            "type": "INTEGER"
+          },
+          {
+            "default": null,
+            "name": "live_execution_allowed",
+            "notnull": true,
+            "pk": 0,
+            "type": "INTEGER"
+          },
+          {
+            "default": null,
+            "name": "validation_json",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "validated_at",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          }
+        ]
       }
     }
   },
-  "table_count": 8
+  "table_count": 10
 }

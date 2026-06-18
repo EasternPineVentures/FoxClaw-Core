@@ -10,6 +10,7 @@ from pathlib import Path
 from typing import Any, Mapping
 
 from foxclaw.adapters.event_contracts.contracts import ForecastReceipt
+from foxclaw.adapters.event_contracts.intake import EvidencePacket, IntakeValidation
 from foxclaw.adapters.event_contracts.markets import (
     dumps_json,
     NormalizedEvent,
@@ -227,6 +228,8 @@ class ForecastRepository:
             "market_snapshots",
             "orderbook_snapshots",
             "forecast_receipts",
+            "trusted_evidence_packets",
+            "trusted_evidence_validations",
             "sync_cursors",
         )
         with connect(self.db_path) as conn:
@@ -279,6 +282,83 @@ class ForecastRepository:
             conn.commit()
         return receipt_id
 
+    def record_evidence_packet(self, packet: EvidencePacket) -> str:
+        with connect(self.db_path) as conn:
+            initialize_schema(conn)
+            conn.execute(
+                """
+                INSERT OR IGNORE INTO trusted_evidence_packets (
+                    packet_id, submitter_id, trust_tier, market_id, source_id, title, url,
+                    source_type, source_classification, claims_json, independence_group,
+                    public_information_only_claimed, authority_level, can_set_probability,
+                    can_publish, can_enter_paper, can_submit_order, can_move_funds,
+                    live_execution_allowed, status, packet_json, raw_payload_hash, submitted_at
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                """,
+                (
+                    packet.packet_id,
+                    packet.submitter_id,
+                    packet.trust_tier,
+                    packet.market_id,
+                    packet.source_id,
+                    packet.title,
+                    packet.url,
+                    packet.source_type,
+                    packet.source_classification,
+                    _json(packet.claims),
+                    packet.independence_group,
+                    _bool(packet.public_information_only_claimed),
+                    packet.authority_level,
+                    _bool(packet.can_set_probability),
+                    _bool(packet.can_publish),
+                    _bool(packet.can_enter_paper),
+                    _bool(packet.can_submit_order),
+                    _bool(packet.can_move_funds),
+                    _bool(packet.live_execution_allowed),
+                    packet.status,
+                    dumps_json(packet),
+                    packet.raw_payload_hash,
+                    _iso(packet.submitted_at),
+                ),
+            )
+            conn.commit()
+        return packet.packet_id
+
+    def record_intake_validation(self, validation: IntakeValidation) -> str:
+        with connect(self.db_path) as conn:
+            initialize_schema(conn)
+            conn.execute(
+                """
+                INSERT OR IGNORE INTO trusted_evidence_validations (
+                    validation_id, packet_id, market_id, source_id, status, accepted_for_dossier,
+                    public_information_only, duplicate_key, reasons_json, can_authorize_execution,
+                    can_publish, can_enter_paper, can_submit_order, can_move_funds,
+                    live_execution_allowed, validation_json, validated_at
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                """,
+                (
+                    validation.validation_id,
+                    validation.packet_id,
+                    validation.market_id,
+                    validation.source_id,
+                    validation.status,
+                    _bool(validation.accepted_for_dossier),
+                    _bool(validation.public_information_only),
+                    validation.duplicate_key,
+                    _json(validation.reasons),
+                    _bool(validation.can_authorize_execution),
+                    _bool(validation.can_publish),
+                    _bool(validation.can_enter_paper),
+                    _bool(validation.can_submit_order),
+                    _bool(validation.can_move_funds),
+                    _bool(validation.live_execution_allowed),
+                    dumps_json(validation),
+                    _iso(validation.validated_at),
+                ),
+            )
+            conn.commit()
+        return validation.validation_id
+
 
 def _snapshot_id(kind: str, subject: str, raw_hash: str) -> str:
     payload = f"{kind}\n{subject}\n{raw_hash}".encode("utf-8")
@@ -298,3 +378,7 @@ def _dec(value: Any) -> str | None:
     if value is None:
         return None
     return format(value, "f")
+
+
+def _bool(value: bool) -> int:
+    return 1 if value else 0
