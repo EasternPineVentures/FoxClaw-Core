@@ -72,7 +72,12 @@ Until then, keep existing paper trading observable and reference-only.
 
 ## First Experiment
 
-Build `Redshift Paper Boundary V1` as a small shadow experiment.
+`Redshift Paper Boundary V1` is implemented as a small shadow experiment in:
+
+- `foxclaw/adapters/redshift/paper_boundary.py`
+- `tools/redshift_paper_boundary.py`
+- `tests/unit/test_redshift_paper_boundary.py`
+- `tests/regression/test_redshift_paper_boundary_cli.py`
 
 Input:
 
@@ -100,6 +105,24 @@ Success:
 - one deterministic fixture demonstrates the full receipt handshake;
 - tests prove Redshift cannot mutate the FoxClaw decision fields;
 - A1/A2 can run it without secrets.
+
+Run it:
+
+```powershell
+python tools\redshift_paper_boundary.py --fixture --json
+```
+
+The fixture emits:
+
+```text
+FoxClaw ForecastReceipt
+-> FoxClawDecisionExport
+-> RedshiftPaperExecutionReceipt
+-> RedshiftPaperOutcomeReceipt
+```
+
+All authority fields remain false, `redshift_capital_effect` is `none`, and no live order
+or account identifiers are allowed.
 
 ## Decision To Defer
 

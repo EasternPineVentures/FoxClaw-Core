@@ -9,6 +9,19 @@ preserved as the `v1-legacy` archive. Milestone map: `0.x` builds toward launch,
 bump per completed overhaul phase; **`1.0.0`** is earned at Apollo-2 cutover when v2 runs the
 live track record and is demo-ready.
 
+## [0.4.6] - 2026-06-18
+### Added
+- **Redshift Paper Boundary V1.** Added context-only FoxClaw decision exports,
+  Redshift paper execution receipts, Redshift paper outcome receipts, and hash-link
+  verification under `foxclaw.adapters.redshift.paper_boundary`.
+- Added `tools/redshift_paper_boundary.py --fixture --json` to emit a deterministic
+  FoxClaw decision -> Redshift paper execution -> Redshift outcome handshake.
+- Tests prove Redshift cannot mutate FoxClaw decision fields, carry live order/account IDs,
+  overfill paper size, introduce capital effect, or gain live authority.
+### Notes
+- This is the first working proof that paper trading can move toward Redshift through
+  receipts without moving FoxClaw's decision authority.
+
 ## [0.4.5] - 2026-06-18
 ### Added
 - Added `docs/progress_operating_model.md` to define progress across build, migration,

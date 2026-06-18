@@ -93,14 +93,30 @@ Stop and write a decision note before continuing if:
 - the old A2 runtime must be modified to keep moving;
 - A1 and A2 have dirty overlapping files.
 
-## Next Progress Slice
+## Current Progress Slice
 
-The next high-signal slice is a Redshift/FoxClaw paper boundary receipt:
+The current high-signal slice is `Redshift Paper Boundary V1`:
 
 1. FoxClaw emits a decision receipt.
 2. Redshift, or a Redshift-like paper lab, consumes it as context only.
 3. Redshift emits a paper execution/outcome receipt.
 4. FoxClaw stores or scores that outcome without granting Redshift decision authority.
 
-That experiment proves whether paper trading should move toward Redshift without committing
-to a big-bang migration.
+Implemented proof:
+
+```powershell
+python tools\redshift_paper_boundary.py --fixture --json
+```
+
+This experiment proves that paper trading can move toward Redshift without committing to a
+big-bang migration or moving FoxClaw's decision authority.
+
+## Next Progress Slice
+
+The next high-signal slice is to compare this fixture contract against the old A2 paper
+runtime inventory:
+
+- identify which old paper receipt fields map cleanly;
+- identify fields to cut;
+- identify fields that should remain Redshift-only;
+- decide whether Redshift Paper Boundary V2 needs storage, import, or a shadow-run adapter.

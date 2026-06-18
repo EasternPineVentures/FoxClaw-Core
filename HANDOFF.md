@@ -5,7 +5,7 @@ Read it before changing code, then verify with `git log --oneline -10` and the t
 
 Last updated: 2026-06-18
 Branch: `master`
-Version: `0.4.5`
+Version: `0.4.6`
 Working repo: `C:\Users\brend\dev\foxclaw-core`
 
 ## Current Lane
@@ -130,6 +130,14 @@ Done in this pass:
 - Current recommendation: do not move all paper trading to Redshift in one step. Keep
   FoxClaw as the decision matrix and prove a receipt handshake where Redshift can rehearse
   paper execution and return paper outcomes.
+- Redshift Paper Boundary V1 implemented.
+- `foxclaw.adapters.redshift.paper_boundary` now provides a context-only
+  `FoxClawDecisionExport`, `RedshiftPaperExecutionReceipt`, `RedshiftPaperOutcomeReceipt`,
+  and hash-link verification.
+- `tools/redshift_paper_boundary.py --fixture --json` emits a deterministic FoxClaw
+  ForecastReceipt -> Redshift paper execution -> Redshift paper outcome receipt chain.
+- Tests prove Redshift cannot mutate FoxClaw decision fields, carry live order/account IDs,
+  overfill paper size, introduce capital effect, or gain live authority.
 
 ## Hard Rails
 
@@ -341,6 +349,24 @@ python tools\check_invariants.py -> green
 git diff --check           -> green
 ```
 
+Focused Redshift Paper Boundary V1 check before handoff update:
+
+```text
+python -m pytest tests\unit\test_redshift_paper_boundary.py tests\regression\test_redshift_paper_boundary_cli.py -q
+-> 7 passed
+python tools\redshift_paper_boundary.py --fixture --json
+-> linked FoxClaw decision export, Redshift paper execution, and Redshift paper outcome;
+   authority false, redshift_capital_effect none
+```
+
+Redshift Paper Boundary V1 full-suite result:
+
+```text
+python -m pytest -q        -> 199 passed
+python tools\check_invariants.py -> green
+git diff --check           -> green
+```
+
 ## Next Phase
 
 Next safe work:
@@ -351,8 +377,8 @@ Next safe work:
   inventory described in `docs/a2_migration_context.md`.
 - Use `python tools\apollo_node_brief.py --node-id A1 --peer-node A2` before handing
   active work from A1 to A2, and the reverse command before handing status back.
-- Build a Redshift Paper Boundary V1 fixture before deciding whether paper runtime loops
-  should move to Redshift.
+- Have A2 compare the Redshift Paper Boundary V1 fields against the old paper runtime
+  inventory, then decide what maps, what gets cut, and what remains Redshift-only.
 - Add source-specific import adapters only after their trust and privacy boundaries are
   explicit.
 - Continue to Phase I/J only after deciding whether to enter demo-auth work.
