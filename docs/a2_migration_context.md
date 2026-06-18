@@ -32,6 +32,8 @@ Coordination rules:
 
 - Pull before starting a new slice.
 - Commit each completed slice separately.
+- Use `tools\apollo_node_brief.py` to send a current node receipt before handing work to
+  the other workstation.
 - Push only when the slice is ready for the other workstation to pull.
 - Avoid editing the same files on both machines at the same time.
 - Before switching machines, run `git status --short --branch` and leave the tree clean or
@@ -39,6 +41,8 @@ Coordination rules:
 - If one workstation is dirty, the other should not guess; inspect or ask before overlapping
   those files.
 - VSCode is fine as the working surface, but git status is the source of truth.
+
+See `docs/apollo_node_coordination.md` for the full node-brief protocol.
 
 ## A2 First Message
 
@@ -51,8 +55,8 @@ foxclaw-core git repo from two VSCode workstations.
 Current target repo clones:
 - A1 path: C:\Users\brend\dev\foxclaw-core
 - A2 path: C:\Users\fox1i\Desktop\FoxClaw-Core-master
-- Expected version after pull: 0.4.3 or newer
-- Expected recent commit: Add A2 migration planning brief
+- Expected version after pull: 0.4.4 or newer
+- Expected recent commit: Add Apollo node coordination briefs
 
 The old A2 FoxClaw repo is still treated as the running legacy/reference system. Do not
 delete, rename, move, or rewrite it. Start read-only.
@@ -89,6 +93,8 @@ Hard rails:
 Two-workstation rules:
 - Pull before starting.
 - Commit each finished slice separately.
+- Use `python tools\apollo_node_brief.py --node-id A2 --peer-node A1 --json` when handing
+  status back.
 - Keep the tree clean before handing work between A1 and A2.
 - Do not edit the same files on both machines at once.
 - If the other clone has uncommitted changes, stop and clarify before overlapping.
@@ -120,13 +126,14 @@ shadow the old repo.
 
 As of this brief:
 
-- `foxclaw-core` version is `0.4.3`.
+- `foxclaw-core` version is `0.4.4`.
 - The active lane is Forecast Desk / Kalshi-first event-contract intelligence.
 - The core engine remains domain-neutral.
 - Forecast Desk is read-only and paper-only.
 - Trusted Evidence Intake V1 exists for context-only evidence submissions.
+- Apollo Node Coordination V1 exists for A1/A2 handoff receipts.
 - Forecast DB schema is version `3`.
-- Latest local verification: `python -m pytest -q` passed with `187 passed`.
+- Latest local verification: `python -m pytest -q` passed with `192 passed`.
 
 ## What A2 Should Not Do Yet
 

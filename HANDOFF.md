@@ -5,7 +5,7 @@ Read it before changing code, then verify with `git log --oneline -10` and the t
 
 Last updated: 2026-06-18
 Branch: `master`
-Version: `0.4.3`
+Version: `0.4.4`
 Working repo: `C:\Users\brend\dev\foxclaw-core`
 
 ## Current Lane
@@ -120,6 +120,11 @@ Done in this pass:
 - A1/A2 migration coordination brief added in `docs/a2_migration_context.md`.
 - The A2 planning default is `C first, then B`: produce a Keep / Cut / Port / Rebuild list
   from the old running A2 repo, then turn it into the next sprint plan.
+- Apollo Node Coordination V1 added.
+- `foxclaw.nodes.apollo` and `tools/apollo_node_brief.py` generate JSON or Markdown
+  node handoff receipts with repo truth, current slice, next request, blockers, notes,
+  dirty-file status, and all authority flags locked false.
+- `docs/apollo_node_coordination.md` documents the A1/A2 handoff rhythm and failure modes.
 
 ## Hard Rails
 
@@ -305,6 +310,23 @@ A1/A2 migration brief verification:
 documentation-only phase; no runtime behavior changed
 ```
 
+Focused Apollo Node Coordination V1 check before handoff update:
+
+```text
+python -m pytest tests\unit\test_apollo_node_brief.py tests\regression\test_apollo_node_brief_cli.py -q
+-> 5 passed
+python tools\apollo_node_brief.py --fixture --node-id A1 --peer-node A2 --current-slice "Apollo node coordination V1" --next-request "pull, read docs\apollo_node_coordination.md, then run the old-repo inventory" --note "old A2 repo is reference-only"
+-> Markdown node brief emitted, authority false
+```
+
+Apollo Node Coordination V1 full-suite result:
+
+```text
+python -m pytest -q        -> 192 passed
+python tools\check_invariants.py -> green
+git diff --check           -> green
+```
+
 ## Next Phase
 
 Next safe work:
@@ -313,6 +335,8 @@ Next safe work:
   operator-run.
 - Have A2 pull this repo, verify version/commit/tests, and run the read-only old-repo
   inventory described in `docs/a2_migration_context.md`.
+- Use `python tools\apollo_node_brief.py --node-id A1 --peer-node A2` before handing
+  active work from A1 to A2, and the reverse command before handing status back.
 - Add source-specific import adapters only after their trust and privacy boundaries are
   explicit.
 - Continue to Phase I/J only after deciding whether to enter demo-auth work.

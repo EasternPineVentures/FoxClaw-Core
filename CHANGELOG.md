@@ -9,6 +9,20 @@ preserved as the `v1-legacy` archive. Milestone map: `0.x` builds toward launch,
 bump per completed overhaul phase; **`1.0.0`** is earned at Apollo-2 cutover when v2 runs the
 live track record and is demo-ready.
 
+## [0.4.4] - 2026-06-18
+### Added
+- **Apollo Node Coordination V1.** Added `foxclaw.nodes.apollo` contracts and
+  `tools/apollo_node_brief.py` for JSON or Markdown handoff receipts between A1, A2, and
+  future Apollo nodes.
+- Added `docs/apollo_node_coordination.md` with two-workstation rhythm, handoff commands,
+  and failure modes.
+- Updated the A1/A2 migration brief to point nodes at the Apollo node brief tool.
+- Tests cover safe authority locks, dirty-file reporting, parseable CLI JSON, and Markdown
+  handoff output.
+### Notes
+- Node communication remains read-only coordination. It does not inspect secrets, share a DB,
+  grant runtime authority, or mutate the old A2 FoxClaw checkout.
+
 ## [0.4.3] - 2026-06-18
 ### Added
 - Added `docs/a2_migration_context.md` as the A1/A2 coordination brief for the clean
