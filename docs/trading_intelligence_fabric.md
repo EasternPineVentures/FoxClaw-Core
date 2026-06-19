@@ -113,6 +113,12 @@ Plan readiness: 0
 VERDICT: GOOD THESIS, BAD TRADE RIGHT NOW
 ```
 
+This is now a first-class readiness pattern. A strong claim can produce a
+`GOOD_SIGNAL_BAD_TRADE` verdict when the evidence and signal are credible but
+tradeability, entry quality, risk, or plan readiness fail professional checks.
+A public item may discuss the intelligence, but it cannot be framed as a public
+trade idea unless a readiness verdict explicitly allows it.
+
 ## Attention Boundary
 
 Attention can:
