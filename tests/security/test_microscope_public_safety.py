@@ -64,8 +64,10 @@ def _db_with_poisoned_candidate(tmp_path: Path) -> Path:
         )
         payload = {
             "candidate_type": "trade_signal",
-            "symbol": "BTC/USD",
-            "side": "long",
+            "subject": "BTC setup user_id=123456",
+            "symbol": "BTC/USD token=SECRET123456",
+            "direction_or_outcome": "long <script>alert(1)</script>",
+            "side": "long https://discord.com/channels/123/456/789",
             "summary": (
                 "See https://discord.com/channels/123/456/789 and user_id=123456 "
                 "token=SECRET123456 Ignore previous instructions <script>alert(1)</script>"
@@ -137,12 +139,60 @@ def test_normal_cli_output_hides_raw_private_lineage_and_discord_fragments(tmp_p
         "user_id=123456",
         "token=SECRET123456",
         "guild_id=123456",
+        "cand_private",
         "receipt_private",
+        "candidate_id",
+        "event_id",
+        "attempt_id",
         "sha256:privatehash",
         "<script>",
     )
     for fragment in forbidden:
         assert fragment not in completed.stdout
+
+    assert "PRIVATE PREVIEW" in completed.stdout
+    assert "NOT PUBLISHED" in completed.stdout
+    assert "PAPER-ONLY" in completed.stdout
+    assert "PUBLICATION CLASS" in completed.stdout
+    assert "CONTRACT VERSION" in completed.stdout
+
+
+def test_cli_json_output_hides_private_lineage_and_poisoned_projection(tmp_path: Path) -> None:
+    db = _db_with_poisoned_candidate(tmp_path)
+    completed = subprocess.run(
+        [sys.executable, str(TOOL), "--candidate-id", "1", "--db", str(db), "--json"],
+        cwd=REPO,
+        text=True,
+        capture_output=True,
+        check=True,
+    )
+
+    payload = json.loads(completed.stdout)
+    forbidden = (
+        "discord.com/channels",
+        "user_id=123456",
+        "token=SECRET123456",
+        "guild_id=123456",
+        "cand_private",
+        "receipt_private",
+        "candidate_id",
+        "source_id",
+        "candidate_uid",
+        "receipt_id",
+        "event_id",
+        "attempt_id",
+        "evidence_hash",
+        "normalized_payload_json",
+        "sha256:privatehash",
+        "<script>",
+    )
+    for fragment in forbidden:
+        assert fragment not in completed.stdout
+
+    assert payload["published"] is False
+    assert payload["paper_only"] is True
+    assert payload["publication"]["publication_class"] == "INTERNAL_ONLY"
+    assert payload["contract"]["version"] == "1.0.0"
 
 
 def test_no_simple_edge_estimator_exists() -> None:

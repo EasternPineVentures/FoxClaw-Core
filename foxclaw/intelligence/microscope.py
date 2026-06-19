@@ -20,6 +20,7 @@ from foxclaw.engine import gate, score
 from foxclaw.engine.edge import BayesianEdge
 from foxclaw.engine.information_quality import InformationQualityInput, assess_information_quality
 from foxclaw.engine.readiness import ReadinessInput, assess_trade_readiness
+from foxclaw.contract.public import PUBLIC_CONTRACT_VERSION, manifest as public_contract_manifest
 from foxclaw.policy.publication import INTERNAL_ONLY, evaluate_publication
 from foxclaw.store.candidate_reader import ReadOnlyCandidateReader
 from foxclaw.store.market_evidence_reader import ReadOnlyMarketEvidenceReader
@@ -72,16 +73,21 @@ def assess_candidate(
             setup_track_record=0,
         )
     )
+    projection_payload = projection_to_dict(projection)
     publication = evaluate_publication(
         {
             "publication_class": INTERNAL_ONLY,
             "claim": projection.summary or "",
+            "projection": projection.public_fields,
             "source_classification": "internal",
             "verification_status": "unknown",
             "presentation": "qualified",
-            "contains_private_source_content": False,
+            "contains_private_source_content": bool(projection.safety_reason_codes),
         },
         requested_class=INTERNAL_ONLY,
+    )
+    publication_reasons = tuple(
+        dict.fromkeys([*publication.reason_codes, *projection.safety_reason_codes])
     )
     identity = {
         "assessment_version": MICROSCOPE_ASSESSMENT_VERSION,
@@ -102,36 +108,26 @@ def assess_candidate(
         "assessment_version": MICROSCOPE_ASSESSMENT_VERSION,
         "assessment_id": _assessment_id(identity),
         "generated_at": generated_at or datetime.now(UTC).replace(microsecond=0).isoformat(),
+        "preview_label": "PRIVATE PREVIEW",
+        "contract": _contract_info(),
         "paper_only": True,
         "published": False,
         "public_card": None,
         "live_ready": False,
         "paper_ready": paper_ready,
-        "candidate": {
-            "internal": {
-                "candidate_id": candidate.get("candidate_id"),
-                "candidate_uid": candidate.get("candidate_uid"),
-                "receipt_id": candidate.get("receipt_id"),
-                "event_id": candidate.get("event_id"),
-                "attempt_id": candidate.get("attempt_id"),
-                "source_id": candidate.get("source_id"),
-                "source_type": candidate.get("source_type"),
-                "evidence_hash": candidate.get("evidence_hash"),
-            },
-            "parser_confidence": candidate.get("confidence"),
-            "parser_version": candidate.get("parser_version"),
-        },
-        "projection": projection_to_dict(projection),
+        "projection": projection_payload,
         "information_quality": asdict(information_quality),
         "readiness": asdict(readiness),
-        "edge": edge_result["edge"],
-        "gate": edge_result["gate"],
+        "edge": _public_edge(edge_result["edge"]),
+        "gate": _public_gate(edge_result["gate"]),
         "publication": {
             "publication_class": publication.publication_class,
             "allowed": publication.allowed,
-            "reason_codes": list(publication.reason_codes),
+            "reason_codes": list(publication_reasons),
             "requested_class": publication.requested_class,
-            "contains_private_source_content": publication.contains_private_source_content,
+            "contains_private_source_content": bool(
+                publication.contains_private_source_content or projection.safety_reason_codes
+            ),
             "authority": publication.authority,
         },
         "warnings": edge_result["warnings"],
@@ -242,6 +238,33 @@ def _score_record(rows: list[dict[str, Any]], key: str) -> dict[str, Any] | None
         "score": composite,
         "trades": n,
         "trust_tier": score.trust_tier(n),
+    }
+
+
+def _public_edge(edge_result: Mapping[str, Any]) -> dict[str, Any]:
+    safe = dict(edge_result)
+    verdict = safe.get("verdict")
+    if isinstance(verdict, Mapping):
+        safe_verdict = dict(verdict)
+        safe_verdict["arm"] = "private_setup"
+        safe["verdict"] = safe_verdict
+    return safe
+
+
+def _public_gate(gate_result: Mapping[str, Any]) -> dict[str, Any]:
+    safe = dict(gate_result)
+    safe["subject"] = None
+    return safe
+
+
+def _contract_info() -> dict[str, str]:
+    try:
+        contract = public_contract_manifest()
+    except Exception:
+        contract = {}
+    return {
+        "name": str(contract.get("contract_name") or "foxclaw-public-intelligence"),
+        "version": str(contract.get("contract_version") or PUBLIC_CONTRACT_VERSION),
     }
 
 

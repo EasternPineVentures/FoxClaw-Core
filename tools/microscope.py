@@ -65,16 +65,17 @@ def _render_private_preview(assessment: dict[str, Any]) -> str:
     edge = assessment["edge"]
     readiness = assessment["readiness"]
     publication = assessment["publication"]
+    contract = assessment["contract"]
     lines = [
-        "PRIVATE MICROSCOPE ASSESSMENT",
+        "PRIVATE PREVIEW",
         "NOT PUBLISHED",
-        "PAPER ONLY",
+        "PAPER-ONLY",
         "",
         f"Assessment ID: {assessment['assessment_id']}",
-        f"Candidate ID: {assessment['candidate']['internal']['candidate_id']} (internal)",
+        f"CONTRACT VERSION: {contract['version']}",
         f"Subject: {_display(projection.get('subject') or projection.get('symbol'))}",
         f"Direction: {_display(projection.get('direction_or_outcome') or projection.get('side'))}",
-        f"Publication class: {publication['publication_class']}",
+        f"PUBLICATION CLASS: {publication['publication_class']}",
         f"Published: {str(assessment['published']).lower()}",
         f"Paper ready: {str(assessment['paper_ready']).lower()}",
         f"Live ready: {str(assessment['live_ready']).lower()}",

@@ -245,7 +245,7 @@ def test_microscope_call_path_does_not_use_writable_store_init_db(
 
     assessment = assess_candidate(candidate_id=1, db_path=microscope_db)
 
-    assert assessment["candidate"]["internal"]["candidate_id"] == 1
+    assert "candidate" not in assessment
     assert assessment["publication"]["publication_class"] == "INTERNAL_ONLY"
 
 
@@ -344,7 +344,8 @@ def test_confidence_does_not_make_risk_edge_or_paper_ready(microscope_db: Path) 
 
     assessment = assess_candidate(candidate_id=1, db_path=microscope_db)
 
-    assert assessment["candidate"]["parser_confidence"] == 0.99
+    assert "candidate" not in assessment
+    assert "0.99" not in json.dumps(assessment, sort_keys=True)
     assert assessment["paper_ready"] is False
     assert assessment["edge"]["available"] is False
     assert assessment["readiness"]["scores"]["risk"] == 0
@@ -361,7 +362,7 @@ def test_cli_private_preview_labels_and_hides_private_lineage(microscope_db: Pat
 
     assert "PRIVATE" in completed.stdout
     assert "NOT PUBLISHED" in completed.stdout
-    assert "PAPER ONLY" in completed.stdout
+    assert "PAPER-ONLY" in completed.stdout
     assert "private_source_alpha" not in completed.stdout
     assert "candidate_fixture_1" not in completed.stdout
     assert "sha256:candidate1" not in completed.stdout

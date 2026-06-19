@@ -5,6 +5,8 @@ from dataclasses import dataclass
 import json
 from typing import Any, Mapping
 
+from foxclaw.policy.private_source_rules import reason_codes, scan_text
+
 PROJECTION_VERSION = "market_candidate_projection.v1"
 
 TEXT_FIELDS = (
@@ -49,6 +51,8 @@ class CandidateProjection:
     public_fields: dict[str, Any]
     internal_lineage: dict[str, Any]
     missing_fields: tuple[str, ...]
+    sanitized_fields: tuple[str, ...]
+    safety_reason_codes: tuple[str, ...]
     payload: dict[str, Any]
 
 
@@ -67,8 +71,17 @@ def project_candidate(candidate: Mapping[str, Any]) -> CandidateProjection:
     """Project only explicit payload fields; never infer from summary text."""
     payload = decode_candidate_payload(str(candidate.get("normalized_payload_json") or ""))
     values: dict[str, Any] = {}
+    sanitized_fields: list[str] = []
+    safety_codes: list[str] = []
     for field in TEXT_FIELDS:
-        values[field] = _text_value(payload, field)
+        text = _text_value(payload, field)
+        violations = scan_text(text or "", field_path=f"projection.{field}") if text else ()
+        if violations:
+            values[field] = None
+            sanitized_fields.append(field)
+            safety_codes.extend(reason_codes(violations))
+        else:
+            values[field] = text
     for field in NUMBER_FIELDS:
         values[field] = _number_value(payload, field)
 
@@ -107,6 +120,8 @@ def project_candidate(candidate: Mapping[str, Any]) -> CandidateProjection:
         public_fields=public_fields,
         internal_lineage=internal_lineage,
         missing_fields=missing,
+        sanitized_fields=tuple(sanitized_fields),
+        safety_reason_codes=tuple(dict.fromkeys(safety_codes)),
         payload=dict(payload),
     )
 
@@ -126,6 +141,8 @@ def projection_to_dict(projection: CandidateProjection) -> dict[str, Any]:
         "stop_loss": projection.stop_loss,
         "take_profit": projection.take_profit,
         "missing_fields": list(projection.missing_fields),
+        "sanitized_fields": list(projection.sanitized_fields),
+        "safety_reason_codes": list(projection.safety_reason_codes),
         "public_fields": dict(projection.public_fields),
     }
 
