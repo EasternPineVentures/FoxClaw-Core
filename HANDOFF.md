@@ -3,14 +3,18 @@
 This file is the operational passoff for the clean FoxClaw company repo.
 Read it before changing code, then verify with `git log --oneline -10` and the tests.
 
-Last updated: 2026-06-18
+Last updated: 2026-06-19
 Branch: `master`
-Version: `0.4.12`
+Version: `0.4.14`
 Working repo: `C:\Users\brend\dev\foxclaw-core`
 
 ## Current Lane
 
-Forecast Desk / Kalshi-first event-contract intelligence is the active lane.
+FoxClaw Gym / June 28 demo readiness is the active lane.
+Trading Intelligence Fabric Phase 0 / public contract foundations remains the current
+architecture lane.
+Forecast Desk / Kalshi-first event-contract intelligence remains the current implemented
+intelligence lane.
 
 FoxClaw is a decision matrix first. Kalshi is one public-data adapter feeding the
 receipt-driven decision machinery. The core `engine/` must remain domain-neutral; market
@@ -176,6 +180,41 @@ Done in this pass:
   with market baseline Brier comparison, paper result, and learning signal.
 - Forecast DB schema version is now 4 with `forecast_learning_receipts`.
 - `docs/forecast_learning_spine.md` documents the learning loop and authority boundary.
+- Trading Intelligence Fabric Phase 0 added as contract/doctrine-only scaffolding.
+- `docs/PROJECT_INDEX.md` is now the start-here orientation layer for future agents and
+  ChatGPT handoffs.
+- `docs/project_boundaries.md`, `docs/trading_intelligence_fabric.md`, and ADRs under
+  `docs/adr/` define the GitHub coordination rule, the five information planes, the
+  attention-is-not-evidence boundary, and the signal-is-not-trade boundary.
+- `docs/integrations/coinfox.md`, `docs/integrations/planifier.md`, and
+  `docs/integrations/foxclaw_node.md` record owner repo, status, resume location, and
+  boundary rules for each future system.
+- `foxclaw/contract/public/` now contains public schema scaffolds for public intelligence
+  cards, public scorecards, attention receipts, and risk classifications.
+- Public contract fixtures and `tests/unit/test_public_contract_schemas.py` validate the
+  required schema shape and authority locks.
+- FoxClaw Gym added as the first-encounter readiness and next-attention surface.
+- `config/foxclaw_gym_drills.json` tracks demo-critical drills, proof commands, due dates,
+  current status, demo lines, and next actions for the June 28 family-demo target.
+- `foxclaw.gym` and `tools/foxclaw_gym.py` produce Markdown or JSON readiness reports with
+  authority locks and the next attention list.
+- `docs/first_encounter_guide.md` and `tools/foxclaw_visitor_guide.py` provide the
+  plain-language opening surface for non-traders and curious family/wedding guests.
+- `docs/foxclaw_gym.md`, `docs/demo_readiness_2026_06_28.md`, and
+  `docs/demo_script_2026_06_28.md` define the readiness loop and optional showing notes.
+- The family-demo order is FoxClaw -> CoinFox -> Planifier. Planifier already exists as a
+  built product, but needs focused integration/polish work before it becomes the practice
+  layer for this flow.
+- CoinFox is documented as having social trading bones already, but needing major work to
+  become the familiar open feed we want: posts, comments, branching replies, upvotes,
+  live discussion, long-running trade ideas, and spotlight surfaces. FoxClaw may provide
+  context there, but CoinFox owns the social feel and implementation.
+- `docs/security_public_demo_threat_model.md` records public-demo attack surfaces and
+  pre-demo security checks.
+- `tools/public_intelligence_card_demo.py` renders the public intelligence fixture as
+  demo-friendly Markdown, with public text escaped before rendering.
+- Gym manifest validation rejects unsafe proof commands that reference live, secret, wallet,
+  funds, order, or rekey paths.
 
 ## Hard Rails
 
@@ -501,11 +540,40 @@ python tools\apollo_mesh.py --node-id A1 --json inbox
 -> count 1, A2 founder heartbeat present
 ```
 
+Trading Intelligence Fabric Phase 0 full-suite result:
+
+```text
+python -m pytest tests\unit\test_public_contract_schemas.py -q -> 4 passed
+python tools\check_invariants.py -> green
+python -m pytest -q -> 222 passed
+git diff --check -> no whitespace errors; CRLF normalization warning only on docs\decisions.md
+```
+
+FoxClaw first-encounter / gym focused result:
+
+```text
+python tools\foxclaw_visitor_guide.py --fixture -> first-encounter guide emitted
+python tools\foxclaw_gym.py --fixture -> training, 6/10 demo-critical ready, 0 blocked
+python tools\public_intelligence_card_demo.py --fixture -> readable public card emitted
+python -m pytest tests\unit\test_foxclaw_gym.py tests\unit\test_foxclaw_visitor_guide.py tests\unit\test_public_intelligence_card_demo.py tests\unit\test_public_contract_schemas.py -q -> 19 passed
+python -m pytest -q -> 237 passed
+python tools\check_invariants.py -> green
+```
+
 ## Next Phase
 
 Next safe work:
 
-- Have A2 pull `0.4.12`, run the focused learning tests, and send a `pulse` through the
+- Use `python tools\foxclaw_visitor_guide.py` as the first thing to show a non-trader.
+- Run `python tools\foxclaw_gym.py` at the start of each work session and take the top
+  `next_attention` item as the next smallest safe slice.
+- Keep `docs/first_encounter_guide.md` understandable without a live explanation before
+  adding more features.
+- Review `docs/security_public_demo_threat_model.md` before the first full dry run.
+- Create or map the GitHub project fields/issues for P17 so each repo owns its work.
+- Keep Phase 1 contract-first: CoinFox attention receipts are sanitized aggregates, not
+  CoinFox internals inside this repo.
+- Have A2 pull `0.4.14`, run the focused learning and public-contract tests, and send a `pulse` through the
   private Apollo exchange folder.
 - Add a private trusted-roster/auth boundary if this intake becomes multi-user instead of
   operator-run.

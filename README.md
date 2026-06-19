@@ -13,6 +13,12 @@ uncertainty-heavy decision.
 current version. This repository is the clean v2 engine; the pre-v2 system is preserved
 as the `v1-legacy` archive.
 
+## Start Here
+
+If you are entering the project cold, read [`HANDOFF.md`](HANDOFF.md), then
+[`docs/PROJECT_INDEX.md`](docs/PROJECT_INDEX.md). The index explains what already exists,
+what is scaffolded, what is planned, and which repository owns each future layer.
+
 ## Architecture
 
 ```
@@ -30,6 +36,8 @@ adapters/  ─►  engine/  ─►  store/ + policy/
   import **only** this; never the internals.
 
 See [`docs/architecture.md`](docs/architecture.md) for the full blueprint and port map.
+See [`docs/trading_intelligence_fabric.md`](docs/trading_intelligence_fabric.md) for the
+Phase 0 public-intelligence framework and attention/evidence boundary.
 
 ## Principles (non-negotiable)
 

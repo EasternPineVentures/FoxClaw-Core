@@ -1,0 +1,22 @@
+{
+  "schema_version": "public_scorecard.v0",
+  "public_scorecard_id": "score_btc_example_001",
+  "public_intelligence_id": "pubintel_btc_example_001",
+  "built_at": "2026-06-19T17:15:00Z",
+  "measurements": {
+    "attention": 94,
+    "evidence_quality": 76,
+    "signal_confidence": 81,
+    "edge": 11,
+    "tradeability": 32,
+    "risk": 92,
+    "plan_readiness": 20,
+    "source_track_record": 63,
+    "setup_track_record": 58
+  },
+  "verdict": "Good thesis, bad trade right now.",
+  "status": {
+    "authority": "paper_only",
+    "live_execution_allowed": false
+  }
+}

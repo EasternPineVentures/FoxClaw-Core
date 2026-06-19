@@ -95,28 +95,30 @@ Stop and write a decision note before continuing if:
 
 ## Current Progress Slice
 
-The current high-signal slice is `Redshift Paper Boundary V1`:
+The current high-signal slice is `FoxClaw Gym / June 28 demo readiness`:
 
-1. FoxClaw emits a decision receipt.
-2. Redshift, or a Redshift-like paper lab, consumes it as context only.
-3. Redshift emits a paper execution/outcome receipt.
-4. FoxClaw stores or scores that outcome without granting Redshift decision authority.
+1. Keep the family-demo target visible.
+2. Track demo-critical drills with proof commands.
+3. Keep a daily next-attention list.
+4. Add threat-model checks before any outside-facing demo.
+5. Preserve paper-only and public-contract boundaries.
 
 Implemented proof:
 
 ```powershell
-python tools\redshift_paper_boundary.py --fixture --json
+python tools\foxclaw_gym.py --fixture
+python -m pytest tests\unit\test_foxclaw_gym.py -q
 ```
 
-This experiment proves that paper trading can move toward Redshift without committing to a
-big-bang migration or moving FoxClaw's decision authority.
+This slice turns "where are we heading?" into a repo-owned readiness report instead of a
+chat-only plan.
 
 ## Next Progress Slice
 
-The next high-signal slice is to compare this fixture contract against the old A2 paper
-runtime inventory:
+The next high-signal slice is to reduce the gym's `not_ready` demo-critical count:
 
-- identify which old paper receipt fields map cleanly;
-- identify fields to cut;
-- identify fields that should remain Redshift-only;
-- decide whether Redshift Paper Boundary V2 needs storage, import, or a shadow-run adapter.
+- rehearse `docs/demo_script_2026_06_28.md`;
+- review `docs/security_public_demo_threat_model.md`;
+- practice `tools/public_intelligence_card_demo.py --fixture`;
+- create a Planifier plan-draft fixture linked to the public intelligence snapshot;
+- decide which public Hunt export files are shown during the demo.

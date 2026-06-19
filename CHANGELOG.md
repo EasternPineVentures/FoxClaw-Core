@@ -9,6 +9,46 @@ preserved as the `v1-legacy` archive. Milestone map: `0.x` builds toward launch,
 bump per completed overhaul phase; **`1.0.0`** is earned at Apollo-2 cutover when v2 runs the
 live track record and is demo-ready.
 
+## [0.4.14] - 2026-06-19
+### Added
+- **FoxClaw Gym.** Added a demo-readiness drill manifest, gym report module, and
+  `tools/foxclaw_gym.py` for daily direction, proof commands, and next-attention items.
+- Added the June 28, 2026 family demo readiness plan and practice script.
+- Added a plain-language first-encounter guide and `tools/foxclaw_visitor_guide.py` for
+  non-trader family/wedding showing context without turning it into a pitch.
+- Added a public intelligence card demo renderer for the public contract fixture.
+- Added a public-demo threat model and wired it into the gym as a demo-critical drill.
+- Clarified the demo order as FoxClaw -> CoinFox -> Planifier, and recorded Planifier as
+  already built but needing focused integration and polish work.
+- Clarified CoinFox as an existing but still clunky social trading product foundation, with
+  posts, comments, upvotes, branching discussion, long-running ideas, and spotlighting as
+  the target social feel, not only a public intelligence card renderer.
+### Security
+- Public card rendering now escapes public text before Markdown output.
+- Gym manifest loading rejects proof commands that reference unsafe live, secret, wallet,
+  funds, order, or rekey fragments.
+### Verification
+- Added tests for gym readiness reporting, unsafe gym command rejection, and public-card
+  rendering/escaping.
+
+## [0.4.13] - 2026-06-19
+### Added
+- **Trading Intelligence Fabric Phase 0.** Added durable doctrine, project boundaries,
+  integration context, and ADRs for separating attention, evidence, signal confidence,
+  tradeability, risk, plan readiness, and authority.
+- Added `docs/PROJECT_INDEX.md` as the start-here orientation layer for future agents and
+  ChatGPT handoffs.
+- Added CoinFox, Planifier, and future FoxClaw Node integration notes with explicit owner,
+  status, boundary, resume location, and issue placeholders.
+- Added public contract schema scaffolds for public intelligence cards, public scorecards,
+  attention receipts, and risk classifications.
+- Added `foxclaw.contract.public` as an importable resource helper for known public schemas.
+- Added public contract fixtures and tests that validate required schema shape and authority
+  locks.
+### Notes
+- This is contract and doctrine only. It does not build CoinFox internals, change runtime
+  scoring, or grant live authority.
+
 ## [0.4.12] - 2026-06-19
 ### Added
 - **Forecast Learning Spine V1.** Added `ForecastLearningReceipt` to close the paper

@@ -1,0 +1,180 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://easternpineventures.example/foxclaw/public_intelligence_card.schema.json",
+  "title": "FoxClaw Public Intelligence Card",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "public_intelligence_id",
+    "snapshot_version",
+    "generated_at",
+    "mode",
+    "claim",
+    "scores",
+    "risk_classification",
+    "evidence",
+    "attention",
+    "tradeability",
+    "invalidation",
+    "plan_status",
+    "professional_wait_for",
+    "status",
+    "lineage"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "const": "public_intelligence_card.v0"
+    },
+    "public_intelligence_id": {
+      "type": "string"
+    },
+    "snapshot_version": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "generated_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "mode": {
+      "type": "string",
+      "enum": ["PAPER", "INFORMATION_ONLY"]
+    },
+    "claim": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["summary", "subject", "direction_or_outcome", "time_horizon"],
+      "properties": {
+        "summary": {"type": "string"},
+        "subject": {"type": "string"},
+        "direction_or_outcome": {"type": "string"},
+        "time_horizon": {"type": "string"}
+      }
+    },
+    "scores": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "attention",
+        "evidence_quality",
+        "signal_confidence",
+        "edge",
+        "tradeability",
+        "risk",
+        "plan_readiness"
+      ],
+      "properties": {
+        "attention": {"type": "integer", "minimum": 0, "maximum": 100},
+        "evidence_quality": {"type": "integer", "minimum": 0, "maximum": 100},
+        "signal_confidence": {"type": "integer", "minimum": 0, "maximum": 100},
+        "edge": {"type": "integer", "minimum": -100, "maximum": 100},
+        "tradeability": {"type": "integer", "minimum": 0, "maximum": 100},
+        "risk": {"type": "integer", "minimum": 0, "maximum": 100},
+        "plan_readiness": {"type": "integer", "minimum": 0, "maximum": 100},
+        "source_track_record": {"type": "integer", "minimum": 0, "maximum": 100},
+        "setup_track_record": {"type": "integer", "minimum": 0, "maximum": 100}
+      }
+    },
+    "risk_classification": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["class", "beginner_safe"],
+      "properties": {
+        "class": {
+          "type": "string",
+          "enum": ["Research", "Watch", "Structured", "Tactical", "Speculative", "Redline", "Reject"]
+        },
+        "beginner_safe": {"type": "boolean"},
+        "summary": {"type": "string"}
+      }
+    },
+    "evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["supporting", "opposing"],
+      "properties": {
+        "supporting": {
+          "type": "array",
+          "items": {"type": "string"}
+        },
+        "opposing": {
+          "type": "array",
+          "items": {"type": "string"}
+        }
+      }
+    },
+    "attention": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["trend", "summary"],
+      "properties": {
+        "trend": {
+          "type": "string",
+          "enum": ["cold", "steady", "accelerating", "crowd_heat"]
+        },
+        "summary": {"type": "string"},
+        "attention_receipt_id": {"type": "string"}
+      }
+    },
+    "tradeability": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "summary"],
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": ["unknown", "poor", "acceptable", "strong"]
+        },
+        "summary": {"type": "string"}
+      }
+    },
+    "invalidation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["summary"],
+      "properties": {
+        "summary": {"type": "string"}
+      }
+    },
+    "plan_status": {
+      "type": "string",
+      "enum": ["not_planned", "draft", "paper_ready"]
+    },
+    "professional_wait_for": {
+      "type": "string"
+    },
+    "status": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["validation", "publication", "authority"],
+      "properties": {
+        "validation": {
+          "type": "string",
+          "enum": ["quarantined", "promoted", "rejected"]
+        },
+        "publication": {
+          "type": "string",
+          "enum": ["public", "internal_only"]
+        },
+        "authority": {
+          "type": "string",
+          "enum": ["observe_only", "paper_only"]
+        }
+      }
+    },
+    "lineage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["public_source_ids", "snapshot_hash"],
+      "properties": {
+        "public_source_ids": {
+          "type": "array",
+          "items": {"type": "string"}
+        },
+        "snapshot_hash": {"type": "string"}
+      }
+    }
+  }
+}

@@ -1,0 +1,62 @@
+{
+  "schema_version": "public_intelligence_card.v0",
+  "public_intelligence_id": "pubintel_btc_example_001",
+  "snapshot_version": 1,
+  "generated_at": "2026-06-19T17:15:00Z",
+  "mode": "PAPER",
+  "claim": {
+    "summary": "BTC directional thesis has evidence, but current entry quality is poor.",
+    "subject": "BTC/USD",
+    "direction_or_outcome": "up",
+    "time_horizon": "hours"
+  },
+  "scores": {
+    "attention": 94,
+    "evidence_quality": 76,
+    "signal_confidence": 81,
+    "edge": 11,
+    "tradeability": 32,
+    "risk": 92,
+    "plan_readiness": 20,
+    "source_track_record": 63,
+    "setup_track_record": 58
+  },
+  "risk_classification": {
+    "class": "Redline",
+    "beginner_safe": false,
+    "summary": "High leverage or thin timing would make this unsafe for beginners."
+  },
+  "evidence": {
+    "supporting": [
+      "Public market momentum remains strong.",
+      "Independent public sources report similar flow."
+    ],
+    "opposing": [
+      "Entry quality is weak after the move.",
+      "Reward-to-risk is not attractive without a reset."
+    ]
+  },
+  "attention": {
+    "trend": "accelerating",
+    "summary": "Public attention is rising quickly, but attention is not evidence.",
+    "attention_receipt_id": "attn_btc_example_001"
+  },
+  "tradeability": {
+    "status": "poor",
+    "summary": "Liquidity is acceptable, but entry quality and leverage risk are poor."
+  },
+  "invalidation": {
+    "summary": "Thesis weakens if price fails to hold the prior breakout area."
+  },
+  "plan_status": "draft",
+  "professional_wait_for": "A defined invalidation level or a better entry after the chase fades.",
+  "status": {
+    "validation": "promoted",
+    "publication": "public",
+    "authority": "paper_only"
+  },
+  "lineage": {
+    "public_source_ids": ["source_public_hash_001", "source_public_hash_002"],
+    "snapshot_hash": "sha256:public-example-card"
+  }
+}

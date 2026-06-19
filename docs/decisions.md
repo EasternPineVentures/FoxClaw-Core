@@ -1,5 +1,16 @@
 # FoxClaw Decision Log
 
+### 2026-06-19 - Trading Intelligence Fabric Phase 0 lives in contracts before runtime
+**Decision:** the next multi-system layer starts as doctrine, boundaries, public schemas,
+fixtures, and validation tests inside `foxclaw-core`. CoinFox, Planifier, Redshift, and
+future public nodes stay separate repositories with explicit contracts crossing boundaries.
+**Why:** future ChatGPT/Codex sessions cannot see the full repo and chat history unless the
+context is in durable project files. The system is too complex to rely on loose comments or
+memory. **Consequences:** `docs/PROJECT_INDEX.md` becomes the start-here orientation layer;
+`docs/trading_intelligence_fabric.md` defines the five planes; `docs/integrations/*` names
+owners and resume triggers; `foxclaw/contract/public/*` holds contract scaffolds only. No
+CoinFox internals are built here, and no attention signal can become evidence or authority.
+
 Short, dated records of the load-bearing decisions and *why* — so no agent has to
 re-derive them, and no one silently reverses a choice without seeing the reasoning.
 If you're about to do the opposite of one of these, that's fine — but say why in

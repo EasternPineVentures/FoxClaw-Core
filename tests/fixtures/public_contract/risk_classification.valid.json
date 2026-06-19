@@ -1,0 +1,24 @@
+{
+  "schema_version": "risk_classification.v0",
+  "risk_class": "Redline",
+  "meaning": "Extreme volatility, leverage, thin liquidity, binary risk, or wide outcome distribution.",
+  "beginner_safe": false,
+  "presentation": {
+    "tone": "explicit risk",
+    "color_family": "red"
+  },
+  "requirements": {
+    "full_loss_acknowledgment": true,
+    "clear_invalidation": true,
+    "liquidity_warning": true,
+    "leverage_warning": true,
+    "maximum_holding_condition": true,
+    "event_risk_disclosure": true,
+    "paper_rehearsal_encouraged": true,
+    "one_click_copy_trade_allowed": false
+  },
+  "status": {
+    "authority": "paper_only",
+    "live_execution_allowed": false
+  }
+}

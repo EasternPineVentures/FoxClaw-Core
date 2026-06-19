@@ -1,0 +1,120 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://easternpineventures.example/foxclaw/attention_receipt.schema.json",
+  "title": "FoxClaw Public Attention Receipt",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "attention_receipt_id",
+    "public_intelligence_id",
+    "source_system",
+    "aggregation_window",
+    "generated_at",
+    "events",
+    "measurements",
+    "quality_adjustments",
+    "status"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "const": "attention_receipt.v0"
+    },
+    "attention_receipt_id": {"type": "string"},
+    "public_intelligence_id": {"type": "string"},
+    "source_system": {
+      "type": "string",
+      "enum": ["coinfox"]
+    },
+    "aggregation_window": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["started_at", "ended_at"],
+      "properties": {
+        "started_at": {"type": "string", "format": "date-time"},
+        "ended_at": {"type": "string", "format": "date-time"}
+      }
+    },
+    "generated_at": {"type": "string", "format": "date-time"},
+    "events": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "post_impression",
+        "post_open",
+        "post_save",
+        "post_share",
+        "post_comment",
+        "watchlist_add",
+        "open_in_planifier",
+        "paper_plan_created"
+      ],
+      "properties": {
+        "post_impression": {"type": "integer", "minimum": 0},
+        "post_open": {"type": "integer", "minimum": 0},
+        "post_dwell": {"type": "integer", "minimum": 0},
+        "post_save": {"type": "integer", "minimum": 0},
+        "post_share": {"type": "integer", "minimum": 0},
+        "post_comment": {"type": "integer", "minimum": 0},
+        "watchlist_add": {"type": "integer", "minimum": 0},
+        "forecast_submit": {"type": "integer", "minimum": 0},
+        "open_in_planifier": {"type": "integer", "minimum": 0},
+        "paper_plan_created": {"type": "integer", "minimum": 0},
+        "outcome_page_return": {"type": "integer", "minimum": 0},
+        "post_reported": {"type": "integer", "minimum": 0}
+      }
+    },
+    "measurements": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "attention_volume",
+        "attention_velocity",
+        "save_rate",
+        "share_rate",
+        "discussion_depth",
+        "watchlist_conversion",
+        "plan_conversion",
+        "forecast_disagreement",
+        "bot_risk"
+      ],
+      "properties": {
+        "attention_volume": {"type": "integer", "minimum": 0},
+        "attention_velocity": {"type": "number", "minimum": 0},
+        "save_rate": {"type": "number", "minimum": 0},
+        "share_rate": {"type": "number", "minimum": 0},
+        "discussion_depth": {"type": "number", "minimum": 0},
+        "watchlist_conversion": {"type": "number", "minimum": 0},
+        "plan_conversion": {"type": "number", "minimum": 0},
+        "forecast_disagreement": {"type": "number", "minimum": 0},
+        "trusted_contributor_attention": {"type": "number", "minimum": 0},
+        "bot_risk": {"type": "number", "minimum": 0},
+        "attention_concentration": {"type": "number", "minimum": 0}
+      }
+    },
+    "quality_adjustments": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["bot_penalty", "duplication_penalty", "concentration_penalty"],
+      "properties": {
+        "bot_penalty": {"type": "number", "minimum": 0},
+        "duplication_penalty": {"type": "number", "minimum": 0},
+        "concentration_penalty": {"type": "number", "minimum": 0}
+      }
+    },
+    "status": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["authority", "can_change_truth", "can_change_source_reliability"],
+      "properties": {
+        "authority": {
+          "type": "string",
+          "enum": ["review_priority_only"]
+        },
+        "can_change_truth": {"type": "boolean", "const": false},
+        "can_change_source_reliability": {"type": "boolean", "const": false}
+      }
+    }
+  }
+}

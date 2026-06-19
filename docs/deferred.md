@@ -157,6 +157,26 @@ engine/store until then. Record the access-tier model in its own doc at that poi
 
 ---
 
+## P17 - Trading Intelligence Fabric and Professional Practice Layer
+**What:** FoxClaw will compile trading information from Discord, CoinFox, public markets,
+news, event contracts, nodes, and experimental systems through versioned information
+contracts. The system must distinguish attention, evidence quality, signal confidence,
+edge, tradeability, risk, plan readiness, source performance, and outcome performance.
+**Why deferred:** the contract and doctrine can exist now, but the runtime fabric spans
+multiple repositories and must not be built as one shared implementation. CoinFox attention,
+Planifier practice, and future node validation each need their owning repo and issue trail.
+**Trigger:** advance one phase at a time after Phase 0 contracts and fixtures are green:
+CoinFox attention receipts, unified claim packets, quarantine/promotion, trade readiness,
+CoinFox professional cards, Planifier connection, outcome feedback, then node validation.
+**Boundary:** CoinFox attention may prioritize review but may not alter evidence truth,
+source trust, edge, position sizing, or execution authority. A signal may not be presented
+as a trade until a Trade Readiness Verdict exists. High-risk opportunities must be labeled
+Tactical, Speculative, Redline, or Reject and may not be beginner-safe.
+**Resume from:** `docs/trading_intelligence_fabric.md`,
+`docs/integrations/coinfox.md`, and `foxclaw/contract/public/README.md`.
+
+---
+
 ## Process note — layering, so things don't step on each other
 Package `__init__` exports must match the layer/phase they belong to. (Caught during the
 3-commit store landing: a full `store/__init__` that imported `journal`/`outcomes` would

@@ -1,0 +1,67 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://easternpineventures.example/foxclaw/public_scorecard.schema.json",
+  "title": "FoxClaw Public Scorecard",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "public_scorecard_id",
+    "public_intelligence_id",
+    "built_at",
+    "measurements",
+    "verdict",
+    "status"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "const": "public_scorecard.v0"
+    },
+    "public_scorecard_id": {"type": "string"},
+    "public_intelligence_id": {"type": "string"},
+    "built_at": {"type": "string", "format": "date-time"},
+    "measurements": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "attention",
+        "evidence_quality",
+        "signal_confidence",
+        "edge",
+        "tradeability",
+        "risk",
+        "plan_readiness"
+      ],
+      "properties": {
+        "attention": {"type": "integer", "minimum": 0, "maximum": 100},
+        "evidence_quality": {"type": "integer", "minimum": 0, "maximum": 100},
+        "signal_confidence": {"type": "integer", "minimum": 0, "maximum": 100},
+        "edge": {"type": "integer", "minimum": -100, "maximum": 100},
+        "tradeability": {"type": "integer", "minimum": 0, "maximum": 100},
+        "risk": {"type": "integer", "minimum": 0, "maximum": 100},
+        "plan_readiness": {"type": "integer", "minimum": 0, "maximum": 100},
+        "source_track_record": {"type": "integer", "minimum": 0, "maximum": 100},
+        "setup_track_record": {"type": "integer", "minimum": 0, "maximum": 100}
+      }
+    },
+    "verdict": {
+      "type": "string"
+    },
+    "status": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["authority", "live_execution_allowed"],
+      "properties": {
+        "authority": {
+          "type": "string",
+          "enum": ["observe_only", "paper_only"]
+        },
+        "live_execution_allowed": {
+          "type": "boolean",
+          "const": false
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,48 @@
+{
+  "schema_version": "attention_receipt.v0",
+  "attention_receipt_id": "attn_btc_example_001",
+  "public_intelligence_id": "pubintel_btc_example_001",
+  "source_system": "coinfox",
+  "aggregation_window": {
+    "started_at": "2026-06-19T16:15:00Z",
+    "ended_at": "2026-06-19T17:15:00Z"
+  },
+  "generated_at": "2026-06-19T17:15:00Z",
+  "events": {
+    "post_impression": 1250,
+    "post_open": 420,
+    "post_dwell": 185,
+    "post_save": 96,
+    "post_share": 41,
+    "post_comment": 38,
+    "watchlist_add": 67,
+    "forecast_submit": 22,
+    "open_in_planifier": 31,
+    "paper_plan_created": 9,
+    "outcome_page_return": 0,
+    "post_reported": 1
+  },
+  "measurements": {
+    "attention_volume": 1250,
+    "attention_velocity": 2.6,
+    "save_rate": 0.23,
+    "share_rate": 0.1,
+    "discussion_depth": 0.09,
+    "watchlist_conversion": 0.16,
+    "plan_conversion": 0.02,
+    "forecast_disagreement": 0.44,
+    "trusted_contributor_attention": 0.18,
+    "bot_risk": 0.08,
+    "attention_concentration": 0.21
+  },
+  "quality_adjustments": {
+    "bot_penalty": 0.08,
+    "duplication_penalty": 0.04,
+    "concentration_penalty": 0.21
+  },
+  "status": {
+    "authority": "review_priority_only",
+    "can_change_truth": false,
+    "can_change_source_reliability": false
+  }
+}

@@ -1,0 +1,75 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://easternpineventures.example/foxclaw/risk_classification.schema.json",
+  "title": "FoxClaw Risk Classification",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "risk_class",
+    "meaning",
+    "beginner_safe",
+    "presentation",
+    "requirements",
+    "status"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "const": "risk_classification.v0"
+    },
+    "risk_class": {
+      "type": "string",
+      "enum": ["Research", "Watch", "Structured", "Tactical", "Speculative", "Redline", "Reject"]
+    },
+    "meaning": {"type": "string"},
+    "beginner_safe": {"type": "boolean"},
+    "presentation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["tone", "color_family"],
+      "properties": {
+        "tone": {"type": "string"},
+        "color_family": {"type": "string"}
+      }
+    },
+    "requirements": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "full_loss_acknowledgment",
+        "clear_invalidation",
+        "liquidity_warning",
+        "leverage_warning",
+        "event_risk_disclosure",
+        "paper_rehearsal_encouraged",
+        "one_click_copy_trade_allowed"
+      ],
+      "properties": {
+        "full_loss_acknowledgment": {"type": "boolean"},
+        "clear_invalidation": {"type": "boolean"},
+        "liquidity_warning": {"type": "boolean"},
+        "leverage_warning": {"type": "boolean"},
+        "maximum_holding_condition": {"type": "boolean"},
+        "event_risk_disclosure": {"type": "boolean"},
+        "paper_rehearsal_encouraged": {"type": "boolean"},
+        "one_click_copy_trade_allowed": {"type": "boolean", "const": false}
+      }
+    },
+    "status": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["authority", "live_execution_allowed"],
+      "properties": {
+        "authority": {
+          "type": "string",
+          "enum": ["observe_only", "paper_only"]
+        },
+        "live_execution_allowed": {
+          "type": "boolean",
+          "const": false
+        }
+      }
+    }
+  }
+}
