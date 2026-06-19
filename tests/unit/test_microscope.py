@@ -368,6 +368,65 @@ def test_cli_private_preview_labels_and_hides_private_lineage(microscope_db: Pat
     assert "sha256:candidate1" not in completed.stdout
 
 
+def test_cli_private_preview_flag_is_explicit_and_labelled(microscope_db: Path) -> None:
+    completed = subprocess.run(
+        [
+            sys.executable,
+            str(TOOL),
+            "--candidate-id",
+            "1",
+            "--db",
+            str(microscope_db),
+            "--private-preview",
+        ],
+        cwd=REPO,
+        text=True,
+        capture_output=True,
+        check=True,
+    )
+
+    assert "PRIVATE PREVIEW" in completed.stdout
+    assert "NOT PUBLISHED" in completed.stdout
+    assert "PAPER-ONLY" in completed.stdout
+
+
+def test_cli_list_recent_outputs_safe_operator_metadata(microscope_db: Path) -> None:
+    completed = subprocess.run(
+        [
+            sys.executable,
+            str(TOOL),
+            "--list-recent",
+            "--limit",
+            "5",
+            "--db",
+            str(microscope_db),
+            "--json",
+        ],
+        cwd=REPO,
+        text=True,
+        capture_output=True,
+        check=True,
+    )
+
+    payload = json.loads(completed.stdout)
+    assert payload[0]["candidate_id"] == 1
+    assert payload[0]["publication_class"] == "INTERNAL_ONLY"
+    forbidden = (
+        "private_source_alpha",
+        "candidate_fixture_1",
+        "event_id",
+        "attempt_id",
+        "source_id",
+        "candidate_uid",
+        "receipt_id",
+        "evidence_hash",
+        "normalized_payload_json",
+        "sha256:candidate1",
+    )
+    for fragment in forbidden:
+        assert fragment not in completed.stdout
+
+
 def test_cli_json_outputs_one_compact_private_object(microscope_db: Path) -> None:
     completed = subprocess.run(
         [
