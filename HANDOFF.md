@@ -5,7 +5,7 @@ Read it before changing code, then verify with `git log --oneline -10` and the t
 
 Last updated: 2026-06-18
 Branch: `master`
-Version: `0.4.9`
+Version: `0.4.10`
 Working repo: `C:\Users\brend\dev\foxclaw-core`
 
 ## Current Lane
@@ -159,6 +159,10 @@ Done in this pass:
   private founder mesh secret without printing the secret.
 - A2's local heartbeat proves it is online; A1/A2 cross-node verification requires matching
   `key_id` after shared-secret enrollment.
+- Apollo Mesh `receive` now tolerates UTF-8 BOM and UTF-16 BOM JSON event files, so Windows
+  editor/PowerShell formatting does not block signed event verification.
+- `docs/apollo_mesh_v0.md` documents the accepted event-file encodings for local file
+  handoff.
 
 ## Hard Rails
 
@@ -435,6 +439,25 @@ Apollo Mesh founder enrollment full-suite result:
 python -m pytest -q        -> 211 passed
 python tools\check_invariants.py -> green
 git diff --check           -> green
+```
+
+Apollo Mesh Windows event-file tolerance full-suite result:
+
+```text
+python -m pytest -q        -> 212 passed
+python tools\check_invariants.py -> green
+git diff --check           -> green
+```
+
+A1/A2 founder mesh enrollment receipt:
+
+```text
+A1 key_id -> mesh-key:fb65caccc2c953e8
+A2 heartbeat signer_key_id -> mesh-key:fb65caccc2c953e8
+python tools\apollo_mesh.py --node-id A1 --json receive --event-file <A2 heartbeat>
+-> received true
+python tools\apollo_mesh.py --node-id A1 --json inbox
+-> count 1, A2 founder heartbeat present
 ```
 
 ## Next Phase

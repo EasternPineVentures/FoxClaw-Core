@@ -58,8 +58,8 @@ foxclaw-core git repo from two VSCode workstations.
 Current target repo clones:
 - A1 path: C:\Users\brend\dev\foxclaw-core
 - A2 path: C:\Users\fox1i\Desktop\FoxClaw-Core-master
-- Expected version after pull: 0.4.9 or newer
-- Expected recent commit: Add Apollo Mesh founder secret enrollment
+- Expected version after pull: 0.4.10 or newer
+- Expected recent commit: Tolerate Windows formatted Apollo event files
 
 The old A2 FoxClaw repo is still treated as the running legacy/reference system. Do not
 delete, rename, move, or rewrite it. Start read-only.
@@ -143,7 +143,7 @@ shadow the old repo.
 
 As of this brief:
 
-- `foxclaw-core` version is `0.4.9`.
+- `foxclaw-core` version is `0.4.10`.
 - The active lane is Forecast Desk / Kalshi-first event-contract intelligence.
 - The core engine remains domain-neutral.
 - Forecast Desk is read-only and paper-only.
@@ -158,10 +158,12 @@ As of this brief:
   IP-protected.
 - `tools/apollo_mesh.py doctor` and `rekey` provide shared founder mesh enrollment without
   printing the secret; compare only `key_id`.
+- `tools/apollo_mesh.py receive` accepts UTF-8, UTF-8-with-BOM, and UTF-16-with-BOM JSON
+  event files for Windows-safe local file handoff.
 - Forecast DB schema is version `3`.
 - Latest focused mesh verification:
   `python -m pytest tests\unit\test_apollo_mesh_events.py tests\regression\test_apollo_mesh_cli.py -q`
-  passed with `12 passed`.
+  passed with `13 passed`.
 
 ## What A2 Should Not Do Yet
 

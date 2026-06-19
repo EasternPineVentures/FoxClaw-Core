@@ -102,6 +102,42 @@ def test_apollo_mesh_cli_handoff_round_trips_to_inbox(tmp_path: Path):
     assert payload["events"][0]["event_id"] == event["event_id"]
 
 
+def test_apollo_mesh_cli_receive_accepts_windows_bom_event_file(tmp_path: Path):
+    mesh_dir = tmp_path / "mesh"
+    identity_file = mesh_dir / "identity.json"
+    sent = _run(
+        "--mesh-dir",
+        str(mesh_dir),
+        "--identity-file",
+        str(identity_file),
+        "--node-id",
+        "A1",
+        "--fixture",
+        "--json",
+        "heartbeat",
+        "--message",
+        "alive",
+    )
+
+    event_file = tmp_path / "event_with_bom.json"
+    event_file.write_text(sent.stdout, encoding="utf-8-sig")
+    received = _run(
+        "--mesh-dir",
+        str(mesh_dir),
+        "--identity-file",
+        str(identity_file),
+        "--node-id",
+        "A1",
+        "--fixture",
+        "--json",
+        "receive",
+        "--event-file",
+        str(event_file),
+    )
+
+    assert json.loads(received.stdout)["received"] is True
+
+
 def test_apollo_mesh_cli_heartbeat_writes_outbox(tmp_path: Path):
     mesh_dir = tmp_path / "mesh"
     identity_file = mesh_dir / "identity.json"

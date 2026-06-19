@@ -112,7 +112,7 @@ def main(argv: list[str] | None = None) -> int:
         store.append("outbox", event)
         return _emit(event, json_mode=args.json)
     if args.command == "receive":
-        payload = json.loads(Path(args.event_file).read_text(encoding="utf-8"))
+        payload = _read_event_payload(Path(args.event_file))
         event = event_from_json(payload)
         verified = verify_mesh_event(event, secret=identity.secret)
         if not verified:
@@ -133,6 +133,17 @@ def _identity(args: argparse.Namespace) -> ApolloMeshIdentity:
         secret=FIXTURE_SECRET if args.fixture else None,
         created_at=FIXTURE_TIME if args.fixture else None,
     )
+
+
+def _read_event_payload(path: Path) -> dict[str, Any]:
+    return json.loads(_read_event_text(path))
+
+
+def _read_event_text(path: Path) -> str:
+    data = path.read_bytes()
+    if data.startswith((b"\xff\xfe", b"\xfe\xff")):
+        return data.decode("utf-16")
+    return data.decode("utf-8-sig")
 
 
 def _doctor(args: argparse.Namespace, *, mesh_dir: Path, store: ApolloMeshStore) -> int:

@@ -134,6 +134,9 @@ Receive a JSON event file into the verified inbox:
 python tools\apollo_mesh.py --node-id A2 --json receive --event-file .\handoff.json
 ```
 
+`receive` accepts UTF-8, UTF-8-with-BOM, and UTF-16-with-BOM JSON files so Windows editor or
+PowerShell formatting does not change the signature contract.
+
 Read inbox:
 
 ```powershell

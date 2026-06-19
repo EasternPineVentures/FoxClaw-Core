@@ -9,6 +9,14 @@ preserved as the `v1-legacy` archive. Milestone map: `0.x` builds toward launch,
 bump per completed overhaul phase; **`1.0.0`** is earned at Apollo-2 cutover when v2 runs the
 live track record and is demo-ready.
 
+## [0.4.10] - 2026-06-19
+### Fixed
+- Apollo Mesh `receive` now accepts UTF-8 BOM and UTF-16 BOM JSON event files, which makes
+  A1/A2 file handoff more tolerant of Windows PowerShell and editor formatting.
+### Notes
+- This is a transport-format tolerance fix only. Signature verification and founder-private
+  authority locks are unchanged.
+
 ## [0.4.9] - 2026-06-18
 ### Added
 - **Apollo Mesh founder secret enrollment.** Added read-only `doctor` and secret-safe
