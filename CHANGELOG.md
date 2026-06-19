@@ -9,6 +9,19 @@ preserved as the `v1-legacy` archive. Milestone map: `0.x` builds toward launch,
 bump per completed overhaul phase; **`1.0.0`** is earned at Apollo-2 cutover when v2 runs the
 live track record and is demo-ready.
 
+## [0.4.11] - 2026-06-19
+### Added
+- **Apollo Mesh private file-drop exchange.** Added `sync` to export local outbox events and
+  import verified peer events from a private exchange folder.
+- Added `pulse` to create a founder heartbeat and immediately run the exchange sync.
+- Added `foxclaw.nodes.mesh_exchange` for safe one-event-per-file transport, duplicate
+  skipping, own-event skipping, and rejected-file counts.
+### Notes
+- The exchange folder is transport only. Every imported event is still signature-verified
+  before entering the local inbox, and Apollo Mesh authority locks remain false.
+- Use a private local/network folder or secure file sync path; do not use GitHub, public
+  folders, or committed repo paths for founder-private events.
+
 ## [0.4.10] - 2026-06-19
 ### Fixed
 - Apollo Mesh `receive` now accepts UTF-8 BOM and UTF-16 BOM JSON event files, which makes

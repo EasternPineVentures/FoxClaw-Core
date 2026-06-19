@@ -149,6 +149,57 @@ Read outbox:
 python tools\apollo_mesh.py --node-id A2 --json inbox --log outbox
 ```
 
+## Private File-Drop Exchange
+
+Manual paste proved the signature contract. The next connection layer is a private
+file-drop exchange.
+
+The exchange folder is transport only:
+
+- each outbox event is written as one JSON file under `events/`;
+- each node imports only peer events;
+- duplicate events are skipped;
+- malformed or wrongly signed files are counted as rejected;
+- every event is still verified before entering the local inbox;
+- no secrets, commands, orders, account IDs, funds movement, or authority flags are allowed.
+
+Use a private folder that both founder nodes can reach. Good examples are a local network
+share, a secure private sync folder, or a manual file-drop directory. Do not use GitHub,
+public folders, committed repo paths, or public/community node infrastructure for the
+founder mesh exchange.
+
+Set the exchange folder with `--exchange-dir`:
+
+```powershell
+python tools\apollo_mesh.py `
+  --node-id A1 `
+  --exchange-dir C:\FoxClawFounderMesh `
+  --json `
+  pulse `
+  --message "A1 pulse"
+```
+
+Or set it once per shell:
+
+```powershell
+$env:FOXCLAW_APOLLO_EXCHANGE_DIR = "C:\FoxClawFounderMesh"
+python tools\apollo_mesh.py --node-id A1 --json pulse --message "A1 pulse"
+python tools\apollo_mesh.py --node-id A1 --json sync
+```
+
+On A2, use the same exchange folder path as seen from that machine:
+
+```powershell
+$env:FOXCLAW_APOLLO_EXCHANGE_DIR = "C:\FoxClawFounderMesh"
+python tools\apollo_mesh.py --node-id A2 --json pulse --message "A2 pulse"
+python tools\apollo_mesh.py --node-id A2 --json sync
+python tools\apollo_mesh.py --node-id A2 --json inbox
+```
+
+`pulse` is the normal active rhythm: emit heartbeat, export outbox, import verified peer
+events. `sync` is the passive rhythm: export anything pending and import verified peer
+events without creating a new heartbeat.
+
 ## A1 To A2 First Use
 
 After pushing this version, A2 should run:
@@ -168,10 +219,10 @@ above on both nodes before treating received events as cross-node verified.
 
 ## Next Adapter
 
-The next adapter should be one of:
+The next adapter after the private file-drop exchange should be one of:
 
 - private Nostr-style relay mapping;
 - FoxClaw-native WebSocket relay;
-- file-drop transport for local network folders.
+- scheduled `pulse` / `sync` runners for A1 and A2.
 
 Do not build transport before the event contract stays green on A1 and A2.

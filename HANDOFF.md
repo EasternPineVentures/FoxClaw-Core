@@ -5,7 +5,7 @@ Read it before changing code, then verify with `git log --oneline -10` and the t
 
 Last updated: 2026-06-18
 Branch: `master`
-Version: `0.4.10`
+Version: `0.4.11`
 Working repo: `C:\Users\brend\dev\foxclaw-core`
 
 ## Current Lane
@@ -163,6 +163,12 @@ Done in this pass:
   editor/PowerShell formatting does not block signed event verification.
 - `docs/apollo_mesh_v0.md` documents the accepted event-file encodings for local file
   handoff.
+- Apollo Mesh private file-drop exchange added.
+- `tools/apollo_mesh.py sync` exports local outbox events and imports verified peer events
+  from a private exchange folder.
+- `tools/apollo_mesh.py pulse` emits a founder heartbeat and runs `sync` in one command.
+- `foxclaw.nodes.mesh_exchange` writes one event per JSON file, skips own/duplicate events,
+  and reports rejected files without printing secrets.
 
 ## Hard Rails
 
@@ -445,6 +451,16 @@ Apollo Mesh Windows event-file tolerance full-suite result:
 
 ```text
 python -m pytest -q        -> 212 passed
+python tools\check_invariants.py -> green
+git diff --check           -> green
+```
+
+Apollo Mesh private file-drop exchange full-suite result:
+
+```text
+python -m pytest tests\regression\test_apollo_mesh_cli.py tests\unit\test_apollo_mesh_events.py -q
+-> 15 passed
+python -m pytest -q        -> 214 passed
 python tools\check_invariants.py -> green
 git diff --check           -> green
 ```

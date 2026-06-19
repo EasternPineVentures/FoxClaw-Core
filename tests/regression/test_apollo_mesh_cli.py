@@ -138,6 +138,138 @@ def test_apollo_mesh_cli_receive_accepts_windows_bom_event_file(tmp_path: Path):
     assert json.loads(received.stdout)["received"] is True
 
 
+def test_apollo_mesh_cli_sync_exports_and_imports_peer_events(tmp_path: Path):
+    exchange_dir = tmp_path / "exchange"
+    a1_mesh = tmp_path / "a1_mesh"
+    a2_mesh = tmp_path / "a2_mesh"
+    _run(
+        "--mesh-dir",
+        str(a1_mesh),
+        "--identity-file",
+        str(a1_mesh / "identity.json"),
+        "--node-id",
+        "A1",
+        "--fixture",
+        "--json",
+        "heartbeat",
+        "--message",
+        "A1 ready",
+    )
+
+    a1_sync = _run(
+        "--mesh-dir",
+        str(a1_mesh),
+        "--identity-file",
+        str(a1_mesh / "identity.json"),
+        "--node-id",
+        "A1",
+        "--fixture",
+        "--exchange-dir",
+        str(exchange_dir),
+        "--json",
+        "sync",
+    )
+    a1_payload = json.loads(a1_sync.stdout)
+    assert a1_payload["exported_count"] == 1
+    assert a1_payload["imported_count"] == 0
+    assert a1_payload["skipped_own_count"] == 1
+    assert a1_payload["secret_printed"] is False
+
+    a2_sync = _run(
+        "--mesh-dir",
+        str(a2_mesh),
+        "--identity-file",
+        str(a2_mesh / "identity.json"),
+        "--node-id",
+        "A2",
+        "--fixture",
+        "--exchange-dir",
+        str(exchange_dir),
+        "--json",
+        "sync",
+    )
+    a2_payload = json.loads(a2_sync.stdout)
+    assert a2_payload["exported_count"] == 0
+    assert a2_payload["imported_count"] == 1
+    assert a2_payload["skipped_own_count"] == 0
+    assert a2_payload["secret_printed"] is False
+
+    inbox = _run(
+        "--mesh-dir",
+        str(a2_mesh),
+        "--identity-file",
+        str(a2_mesh / "identity.json"),
+        "--node-id",
+        "A2",
+        "--fixture",
+        "--json",
+        "inbox",
+    )
+    inbox_payload = json.loads(inbox.stdout)
+    assert inbox_payload["count"] == 1
+    assert inbox_payload["events"][0]["from_node"] == "A1"
+    assert inbox_payload["events"][0]["content"]["message"] == "A1 ready"
+
+
+def test_apollo_mesh_cli_pulse_creates_heartbeat_and_syncs(tmp_path: Path):
+    exchange_dir = tmp_path / "exchange"
+    a1_mesh = tmp_path / "a1_mesh"
+    a2_mesh = tmp_path / "a2_mesh"
+
+    pulse = _run(
+        "--mesh-dir",
+        str(a2_mesh),
+        "--identity-file",
+        str(a2_mesh / "identity.json"),
+        "--node-id",
+        "A2",
+        "--fixture",
+        "--exchange-dir",
+        str(exchange_dir),
+        "--json",
+        "pulse",
+        "--message",
+        "A2 pulse",
+    )
+    pulse_payload = json.loads(pulse.stdout)
+    assert pulse_payload["pulse_kind"] == "node.heartbeat"
+    assert pulse_payload["sync"]["exported_count"] == 1
+    assert pulse_payload["sync"]["skipped_own_count"] == 1
+    assert pulse_payload["secret_printed"] is False
+
+    a1_sync = _run(
+        "--mesh-dir",
+        str(a1_mesh),
+        "--identity-file",
+        str(a1_mesh / "identity.json"),
+        "--node-id",
+        "A1",
+        "--fixture",
+        "--exchange-dir",
+        str(exchange_dir),
+        "--json",
+        "sync",
+    )
+    a1_payload = json.loads(a1_sync.stdout)
+    assert a1_payload["imported_count"] == 1
+
+    inbox = _run(
+        "--mesh-dir",
+        str(a1_mesh),
+        "--identity-file",
+        str(a1_mesh / "identity.json"),
+        "--node-id",
+        "A1",
+        "--fixture",
+        "--json",
+        "inbox",
+    )
+    inbox_payload = json.loads(inbox.stdout)
+    assert inbox_payload["count"] == 1
+    assert inbox_payload["events"][0]["from_node"] == "A2"
+    assert inbox_payload["events"][0]["content"]["message"] == "A2 pulse"
+
+
 def test_apollo_mesh_cli_heartbeat_writes_outbox(tmp_path: Path):
     mesh_dir = tmp_path / "mesh"
     identity_file = mesh_dir / "identity.json"

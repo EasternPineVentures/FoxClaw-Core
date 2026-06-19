@@ -19,6 +19,7 @@ from .mesh import (
     verify_mesh_event,
     write_identity,
 )
+from .mesh_exchange import ApolloMeshExchangeResult, sync_exchange
 from .mesh_store import ApolloMeshStore
 
 __all__ = [
@@ -38,4 +39,6 @@ __all__ = [
     "load_or_create_identity",
     "verify_mesh_event",
     "write_identity",
+    "ApolloMeshExchangeResult",
+    "sync_exchange",
 ]

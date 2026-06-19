@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import sys
 from datetime import UTC, datetime
 from pathlib import Path
@@ -19,16 +20,18 @@ from foxclaw.nodes.mesh import (  # noqa: E402
     MESH_SECRET_ENV,
     create_mesh_event,
     dumps_event,
-    event_from_json,
     identity_from_json,
     load_or_create_identity,
     to_jsonable,
     verify_mesh_event,
     write_identity,
 )
+from foxclaw.nodes.mesh_exchange import read_event_file, sync_exchange  # noqa: E402
 from foxclaw.nodes.mesh_store import ApolloMeshStore  # noqa: E402
 
 DEFAULT_MESH_DIR = REPO / "data" / "apollo_mesh"
+DEFAULT_EXCHANGE_DIR = REPO / "data" / "apollo_mesh_exchange"
+EXCHANGE_DIR_ENV = "FOXCLAW_APOLLO_EXCHANGE_DIR"
 FIXTURE_SECRET = "fixture-mesh-secret-" + "0" * 32
 FIXTURE_TIME = datetime(2026, 6, 18, 0, 0, tzinfo=UTC)
 
@@ -40,6 +43,10 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--node-id", default="apollo")
     parser.add_argument("--fixture", action="store_true")
     parser.add_argument("--json", action="store_true")
+    parser.add_argument(
+        "--exchange-dir",
+        default=os.environ.get(EXCHANGE_DIR_ENV, str(DEFAULT_EXCHANGE_DIR)),
+    )
     sub = parser.add_subparsers(dest="command", required=True)
 
     sub.add_parser("init")
@@ -51,6 +58,10 @@ def main(argv: list[str] | None = None) -> int:
     heartbeat = sub.add_parser("heartbeat")
     heartbeat.add_argument("--message", default="alive")
     heartbeat.add_argument("--tag", action="append", default=[])
+
+    pulse = sub.add_parser("pulse")
+    pulse.add_argument("--message", default="alive")
+    pulse.add_argument("--tag", action="append", default=[])
 
     handoff = sub.add_parser("handoff")
     handoff.add_argument("--to-node", required=True)
@@ -64,6 +75,8 @@ def main(argv: list[str] | None = None) -> int:
 
     inbox = sub.add_parser("inbox")
     inbox.add_argument("--log", choices=("inbox", "outbox"), default="inbox")
+
+    sub.add_parser("sync")
 
     args = parser.parse_args(argv)
     mesh_dir = Path(args.mesh_dir)
@@ -96,6 +109,25 @@ def main(argv: list[str] | None = None) -> int:
         )
         store.append("outbox", event)
         return _emit(event, json_mode=args.json)
+    if args.command == "pulse":
+        event = create_mesh_event(
+            identity=identity,
+            kind="node.heartbeat",
+            content={"message": args.message},
+            tags=tuple(args.tag),
+            created_at=FIXTURE_TIME if args.fixture else None,
+        )
+        store.append("outbox", event)
+        result = sync_exchange(identity=identity, store=store, exchange_dir=args.exchange_dir)
+        return _emit(
+            {
+                "pulse_event_id": event.event_id,
+                "pulse_kind": event.kind,
+                "sync": result,
+                "secret_printed": False,
+            },
+            json_mode=args.json,
+        )
     if args.command == "handoff":
         event = create_mesh_event(
             identity=identity,
@@ -112,8 +144,7 @@ def main(argv: list[str] | None = None) -> int:
         store.append("outbox", event)
         return _emit(event, json_mode=args.json)
     if args.command == "receive":
-        payload = _read_event_payload(Path(args.event_file))
-        event = event_from_json(payload)
+        event = read_event_file(Path(args.event_file))
         verified = verify_mesh_event(event, secret=identity.secret)
         if not verified:
             raise SystemExit("mesh event signature verification failed")
@@ -122,6 +153,9 @@ def main(argv: list[str] | None = None) -> int:
     if args.command == "inbox":
         events = store.read(args.log)
         return _emit({"log": args.log, "count": len(events), "events": list(events)}, json_mode=args.json)
+    if args.command == "sync":
+        result = sync_exchange(identity=identity, store=store, exchange_dir=args.exchange_dir)
+        return _emit({**to_jsonable(result), "secret_printed": False}, json_mode=args.json)
     raise SystemExit(f"unsupported command: {args.command}")
 
 
@@ -133,17 +167,6 @@ def _identity(args: argparse.Namespace) -> ApolloMeshIdentity:
         secret=FIXTURE_SECRET if args.fixture else None,
         created_at=FIXTURE_TIME if args.fixture else None,
     )
-
-
-def _read_event_payload(path: Path) -> dict[str, Any]:
-    return json.loads(_read_event_text(path))
-
-
-def _read_event_text(path: Path) -> str:
-    data = path.read_bytes()
-    if data.startswith((b"\xff\xfe", b"\xfe\xff")):
-        return data.decode("utf-16")
-    return data.decode("utf-8-sig")
 
 
 def _doctor(args: argparse.Namespace, *, mesh_dir: Path, store: ApolloMeshStore) -> int:
