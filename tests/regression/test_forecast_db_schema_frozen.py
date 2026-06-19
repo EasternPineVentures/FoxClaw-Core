@@ -14,12 +14,13 @@ def test_forecast_schema_frozen_artifact_matches_current_schema():
     frozen = json.loads(FROZEN_JSON.read_text(encoding="utf-8"))
     current = current_artifact()
     assert frozen["fingerprint"] == current["fingerprint"]
-    assert frozen["schema"]["schema_version"] == 3
+    assert frozen["schema"]["schema_version"] == 4
     assert "raw_payloads" in frozen["schema"]["tables"]
     assert "market_snapshots" in frozen["schema"]["tables"]
     assert "forecast_receipts" in frozen["schema"]["tables"]
     assert "trusted_evidence_packets" in frozen["schema"]["tables"]
     assert "trusted_evidence_validations" in frozen["schema"]["tables"]
+    assert "forecast_learning_receipts" in frozen["schema"]["tables"]
 
 
 def test_freeze_forecast_schema_check_command_passes():

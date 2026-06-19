@@ -35,6 +35,7 @@ from .intake import (  # noqa: E402
 )
 from .policy import assess_event_contract_policy  # noqa: E402
 from .paper import PaperOutcome, PaperPosition, replay_positions, simulate_paper_entry  # noqa: E402
+from .learning import ForecastLearningReceipt, build_learning_receipt  # noqa: E402
 from .pricing import (  # noqa: E402
     edge_gap,
     favored_side,
@@ -82,6 +83,8 @@ __all__ = [
     "evaluate_self_funding",
     "PaperPosition",
     "PaperOutcome",
+    "ForecastLearningReceipt",
+    "build_learning_receipt",
     "simulate_paper_entry",
     "replay_positions",
     "public_forecast",

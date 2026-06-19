@@ -11,6 +11,7 @@ from typing import Any, Mapping
 
 from foxclaw.adapters.event_contracts.contracts import ForecastReceipt
 from foxclaw.adapters.event_contracts.intake import EvidencePacket, IntakeValidation
+from foxclaw.adapters.event_contracts.learning import ForecastLearningReceipt
 from foxclaw.adapters.event_contracts.markets import (
     dumps_json,
     NormalizedEvent,
@@ -228,6 +229,7 @@ class ForecastRepository:
             "market_snapshots",
             "orderbook_snapshots",
             "forecast_receipts",
+            "forecast_learning_receipts",
             "trusted_evidence_packets",
             "trusted_evidence_validations",
             "sync_cursors",
@@ -281,6 +283,59 @@ class ForecastRepository:
             )
             conn.commit()
         return receipt_id
+
+    def record_learning_receipt(self, receipt: ForecastLearningReceipt) -> str:
+        with connect(self.db_path) as conn:
+            initialize_schema(conn)
+            conn.execute(
+                """
+                INSERT OR IGNORE INTO forecast_learning_receipts (
+                    learning_receipt_id, market_id, position_id, forecast_receipt_hash,
+                    dossier_hash, side, resolved_outcome, outcome_yes,
+                    forecast_probability, market_yes_probability, forecast_brier,
+                    market_brier, brier_edge, usable_edge, paper_net_result,
+                    paper_result_label, decision_quality, learning_signal,
+                    evidence_quality, engine_tier, mode, public_information_only,
+                    founder_private_reasoning_excluded, public_safe_export_candidate,
+                    can_set_probability, can_submit_order, can_move_funds,
+                    live_execution_allowed, receipt_json, created_at
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                """,
+                (
+                    receipt.learning_receipt_id,
+                    receipt.market_id,
+                    receipt.position_id,
+                    receipt.forecast_receipt_hash,
+                    receipt.dossier_hash,
+                    receipt.side,
+                    receipt.resolved_outcome,
+                    _optional_bool(receipt.outcome_yes),
+                    _dec(receipt.forecast_probability),
+                    _dec(receipt.market_yes_probability),
+                    _dec(receipt.forecast_brier),
+                    _dec(receipt.market_brier),
+                    _dec(receipt.brier_edge),
+                    _dec(receipt.usable_edge),
+                    _dec(receipt.paper_net_result),
+                    receipt.paper_result_label,
+                    receipt.decision_quality,
+                    receipt.learning_signal,
+                    _dec(receipt.evidence_quality),
+                    receipt.engine_tier,
+                    receipt.mode,
+                    _bool(receipt.public_information_only),
+                    _bool(receipt.founder_private_reasoning_excluded),
+                    _bool(receipt.public_safe_export_candidate),
+                    _bool(receipt.can_set_probability),
+                    _bool(receipt.can_submit_order),
+                    _bool(receipt.can_move_funds),
+                    _bool(receipt.live_execution_allowed),
+                    dumps_json(receipt),
+                    _iso(receipt.created_at),
+                ),
+            )
+            conn.commit()
+        return receipt.learning_receipt_id
 
     def record_evidence_packet(self, packet: EvidencePacket) -> str:
         with connect(self.db_path) as conn:
@@ -382,3 +437,9 @@ def _dec(value: Any) -> str | None:
 
 def _bool(value: bool) -> int:
     return 1 if value else 0
+
+
+def _optional_bool(value: bool | None) -> int | None:
+    if value is None:
+        return None
+    return _bool(value)

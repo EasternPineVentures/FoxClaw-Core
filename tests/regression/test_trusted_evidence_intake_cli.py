@@ -61,6 +61,6 @@ def test_trusted_evidence_intake_cli_writes_packet_and_validation_receipts(tmp_p
             """
         ).fetchone()
 
-    assert version == 3
+    assert version == 4
     assert packet == ("context_only", 0, 0, 0, 0, 0, 0)
     assert validation == ("accepted", 1, 0, 0, 0, 0, 0, 0)

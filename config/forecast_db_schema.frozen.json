@@ -1,10 +1,20 @@
 {
   "artifact": "forecast_db_schema",
-  "fingerprint": "daf41a145f4c9e8d910ed33bbb95c91132c7ec2b6e32905f1381c0ba6fc9263b",
-  "generated": "2026-06-18T03:45:26Z",
-  "index_count": 7,
+  "fingerprint": "568c629e6f1f25e5183bae1f7f178bd452d46ac460c269ea177a5d6ad796c9f0",
+  "generated": "2026-06-19T01:10:05Z",
+  "index_count": 9,
   "schema": {
     "indexes": [
+      {
+        "name": "idx_forecast_learning_receipts_market_time",
+        "sql": "CREATE INDEX idx_forecast_learning_receipts_market_time ON forecast_learning_receipts(market_id, created_at)",
+        "table": "forecast_learning_receipts"
+      },
+      {
+        "name": "idx_forecast_learning_receipts_signal",
+        "sql": "CREATE INDEX idx_forecast_learning_receipts_signal ON forecast_learning_receipts(learning_signal)",
+        "table": "forecast_learning_receipts"
+      },
       {
         "name": "idx_forecast_receipts_market_time",
         "sql": "CREATE INDEX idx_forecast_receipts_market_time ON forecast_receipts(market_id, created_at)",
@@ -41,7 +51,7 @@
         "table": "trusted_evidence_validations"
       }
     ],
-    "schema_version": 3,
+    "schema_version": 4,
     "tables": {
       "event_snapshots": {
         "columns": [
@@ -118,6 +128,220 @@
           {
             "default": null,
             "name": "raw_payload_hash",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          }
+        ]
+      },
+      "forecast_learning_receipts": {
+        "columns": [
+          {
+            "default": null,
+            "name": "learning_receipt_id",
+            "notnull": false,
+            "pk": 1,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "market_id",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "position_id",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "forecast_receipt_hash",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "dossier_hash",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "side",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "resolved_outcome",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "outcome_yes",
+            "notnull": false,
+            "pk": 0,
+            "type": "INTEGER"
+          },
+          {
+            "default": null,
+            "name": "forecast_probability",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "market_yes_probability",
+            "notnull": false,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "forecast_brier",
+            "notnull": false,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "market_brier",
+            "notnull": false,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "brier_edge",
+            "notnull": false,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "usable_edge",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "paper_net_result",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "paper_result_label",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "decision_quality",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "learning_signal",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "evidence_quality",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "engine_tier",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "mode",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "public_information_only",
+            "notnull": true,
+            "pk": 0,
+            "type": "INTEGER"
+          },
+          {
+            "default": null,
+            "name": "founder_private_reasoning_excluded",
+            "notnull": true,
+            "pk": 0,
+            "type": "INTEGER"
+          },
+          {
+            "default": null,
+            "name": "public_safe_export_candidate",
+            "notnull": true,
+            "pk": 0,
+            "type": "INTEGER"
+          },
+          {
+            "default": null,
+            "name": "can_set_probability",
+            "notnull": true,
+            "pk": 0,
+            "type": "INTEGER"
+          },
+          {
+            "default": null,
+            "name": "can_submit_order",
+            "notnull": true,
+            "pk": 0,
+            "type": "INTEGER"
+          },
+          {
+            "default": null,
+            "name": "can_move_funds",
+            "notnull": true,
+            "pk": 0,
+            "type": "INTEGER"
+          },
+          {
+            "default": null,
+            "name": "live_execution_allowed",
+            "notnull": true,
+            "pk": 0,
+            "type": "INTEGER"
+          },
+          {
+            "default": null,
+            "name": "receipt_json",
+            "notnull": true,
+            "pk": 0,
+            "type": "TEXT"
+          },
+          {
+            "default": null,
+            "name": "created_at",
             "notnull": true,
             "pk": 0,
             "type": "TEXT"
@@ -1023,5 +1247,5 @@
       }
     }
   },
-  "table_count": 10
+  "table_count": 11
 }

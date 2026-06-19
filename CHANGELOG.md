@@ -9,6 +9,18 @@ preserved as the `v1-legacy` archive. Milestone map: `0.x` builds toward launch,
 bump per completed overhaul phase; **`1.0.0`** is earned at Apollo-2 cutover when v2 runs the
 live track record and is demo-ready.
 
+## [0.4.12] - 2026-06-19
+### Added
+- **Forecast Learning Spine V1.** Added `ForecastLearningReceipt` to close the paper
+  forecast -> outcome -> learning loop with per-resolution receipts.
+- Added `tools/forecast_learning_spine.py --fixture` for deterministic learning receipts and
+  optional Forecast DB recording.
+- Forecast DB schema version `4` adds `forecast_learning_receipts`.
+- Added `docs/forecast_learning_spine.md`.
+### Notes
+- Learning receipts can recommend `reinforce`, `review`, `neutral`, or `void`, but cannot
+  set probability, submit orders, move funds, or authorize live execution.
+
 ## [0.4.11] - 2026-06-19
 ### Added
 - **Apollo Mesh private file-drop exchange.** Added `sync` to export local outbox events and

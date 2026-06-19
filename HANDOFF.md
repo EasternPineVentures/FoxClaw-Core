@@ -5,7 +5,7 @@ Read it before changing code, then verify with `git log --oneline -10` and the t
 
 Last updated: 2026-06-18
 Branch: `master`
-Version: `0.4.11`
+Version: `0.4.12`
 Working repo: `C:\Users\brend\dev\foxclaw-core`
 
 ## Current Lane
@@ -169,6 +169,13 @@ Done in this pass:
 - `tools/apollo_mesh.py pulse` emits a founder heartbeat and runs `sync` in one command.
 - `foxclaw.nodes.mesh_exchange` writes one event per JSON file, skips own/duplicate events,
   and reports rejected files without printing secrets.
+- Forecast Learning Spine V1 added.
+- `foxclaw.adapters.event_contracts.learning` creates paper-only `ForecastLearningReceipt`
+  artifacts from ForecastReceipt + PaperOutcome pairs.
+- `tools/forecast_learning_spine.py --fixture --json` emits a deterministic learning receipt
+  with market baseline Brier comparison, paper result, and learning signal.
+- Forecast DB schema version is now 4 with `forecast_learning_receipts`.
+- `docs/forecast_learning_spine.md` documents the learning loop and authority boundary.
 
 ## Hard Rails
 
@@ -465,6 +472,24 @@ python tools\check_invariants.py -> green
 git diff --check           -> green
 ```
 
+Forecast Learning Spine V1 focused check before handoff update:
+
+```text
+python -m pytest tests\unit\test_forecast_learning.py tests\regression\test_forecast_learning_spine_cli.py tests\regression\test_forecast_storage_lineage.py tests\regression\test_forecast_db_schema_frozen.py -q
+-> 11 passed
+python tools\freeze_forecast_db_schema.py --check -> green
+python tools\forecast_learning_spine.py --fixture --json
+-> learning_signal reinforce, decision_quality foxclaw_outperformed_market, authority false
+```
+
+Forecast Learning Spine V1 full-suite result:
+
+```text
+python -m pytest -q        -> 218 passed
+python tools\check_invariants.py -> green
+git diff --check           -> green; CRLF normalization warnings only on generated schema docs
+```
+
 A1/A2 founder mesh enrollment receipt:
 
 ```text
@@ -480,16 +505,18 @@ python tools\apollo_mesh.py --node-id A1 --json inbox
 
 Next safe work:
 
-- Enroll A1 and A2 with the same founder mesh secret through a secure local channel, then
-  compare only `doctor` `key_id` outputs. Do not paste or commit the secret.
+- Have A2 pull `0.4.12`, run the focused learning tests, and send a `pulse` through the
+  private Apollo exchange folder.
 - Add a private trusted-roster/auth boundary if this intake becomes multi-user instead of
   operator-run.
+- Expand Learning Spine V1 from deterministic fixture receipts into real ledger replay over
+  resolved Forecast Desk paper positions.
 - Have A2 pull this repo, verify version/commit/tests, and run the read-only old-repo
   inventory described in `docs/a2_migration_context.md`.
 - Use `python tools\apollo_node_brief.py --node-id A1 --peer-node A2` before handing
   active work from A1 to A2, and the reverse command before handing status back.
-- Use `python tools\apollo_mesh.py --node-id A2 --json heartbeat --message "A2 founder node online"`
-  after A2 pulls this version, then paste the signed heartbeat back to A1.
+- Use `python tools\apollo_mesh.py --node-id A2 --json pulse --message "A2 active"` after
+  A2 pulls this version, then run `sync` on A1 against the same private exchange folder.
 - Keep Apollo Mesh V0 founder-only. Do not connect public/community nodes until a separate
   sanitized contract exists.
 - Have A2 compare the Redshift Paper Boundary V1 fields against the old paper runtime

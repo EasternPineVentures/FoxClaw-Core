@@ -58,8 +58,8 @@ foxclaw-core git repo from two VSCode workstations.
 Current target repo clones:
 - A1 path: C:\Users\brend\dev\foxclaw-core
 - A2 path: C:\Users\fox1i\Desktop\FoxClaw-Core-master
-- Expected version after pull: 0.4.11 or newer
-- Expected recent commit: Add Apollo Mesh private file-drop exchange
+- Expected version after pull: 0.4.12 or newer
+- Expected recent commit: Add Forecast Learning Spine V1
 
 The old A2 FoxClaw repo is still treated as the running legacy/reference system. Do not
 delete, rename, move, or rewrite it. Start read-only.
@@ -143,7 +143,7 @@ shadow the old repo.
 
 As of this brief:
 
-- `foxclaw-core` version is `0.4.11`.
+- `foxclaw-core` version is `0.4.12`.
 - The active lane is Forecast Desk / Kalshi-first event-contract intelligence.
 - The core engine remains domain-neutral.
 - Forecast Desk is read-only and paper-only.
@@ -162,10 +162,16 @@ As of this brief:
   event files for Windows-safe local file handoff.
 - `tools/apollo_mesh.py sync` and `pulse` provide the private file-drop exchange for active
   A1/A2 founder-node coordination without public transport.
-- Forecast DB schema is version `3`.
+- Forecast Learning Spine V1 creates paper-only learning receipts from resolved paper
+  forecasts and records them in `forecast_learning_receipts`.
+- Forecast DB schema is version `4`.
 - Latest focused mesh verification:
   `python -m pytest tests\unit\test_apollo_mesh_events.py tests\regression\test_apollo_mesh_cli.py -q`
   passed with `15 passed`.
+- Latest focused learning verification:
+  `python -m pytest tests\unit\test_forecast_learning.py tests\regression\test_forecast_learning_spine_cli.py tests\regression\test_forecast_storage_lineage.py tests\regression\test_forecast_db_schema_frozen.py -q`
+  passed with `11 passed`.
+- Latest full-suite verification: `python -m pytest -q` passed with `218 passed`.
 
 ## What A2 Should Not Do Yet
 

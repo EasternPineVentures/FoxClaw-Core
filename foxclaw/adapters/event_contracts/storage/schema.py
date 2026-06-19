@@ -7,7 +7,7 @@ import json
 import sqlite3
 from typing import Any
 
-FORECAST_SCHEMA_VERSION = 3
+FORECAST_SCHEMA_VERSION = 4
 
 
 def initialize_schema(conn: sqlite3.Connection) -> None:
@@ -178,6 +178,39 @@ def initialize_schema(conn: sqlite3.Connection) -> None:
             FOREIGN KEY(packet_id) REFERENCES trusted_evidence_packets(packet_id)
         );
 
+        CREATE TABLE IF NOT EXISTS forecast_learning_receipts (
+            learning_receipt_id TEXT PRIMARY KEY,
+            market_id TEXT NOT NULL,
+            position_id TEXT NOT NULL,
+            forecast_receipt_hash TEXT NOT NULL,
+            dossier_hash TEXT NOT NULL,
+            side TEXT NOT NULL,
+            resolved_outcome TEXT NOT NULL,
+            outcome_yes INTEGER,
+            forecast_probability TEXT NOT NULL,
+            market_yes_probability TEXT,
+            forecast_brier TEXT,
+            market_brier TEXT,
+            brier_edge TEXT,
+            usable_edge TEXT NOT NULL,
+            paper_net_result TEXT NOT NULL,
+            paper_result_label TEXT NOT NULL,
+            decision_quality TEXT NOT NULL,
+            learning_signal TEXT NOT NULL,
+            evidence_quality TEXT NOT NULL,
+            engine_tier TEXT NOT NULL,
+            mode TEXT NOT NULL,
+            public_information_only INTEGER NOT NULL,
+            founder_private_reasoning_excluded INTEGER NOT NULL,
+            public_safe_export_candidate INTEGER NOT NULL,
+            can_set_probability INTEGER NOT NULL,
+            can_submit_order INTEGER NOT NULL,
+            can_move_funds INTEGER NOT NULL,
+            live_execution_allowed INTEGER NOT NULL,
+            receipt_json TEXT NOT NULL,
+            created_at TEXT NOT NULL
+        );
+
         CREATE TABLE IF NOT EXISTS sync_cursors (
             cursor_key TEXT PRIMARY KEY,
             cursor TEXT,
@@ -198,6 +231,10 @@ def initialize_schema(conn: sqlite3.Connection) -> None:
             ON trusted_evidence_packets(submitter_id, submitted_at);
         CREATE INDEX IF NOT EXISTS idx_trusted_evidence_validations_packet
             ON trusted_evidence_validations(packet_id);
+        CREATE INDEX IF NOT EXISTS idx_forecast_learning_receipts_market_time
+            ON forecast_learning_receipts(market_id, created_at);
+        CREATE INDEX IF NOT EXISTS idx_forecast_learning_receipts_signal
+            ON forecast_learning_receipts(learning_signal);
         """
     )
     conn.execute(
