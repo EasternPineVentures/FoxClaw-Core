@@ -16,6 +16,12 @@ live track record and is demo-ready.
   attention aggregates, tradeability snapshots, readiness verdicts, publication decisions,
   and verified outcomes.
 - Added ignored private fixture folders for parser replay material that must never enter git.
+- Added the anti-poisoning publication gate, private-source scanners, attention-boundary
+  checks, shared risk vocabulary, and security tests for public contract leakage.
+### Security
+- Publication defaults to `INTERNAL_ONLY` and rejects private Discord content, identifiers,
+  invite links, credentials, prompt injection, markup injection, and unsupported performance
+  claims with explicit reason codes.
 
 ## [0.4.14] - 2026-06-19
 ### Added
