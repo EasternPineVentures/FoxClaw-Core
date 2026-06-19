@@ -1,0 +1,73 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://easternpineventures.example/foxclaw/internal/attention_aggregate.schema.json",
+  "title": "FoxClaw Internal AttentionAggregate",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "attention_aggregate_id",
+    "subject",
+    "window",
+    "measurements",
+    "permissions",
+    "lineage"
+  ],
+  "properties": {
+    "schema_version": {"type": "string", "const": "internal.attention_aggregate.v1"},
+    "attention_aggregate_id": {"type": "string"},
+    "subject": {"type": "string"},
+    "window": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["started_at", "ended_at"],
+      "properties": {
+        "started_at": {"type": "string"},
+        "ended_at": {"type": "string"}
+      }
+    },
+    "measurements": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["attention_score", "trend", "sample_size"],
+      "properties": {
+        "attention_score": {"type": "integer", "minimum": 0, "maximum": 100},
+        "trend": {"type": "string", "enum": ["cold", "steady", "accelerating", "crowd_heat"]},
+        "sample_size": {"type": "integer", "minimum": 0}
+      }
+    },
+    "permissions": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "can_raise_review_priority",
+        "can_create_trending_flag",
+        "can_trigger_evidence_refresh",
+        "can_change_truth",
+        "can_change_source_reliability",
+        "can_alter_edge",
+        "can_increase_sizing",
+        "can_authorize_execution"
+      ],
+      "properties": {
+        "can_raise_review_priority": {"type": "boolean"},
+        "can_create_trending_flag": {"type": "boolean"},
+        "can_trigger_evidence_refresh": {"type": "boolean"},
+        "can_change_truth": {"type": "boolean"},
+        "can_change_source_reliability": {"type": "boolean"},
+        "can_alter_edge": {"type": "boolean"},
+        "can_increase_sizing": {"type": "boolean"},
+        "can_authorize_execution": {"type": "boolean"}
+      }
+    },
+    "lineage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["aggregate_source", "input_receipt_ids"],
+      "properties": {
+        "aggregate_source": {"type": "string"},
+        "input_receipt_ids": {"type": "array", "items": {"type": "string"}}
+      }
+    }
+  }
+}

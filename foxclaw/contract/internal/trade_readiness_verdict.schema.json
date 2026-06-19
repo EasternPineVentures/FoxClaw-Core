@@ -1,0 +1,70 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://easternpineventures.example/foxclaw/internal/trade_readiness_verdict.schema.json",
+  "title": "FoxClaw Internal TradeReadinessVerdict",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "trade_readiness_verdict_id",
+    "claim_packet_id",
+    "evidence_bundle_id",
+    "tradeability_snapshot_id",
+    "scores",
+    "risk_class",
+    "plan_readiness",
+    "verdict",
+    "lineage"
+  ],
+  "properties": {
+    "schema_version": {"type": "string", "const": "internal.trade_readiness_verdict.v1"},
+    "trade_readiness_verdict_id": {"type": "string"},
+    "claim_packet_id": {"type": "string"},
+    "evidence_bundle_id": {"type": "string"},
+    "tradeability_snapshot_id": {"type": "string"},
+    "scores": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "attention",
+        "evidence_quality",
+        "signal_confidence",
+        "cost_adjusted_edge",
+        "tradeability",
+        "entry_quality",
+        "risk",
+        "plan_readiness",
+        "source_track_record",
+        "setup_track_record"
+      ],
+      "properties": {
+        "attention": {"type": "integer", "minimum": 0, "maximum": 100},
+        "evidence_quality": {"type": "integer", "minimum": 0, "maximum": 100},
+        "signal_confidence": {"type": "integer", "minimum": 0, "maximum": 100},
+        "cost_adjusted_edge": {"type": "integer", "minimum": -100, "maximum": 100},
+        "tradeability": {"type": "integer", "minimum": 0, "maximum": 100},
+        "entry_quality": {"type": "integer", "minimum": 0, "maximum": 100},
+        "risk": {"type": "integer", "minimum": 0, "maximum": 100},
+        "plan_readiness": {"type": "integer", "minimum": 0, "maximum": 100},
+        "source_track_record": {"type": "integer", "minimum": 0, "maximum": 100},
+        "setup_track_record": {"type": "integer", "minimum": 0, "maximum": 100}
+      }
+    },
+    "risk_class": {
+      "type": "string",
+      "enum": ["RESEARCH", "WATCH", "STRUCTURED", "TACTICAL", "SPECULATIVE", "REDLINE", "REJECT"]
+    },
+    "plan_readiness": {"type": "string", "enum": ["NOT_PLANNED", "DRAFT", "PAPER_READY"]},
+    "verdict": {"type": "string"},
+    "lineage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["claim_packet_id", "evidence_bundle_id", "tradeability_snapshot_id"],
+      "properties": {
+        "claim_packet_id": {"type": "string"},
+        "evidence_bundle_id": {"type": "string"},
+        "tradeability_snapshot_id": {"type": "string"}
+      }
+    }
+  }
+}

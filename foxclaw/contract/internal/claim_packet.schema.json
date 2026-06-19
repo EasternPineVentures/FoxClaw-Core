@@ -1,0 +1,60 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://easternpineventures.example/foxclaw/internal/claim_packet.schema.json",
+  "title": "FoxClaw Internal ClaimPacket",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "claim_packet_id",
+    "parse_attempt_id",
+    "claim",
+    "extraction",
+    "quarantine",
+    "lineage"
+  ],
+  "properties": {
+    "schema_version": {"type": "string", "const": "internal.claim_packet.v1"},
+    "claim_packet_id": {"type": "string"},
+    "parse_attempt_id": {"type": "string"},
+    "claim": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["subject", "direction_or_outcome", "summary", "time_horizon"],
+      "properties": {
+        "subject": {"type": "string"},
+        "direction_or_outcome": {"type": "string"},
+        "summary": {"type": "string"},
+        "time_horizon": {"type": "string"}
+      }
+    },
+    "extraction": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["extractor", "confidence", "reason_codes"],
+      "properties": {
+        "extractor": {"type": "string"},
+        "confidence": {"type": "integer", "minimum": 0, "maximum": 100},
+        "reason_codes": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+    "quarantine": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["state", "reason_codes"],
+      "properties": {
+        "state": {"type": "string", "enum": ["quarantined", "promoted", "rejected"]},
+        "reason_codes": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+    "lineage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["raw_event_id", "parse_attempt_id"],
+      "properties": {
+        "raw_event_id": {"type": "string"},
+        "parse_attempt_id": {"type": "string"}
+      }
+    }
+  }
+}

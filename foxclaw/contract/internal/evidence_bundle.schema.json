@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://easternpineventures.example/foxclaw/internal/evidence_bundle.schema.json",
+  "title": "FoxClaw Internal EvidenceBundle",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "evidence_bundle_id",
+    "claim_packet_ids",
+    "supporting_evidence",
+    "opposing_evidence",
+    "quality",
+    "quarantine",
+    "lineage"
+  ],
+  "properties": {
+    "schema_version": {"type": "string", "const": "internal.evidence_bundle.v1"},
+    "evidence_bundle_id": {"type": "string"},
+    "claim_packet_ids": {"type": "array", "items": {"type": "string"}},
+    "supporting_evidence": {"type": "array", "items": {"type": "string"}},
+    "opposing_evidence": {"type": "array", "items": {"type": "string"}},
+    "quality": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["evidence_quality", "source_independence", "freshness", "traceability"],
+      "properties": {
+        "evidence_quality": {"type": "integer", "minimum": 0, "maximum": 100},
+        "source_independence": {"type": "integer", "minimum": 0, "maximum": 100},
+        "freshness": {"type": "integer", "minimum": 0, "maximum": 100},
+        "traceability": {"type": "integer", "minimum": 0, "maximum": 100}
+      }
+    },
+    "quarantine": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["state", "reason_codes"],
+      "properties": {
+        "state": {"type": "string", "enum": ["quarantined", "promoted", "rejected"]},
+        "reason_codes": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+    "lineage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["raw_event_ids", "parse_attempt_ids", "claim_packet_ids"],
+      "properties": {
+        "raw_event_ids": {"type": "array", "items": {"type": "string"}},
+        "parse_attempt_ids": {"type": "array", "items": {"type": "string"}},
+        "claim_packet_ids": {"type": "array", "items": {"type": "string"}}
+      }
+    }
+  }
+}

@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://easternpineventures.example/foxclaw/internal/tradeability_snapshot.schema.json",
+  "title": "FoxClaw Internal TradeabilitySnapshot",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "tradeability_snapshot_id",
+    "evidence_bundle_id",
+    "measurements",
+    "market_context",
+    "lineage"
+  ],
+  "properties": {
+    "schema_version": {"type": "string", "const": "internal.tradeability_snapshot.v1"},
+    "tradeability_snapshot_id": {"type": "string"},
+    "evidence_bundle_id": {"type": "string"},
+    "measurements": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["tradeability", "entry_quality", "risk", "cost_adjusted_edge"],
+      "properties": {
+        "tradeability": {"type": "integer", "minimum": 0, "maximum": 100},
+        "entry_quality": {"type": "integer", "minimum": 0, "maximum": 100},
+        "risk": {"type": "integer", "minimum": 0, "maximum": 100},
+        "cost_adjusted_edge": {"type": "integer", "minimum": -100, "maximum": 100}
+      }
+    },
+    "market_context": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["liquidity_status", "spread_status", "timing_status"],
+      "properties": {
+        "liquidity_status": {"type": "string"},
+        "spread_status": {"type": "string"},
+        "timing_status": {"type": "string"}
+      }
+    },
+    "lineage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["claim_packet_id", "evidence_bundle_id", "market_snapshot_ids"],
+      "properties": {
+        "claim_packet_id": {"type": "string"},
+        "evidence_bundle_id": {"type": "string"},
+        "market_snapshot_ids": {"type": "array", "items": {"type": "string"}}
+      }
+    }
+  }
+}

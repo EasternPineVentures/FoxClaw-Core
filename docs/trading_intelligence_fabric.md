@@ -1,6 +1,6 @@
 # Trading Intelligence Fabric
 
-Status: SCAFFOLD doctrine and contract foundation.
+Status: IN PROGRESS doctrine and contract foundation.
 Last updated: 2026-06-19.
 
 FoxClaw does not distribute trades. It transforms information into
@@ -37,6 +37,32 @@ decision processing.
 Existing Forecast Desk and trusted-evidence work already prove parts of the
 Evidence and Decision planes. CoinFox attention and public cards are contract
 scaffolds until their owning repo implements them.
+
+## Internal Contract Chain
+
+The internal contract path is separate from the public contract. Internal
+objects may include private source references, diagnostics, provider metadata,
+quarantine state, and full lineage. CoinFox must never consume internal objects
+and remove fields itself.
+
+Current internal v1 foundation:
+
+```text
+RawSourceEvent
+  -> ParseAttempt
+  -> ClaimPacket
+  -> EvidenceBundle
+  -> AttentionAggregate
+  -> TradeabilitySnapshot
+  -> TradeReadinessVerdict
+  -> PublicationDecision
+  -> PublicIntelligenceCard
+  -> VerifiedOutcome
+```
+
+Parser behavior remains A2-dependent. The contracts are ready now so the legacy
+Discord parser can later be ported behind replay-compatible boundaries instead
+of copied into a new monolith.
 
 ## CoinFox Social Layer
 
@@ -178,13 +204,14 @@ Without the passport, information does not travel.
 ```text
 Discord / CoinFox / News / Kalshi / Mobile Node
   -> Raw Source Event
+  -> Parse Attempt
   -> Claim Packet
-  -> Attention Receipt + Evidence Bundle
+  -> Attention Aggregate + Evidence Bundle
   -> quarantine
   -> validate/promote
-  -> Setup Candidate
-  -> FoxClaw Edge + Gate
+  -> Tradeability Snapshot
   -> Trade Readiness Verdict
+  -> Publication Decision
   -> CoinFox Public Card + Planifier Plan
   -> Paper Outcome
   -> Source / Setup Learning
@@ -209,7 +236,7 @@ Discord / CoinFox / News / Kalshi / Mobile Node
 
 | Phase | Status | Work |
 | --- | --- | --- |
-| 0 | IN PROGRESS | Doctrine, boundaries, public schemas, fixtures, validation tests. |
+| 0 | IN PROGRESS | Doctrine, boundaries, internal/public schemas, sanitized fixtures, validation tests. |
 | 1 | PLANNED | CoinFox attention receipts as sanitized aggregates. |
 | 2 | PLANNED | Unified claim packets for Discord signals and CoinFox posts. |
 | 3 | PLANNED | Quarantine, duplicate filtering, source checks, promotion receipts. |

@@ -1,0 +1,27 @@
+{
+  "schema_version": "internal.trade_readiness_verdict.v1",
+  "trade_readiness_verdict_id": "readiness_btc_good_signal_bad_trade_001",
+  "claim_packet_id": "claim_btc_momentum_extended_001",
+  "evidence_bundle_id": "evidence_btc_momentum_extended_001",
+  "tradeability_snapshot_id": "tradeability_btc_001",
+  "scores": {
+    "attention": 94,
+    "evidence_quality": 79,
+    "signal_confidence": 84,
+    "cost_adjusted_edge": 11,
+    "tradeability": 31,
+    "entry_quality": 22,
+    "risk": 92,
+    "plan_readiness": 0,
+    "source_track_record": 63,
+    "setup_track_record": 58
+  },
+  "risk_class": "REDLINE",
+  "plan_readiness": "NOT_PLANNED",
+  "verdict": "GOOD_SIGNAL_BAD_TRADE",
+  "lineage": {
+    "claim_packet_id": "claim_btc_momentum_extended_001",
+    "evidence_bundle_id": "evidence_btc_momentum_extended_001",
+    "tradeability_snapshot_id": "tradeability_btc_001"
+  }
+}

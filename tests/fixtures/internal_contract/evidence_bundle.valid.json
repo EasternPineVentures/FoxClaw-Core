@@ -1,0 +1,28 @@
+{
+  "schema_version": "internal.evidence_bundle.v1",
+  "evidence_bundle_id": "evidence_btc_momentum_extended_001",
+  "claim_packet_ids": ["claim_btc_momentum_extended_001"],
+  "supporting_evidence": [
+    "Public market momentum remains strong.",
+    "Independent public source reports similar flow."
+  ],
+  "opposing_evidence": [
+    "Entry quality is weak after the move.",
+    "Reward-to-risk is unattractive without a reset."
+  ],
+  "quality": {
+    "evidence_quality": 79,
+    "source_independence": 72,
+    "freshness": 88,
+    "traceability": 81
+  },
+  "quarantine": {
+    "state": "promoted",
+    "reason_codes": ["public_evidence_only"]
+  },
+  "lineage": {
+    "raw_event_ids": ["raw_sanitized_discord_001"],
+    "parse_attempt_ids": ["parse_sanitized_discord_001"],
+    "claim_packet_ids": ["claim_btc_momentum_extended_001"]
+  }
+}

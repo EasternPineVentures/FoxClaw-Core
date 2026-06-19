@@ -1,0 +1,24 @@
+{
+  "schema_version": "internal.claim_packet.v1",
+  "claim_packet_id": "claim_btc_momentum_extended_001",
+  "parse_attempt_id": "parse_sanitized_discord_001",
+  "claim": {
+    "subject": "BTC/USD",
+    "direction_or_outcome": "up",
+    "summary": "BTC momentum may continue, but current entry is extended.",
+    "time_horizon": "hours"
+  },
+  "extraction": {
+    "extractor": "fixture_claim_extractor",
+    "confidence": 82,
+    "reason_codes": ["directional_claim", "time_horizon_present"]
+  },
+  "quarantine": {
+    "state": "promoted",
+    "reason_codes": ["sanitized_fixture"]
+  },
+  "lineage": {
+    "raw_event_id": "raw_sanitized_discord_001",
+    "parse_attempt_id": "parse_sanitized_discord_001"
+  }
+}

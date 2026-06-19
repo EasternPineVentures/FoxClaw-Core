@@ -11,6 +11,8 @@ data/
 /storage/
 runtime_logs/
 runtime/machine_id.txt
+tests/fixtures/parser_private/
+tests/fixtures/internal_private/
 
 # Python
 __pycache__/

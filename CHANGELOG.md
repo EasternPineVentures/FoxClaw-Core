@@ -9,6 +9,14 @@ preserved as the `v1-legacy` archive. Milestone map: `0.x` builds toward launch,
 bump per completed overhaul phase; **`1.0.0`** is earned at Apollo-2 cutover when v2 runs the
 live track record and is demo-ready.
 
+## [0.4.15] - 2026-06-19
+### Added
+- **FoxClaw foundation sprint.** Added internal intelligence contract v1 schemas and
+  sanitized fixtures for raw source events, parse attempts, claim packets, evidence bundles,
+  attention aggregates, tradeability snapshots, readiness verdicts, publication decisions,
+  and verified outcomes.
+- Added ignored private fixture folders for parser replay material that must never enter git.
+
 ## [0.4.14] - 2026-06-19
 ### Added
 - **FoxClaw Gym.** Added a demo-readiness drill manifest, gym report module, and

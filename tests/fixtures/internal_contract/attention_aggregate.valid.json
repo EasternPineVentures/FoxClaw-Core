@@ -1,0 +1,28 @@
+{
+  "schema_version": "internal.attention_aggregate.v1",
+  "attention_aggregate_id": "attention_btc_001",
+  "subject": "BTC/USD",
+  "window": {
+    "started_at": "2026-06-19T16:00:00Z",
+    "ended_at": "2026-06-19T17:00:00Z"
+  },
+  "measurements": {
+    "attention_score": 94,
+    "trend": "accelerating",
+    "sample_size": 48
+  },
+  "permissions": {
+    "can_raise_review_priority": true,
+    "can_create_trending_flag": true,
+    "can_trigger_evidence_refresh": true,
+    "can_change_truth": false,
+    "can_change_source_reliability": false,
+    "can_alter_edge": false,
+    "can_increase_sizing": false,
+    "can_authorize_execution": false
+  },
+  "lineage": {
+    "aggregate_source": "coinfox_sanitized_attention_fixture",
+    "input_receipt_ids": ["attn_event_hash_001"]
+  }
+}

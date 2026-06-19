@@ -1,0 +1,25 @@
+{
+  "schema_version": "internal.parse_attempt.v1",
+  "parse_attempt_id": "parse_sanitized_discord_001",
+  "raw_event_id": "raw_sanitized_discord_001",
+  "parser": {
+    "name": "discord_compatibility_parser",
+    "version": "pending_a2_inventory",
+    "mode": "fixture"
+  },
+  "status": "accepted",
+  "reason_codes": ["fixture_claim_shape_detected"],
+  "diagnostics": {
+    "confidence": 83,
+    "field_warnings": [],
+    "provider_metadata": {
+      "provider": "rule_fixture",
+      "model": "none",
+      "prompt_version": "none"
+    }
+  },
+  "lineage": {
+    "raw_event_id": "raw_sanitized_discord_001",
+    "content_hash": "sha256:raw-sanitized-discord-001"
+  }
+}

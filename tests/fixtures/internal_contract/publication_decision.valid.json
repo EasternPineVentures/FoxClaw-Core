@@ -1,0 +1,14 @@
+{
+  "schema_version": "internal.publication_decision.v1",
+  "publication_decision_id": "publication_btc_001",
+  "trade_readiness_verdict_id": "readiness_btc_good_signal_bad_trade_001",
+  "publication_class": "DERIVATIVE_PUBLIC_SAFE",
+  "allowed": true,
+  "reason_codes": ["sanitized_derivative_summary", "no_private_source_content"],
+  "public_payload_id": "pubintel_btc_example_001",
+  "lineage": {
+    "claim_packet_id": "claim_btc_momentum_extended_001",
+    "evidence_bundle_id": "evidence_btc_momentum_extended_001",
+    "trade_readiness_verdict_id": "readiness_btc_good_signal_bad_trade_001"
+  }
+}

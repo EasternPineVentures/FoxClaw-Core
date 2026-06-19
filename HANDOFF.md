@@ -5,7 +5,7 @@ Read it before changing code, then verify with `git log --oneline -10` and the t
 
 Last updated: 2026-06-19
 Branch: `master`
-Version: `0.4.14`
+Version: `0.4.15`
 Working repo: `C:\Users\brend\dev\foxclaw-core`
 
 ## Current Lane
@@ -215,6 +215,11 @@ Done in this pass:
   demo-friendly Markdown, with public text escaped before rendering.
 - Gym manifest validation rejects unsafe proof commands that reference live, secret, wallet,
   funds, order, or rekey paths.
+- Internal intelligence contract v1 foundation added under `foxclaw/contract/internal/`.
+  It defines the private RawSourceEvent -> ParseAttempt -> ClaimPacket -> EvidenceBundle ->
+  AttentionAggregate -> TradeabilitySnapshot -> TradeReadinessVerdict ->
+  PublicationDecision -> VerifiedOutcome path with sanitized fixtures and lineage tests.
+  Parser behavior still waits for A2's legacy Discord inventory.
 
 ## Hard Rails
 

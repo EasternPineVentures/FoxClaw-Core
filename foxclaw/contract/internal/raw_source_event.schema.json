@@ -1,0 +1,68 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://easternpineventures.example/foxclaw/internal/raw_source_event.schema.json",
+  "title": "FoxClaw Internal RawSourceEvent",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "raw_event_id",
+    "source_kind",
+    "observed_at",
+    "captured_at",
+    "private_source_ref",
+    "content",
+    "quarantine",
+    "lineage"
+  ],
+  "properties": {
+    "schema_version": {"type": "string", "const": "internal.raw_source_event.v1"},
+    "raw_event_id": {"type": "string"},
+    "source_kind": {"type": "string", "enum": ["discord", "coinfox", "news", "market", "manual"]},
+    "observed_at": {"type": "string"},
+    "captured_at": {"type": "string"},
+    "private_source_ref": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source_ref_id", "source_ref_type", "privacy_classification"],
+      "properties": {
+        "source_ref_id": {"type": "string"},
+        "source_ref_type": {"type": "string"},
+        "privacy_classification": {
+          "type": "string",
+          "enum": ["private", "public", "sanitized_fixture"]
+        },
+        "private_location_hint": {"type": "string"}
+      }
+    },
+    "content": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["content_hash", "content_excerpt", "content_mime", "sanitized"],
+      "properties": {
+        "content_hash": {"type": "string"},
+        "content_excerpt": {"type": "string"},
+        "content_mime": {"type": "string"},
+        "sanitized": {"type": "boolean"}
+      }
+    },
+    "quarantine": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["state", "reason_codes"],
+      "properties": {
+        "state": {"type": "string", "enum": ["quarantined", "released", "rejected"]},
+        "reason_codes": {"type": "array", "items": {"type": "string"}}
+      }
+    },
+    "lineage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["ingest_run_id", "raw_payload_hash"],
+      "properties": {
+        "ingest_run_id": {"type": "string"},
+        "raw_payload_hash": {"type": "string"}
+      }
+    }
+  }
+}

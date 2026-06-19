@@ -1,0 +1,62 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://easternpineventures.example/foxclaw/internal/parse_attempt.schema.json",
+  "title": "FoxClaw Internal ParseAttempt",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "parse_attempt_id",
+    "raw_event_id",
+    "parser",
+    "status",
+    "reason_codes",
+    "diagnostics",
+    "lineage"
+  ],
+  "properties": {
+    "schema_version": {"type": "string", "const": "internal.parse_attempt.v1"},
+    "parse_attempt_id": {"type": "string"},
+    "raw_event_id": {"type": "string"},
+    "parser": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "version", "mode"],
+      "properties": {
+        "name": {"type": "string"},
+        "version": {"type": "string"},
+        "mode": {"type": "string", "enum": ["live_listener", "offline_replay", "fixture"]}
+      }
+    },
+    "status": {"type": "string", "enum": ["accepted", "rejected", "needs_review"]},
+    "reason_codes": {"type": "array", "items": {"type": "string"}},
+    "diagnostics": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["confidence", "field_warnings", "provider_metadata"],
+      "properties": {
+        "confidence": {"type": "integer", "minimum": 0, "maximum": 100},
+        "field_warnings": {"type": "array", "items": {"type": "string"}},
+        "provider_metadata": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["provider", "model", "prompt_version"],
+          "properties": {
+            "provider": {"type": "string"},
+            "model": {"type": "string"},
+            "prompt_version": {"type": "string"}
+          }
+        }
+      }
+    },
+    "lineage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["raw_event_id", "content_hash"],
+      "properties": {
+        "raw_event_id": {"type": "string"},
+        "content_hash": {"type": "string"}
+      }
+    }
+  }
+}

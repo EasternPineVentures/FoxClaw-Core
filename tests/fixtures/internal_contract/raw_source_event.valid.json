@@ -1,0 +1,27 @@
+{
+  "schema_version": "internal.raw_source_event.v1",
+  "raw_event_id": "raw_sanitized_discord_001",
+  "source_kind": "discord",
+  "observed_at": "2026-06-19T17:00:00Z",
+  "captured_at": "2026-06-19T17:00:02Z",
+  "private_source_ref": {
+    "source_ref_id": "private_ref_hash_001",
+    "source_ref_type": "discord_message",
+    "privacy_classification": "sanitized_fixture",
+    "private_location_hint": "ignored private fixture only"
+  },
+  "content": {
+    "content_hash": "sha256:raw-sanitized-discord-001",
+    "content_excerpt": "Sanitized claim says BTC momentum is strong but entry is extended.",
+    "content_mime": "text/plain",
+    "sanitized": true
+  },
+  "quarantine": {
+    "state": "quarantined",
+    "reason_codes": ["raw_source_default_quarantine"]
+  },
+  "lineage": {
+    "ingest_run_id": "ingest_fixture_001",
+    "raw_payload_hash": "sha256:raw-sanitized-discord-001"
+  }
+}

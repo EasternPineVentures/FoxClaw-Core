@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://easternpineventures.example/foxclaw/internal/publication_decision.schema.json",
+  "title": "FoxClaw Internal PublicationDecision",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "publication_decision_id",
+    "trade_readiness_verdict_id",
+    "publication_class",
+    "allowed",
+    "reason_codes",
+    "public_payload_id",
+    "lineage"
+  ],
+  "properties": {
+    "schema_version": {"type": "string", "const": "internal.publication_decision.v1"},
+    "publication_decision_id": {"type": "string"},
+    "trade_readiness_verdict_id": {"type": "string"},
+    "publication_class": {
+      "type": "string",
+      "enum": ["INTERNAL_ONLY", "DERIVATIVE_PUBLIC_SAFE", "PUBLIC_SOURCE", "UNKNOWN_REVIEW"]
+    },
+    "allowed": {"type": "boolean"},
+    "reason_codes": {"type": "array", "items": {"type": "string"}},
+    "public_payload_id": {"type": "string"},
+    "lineage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["claim_packet_id", "evidence_bundle_id", "trade_readiness_verdict_id"],
+      "properties": {
+        "claim_packet_id": {"type": "string"},
+        "evidence_bundle_id": {"type": "string"},
+        "trade_readiness_verdict_id": {"type": "string"}
+      }
+    }
+  }
+}
