@@ -1,0 +1,18 @@
+{
+  "contract_name": "foxclaw-public-intelligence",
+  "contract_version": "1.0.0",
+  "frozen_at": "2026-06-19T18:00:00Z",
+  "schemas": {
+    "public_intelligence_card": "1.0.0",
+    "public_scorecard": "1.0.0",
+    "attention_receipt": "1.0.0",
+    "risk_classification": "1.0.0",
+    "verified_outcome": "1.0.0"
+  },
+  "compatibility": {
+    "patch": "clarification or backwards-compatible validation",
+    "minor": "additive optional fields",
+    "major": "breaking field or semantic change"
+  },
+  "consumer_rule": "Consumers must refuse unsupported major versions."
+}

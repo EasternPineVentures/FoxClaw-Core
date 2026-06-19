@@ -5,22 +5,29 @@
   "type": "object",
   "additionalProperties": false,
   "required": [
+    "contract_version",
     "schema_version",
     "public_scorecard_id",
     "public_intelligence_id",
+    "receipt_id",
     "built_at",
+    "author_type",
+    "author_display",
+    "mode",
     "measurements",
     "verdict",
     "status"
   ],
   "properties": {
-    "schema_version": {
-      "type": "string",
-      "const": "public_scorecard.v0"
-    },
+    "contract_version": {"type": "string", "const": "1.0.0"},
+    "schema_version": {"type": "string", "const": "public_scorecard.v1"},
     "public_scorecard_id": {"type": "string"},
     "public_intelligence_id": {"type": "string"},
+    "receipt_id": {"type": "string"},
     "built_at": {"type": "string", "format": "date-time"},
+    "author_type": {"type": "string", "enum": ["system"]},
+    "author_display": {"type": "string", "const": "FoxClaw"},
+    "mode": {"type": "string", "enum": ["informational_paper"]},
     "measurements": {
       "type": "object",
       "additionalProperties": false,
@@ -30,8 +37,11 @@
         "signal_confidence",
         "edge",
         "tradeability",
+        "entry_quality",
         "risk",
-        "plan_readiness"
+        "plan_readiness",
+        "source_track_record",
+        "setup_track_record"
       ],
       "properties": {
         "attention": {"type": "integer", "minimum": 0, "maximum": 100},
@@ -39,28 +49,22 @@
         "signal_confidence": {"type": "integer", "minimum": 0, "maximum": 100},
         "edge": {"type": "integer", "minimum": -100, "maximum": 100},
         "tradeability": {"type": "integer", "minimum": 0, "maximum": 100},
+        "entry_quality": {"type": "integer", "minimum": 0, "maximum": 100},
         "risk": {"type": "integer", "minimum": 0, "maximum": 100},
         "plan_readiness": {"type": "integer", "minimum": 0, "maximum": 100},
         "source_track_record": {"type": "integer", "minimum": 0, "maximum": 100},
         "setup_track_record": {"type": "integer", "minimum": 0, "maximum": 100}
       }
     },
-    "verdict": {
-      "type": "string"
-    },
+    "verdict": {"type": "string"},
     "status": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["authority", "live_execution_allowed"],
+      "required": ["authority", "live_execution_allowed", "not_individualized_advice"],
       "properties": {
-        "authority": {
-          "type": "string",
-          "enum": ["observe_only", "paper_only"]
-        },
-        "live_execution_allowed": {
-          "type": "boolean",
-          "const": false
-        }
+        "authority": {"type": "string", "enum": ["paper_only"]},
+        "live_execution_allowed": {"type": "boolean", "const": false},
+        "not_individualized_advice": {"type": "boolean", "const": true}
       }
     }
   }

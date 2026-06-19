@@ -5,6 +5,7 @@
   "type": "object",
   "additionalProperties": false,
   "required": [
+    "contract_version",
     "schema_version",
     "risk_class",
     "meaning",
@@ -14,13 +15,11 @@
     "status"
   ],
   "properties": {
-    "schema_version": {
-      "type": "string",
-      "const": "risk_classification.v0"
-    },
+    "contract_version": {"type": "string", "const": "1.0.0"},
+    "schema_version": {"type": "string", "const": "risk_classification.v1"},
     "risk_class": {
       "type": "string",
-      "enum": ["Research", "Watch", "Structured", "Tactical", "Speculative", "Redline", "Reject"]
+      "enum": ["RESEARCH", "WATCH", "STRUCTURED", "TACTICAL", "SPECULATIVE", "REDLINE", "REJECT"]
     },
     "meaning": {"type": "string"},
     "beginner_safe": {"type": "boolean"},
@@ -59,16 +58,11 @@
     "status": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["authority", "live_execution_allowed"],
+      "required": ["authority", "live_execution_allowed", "not_individualized_advice"],
       "properties": {
-        "authority": {
-          "type": "string",
-          "enum": ["observe_only", "paper_only"]
-        },
-        "live_execution_allowed": {
-          "type": "boolean",
-          "const": false
-        }
+        "authority": {"type": "string", "enum": ["paper_only"]},
+        "live_execution_allowed": {"type": "boolean", "const": false},
+        "not_individualized_advice": {"type": "boolean", "const": true}
       }
     }
   }

@@ -37,10 +37,12 @@ conversation, and topic discovery. CoinFox owns that feel.
 ## FoxClaw Core Provides
 
 - public intelligence schemas;
+- Public Contract v1 manifest and compatibility rule;
 - versioned example payloads;
 - validation rules;
 - public-safe identifiers;
 - fixture data for CoinFox development;
+- deterministic reference exports under `runtime_exports/coinfox/`;
 - explicit boundaries for attention, evidence, readiness, and publication.
 
 ## CoinFox Must Eventually Build
@@ -104,9 +106,43 @@ During the FoxClaw foundation phase:
 - CoinFox later implements persistence, engagement, ranking, moderation, API
   client, and presentation layers.
 - CoinFox consumes only versioned public contracts.
+- CoinFox should refuse unsupported public-contract major versions.
 - No FoxClaw private implementation is copied into CoinFox.
 - CoinFox social content remains user-generated until converted into a structured
   claim through an explicit intake/promotion path.
+
+## Current FoxClaw Export Contract
+
+FoxClaw now has a deterministic reference exporter:
+
+```text
+python tools/export_public_intelligence.py --fixture --output runtime_exports/coinfox
+```
+
+Expected output:
+
+```text
+runtime_exports/coinfox/manifest.json
+runtime_exports/coinfox/intelligence_cards.jsonl
+runtime_exports/coinfox/scorecard.json
+runtime_exports/coinfox/outcomes.jsonl
+```
+
+Every exported card states:
+
+```text
+contract_version = 1.0.0
+author_type = system
+author_display = FoxClaw
+mode = informational_paper
+publication_class = DERIVATIVE_PUBLIC_SAFE or PUBLIC_SOURCE
+contains_private_source_content = false
+live_execution_allowed = false
+not_individualized_advice = true
+```
+
+CoinFox should use these files as its first integration target before wiring a
+live FoxClaw client.
 
 ## Attention Events CoinFox May Aggregate Later
 
@@ -129,5 +165,8 @@ FoxClaw should receive aggregates, not CoinFox's full private user-event stream.
 
 ## Resume Trigger
 
-Resume inside the CoinFox repository after the FoxClaw ingest, claim, promotion,
-and public-contract foundations are stable.
+Resume inside the CoinFox repository after A2's parser inventory is reviewed and
+the remaining Discord parser compatibility work is either ported or explicitly
+deferred. The first CoinFox pass should preserve the existing social bones, add a
+FoxClaw public-contract client, ingest fixture cards, collect sanitized attention
+aggregates, and reshape the feed into the open trading-social surface.

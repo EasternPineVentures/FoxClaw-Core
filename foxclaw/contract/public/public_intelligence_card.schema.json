@@ -5,52 +5,58 @@
   "type": "object",
   "additionalProperties": false,
   "required": [
+    "contract_version",
     "schema_version",
     "public_intelligence_id",
+    "receipt_id",
     "snapshot_version",
     "generated_at",
+    "author_type",
+    "author_display",
+    "disclosure",
     "mode",
+    "publication_class",
+    "contains_private_source_content",
     "claim",
     "scores",
+    "risk_class",
     "risk_classification",
     "evidence",
     "attention",
     "tradeability",
     "invalidation",
-    "plan_status",
+    "plan_readiness",
     "professional_wait_for",
+    "public_explanation",
     "status",
     "lineage"
   ],
   "properties": {
-    "schema_version": {
+    "contract_version": {"type": "string", "const": "1.0.0"},
+    "schema_version": {"type": "string", "const": "public_intelligence_card.v1"},
+    "public_intelligence_id": {"type": "string"},
+    "receipt_id": {"type": "string"},
+    "snapshot_version": {"type": "integer", "minimum": 1},
+    "generated_at": {"type": "string", "format": "date-time"},
+    "author_type": {"type": "string", "enum": ["system"]},
+    "author_display": {"type": "string", "const": "FoxClaw"},
+    "disclosure": {"type": "string"},
+    "mode": {"type": "string", "enum": ["informational_paper"]},
+    "publication_class": {
       "type": "string",
-      "const": "public_intelligence_card.v0"
+      "enum": ["DERIVATIVE_PUBLIC_SAFE", "PUBLIC_SOURCE"]
     },
-    "public_intelligence_id": {
-      "type": "string"
-    },
-    "snapshot_version": {
-      "type": "integer",
-      "minimum": 1
-    },
-    "generated_at": {
-      "type": "string",
-      "format": "date-time"
-    },
-    "mode": {
-      "type": "string",
-      "enum": ["PAPER", "INFORMATION_ONLY"]
-    },
+    "contains_private_source_content": {"type": "boolean", "const": false},
     "claim": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["summary", "subject", "direction_or_outcome", "time_horizon"],
+      "required": ["summary", "subject", "direction_or_outcome", "time_horizon", "why_it_matters_now"],
       "properties": {
         "summary": {"type": "string"},
         "subject": {"type": "string"},
         "direction_or_outcome": {"type": "string"},
-        "time_horizon": {"type": "string"}
+        "time_horizon": {"type": "string"},
+        "why_it_matters_now": {"type": "string"}
       }
     },
     "scores": {
@@ -62,8 +68,11 @@
         "signal_confidence",
         "edge",
         "tradeability",
+        "entry_quality",
         "risk",
-        "plan_readiness"
+        "plan_readiness",
+        "source_track_record",
+        "setup_track_record"
       ],
       "properties": {
         "attention": {"type": "integer", "minimum": 0, "maximum": 100},
@@ -71,20 +80,25 @@
         "signal_confidence": {"type": "integer", "minimum": 0, "maximum": 100},
         "edge": {"type": "integer", "minimum": -100, "maximum": 100},
         "tradeability": {"type": "integer", "minimum": 0, "maximum": 100},
+        "entry_quality": {"type": "integer", "minimum": 0, "maximum": 100},
         "risk": {"type": "integer", "minimum": 0, "maximum": 100},
         "plan_readiness": {"type": "integer", "minimum": 0, "maximum": 100},
         "source_track_record": {"type": "integer", "minimum": 0, "maximum": 100},
         "setup_track_record": {"type": "integer", "minimum": 0, "maximum": 100}
       }
     },
+    "risk_class": {
+      "type": "string",
+      "enum": ["RESEARCH", "WATCH", "STRUCTURED", "TACTICAL", "SPECULATIVE", "REDLINE", "REJECT"]
+    },
     "risk_classification": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["class", "beginner_safe"],
+      "required": ["class", "beginner_safe", "summary"],
       "properties": {
         "class": {
           "type": "string",
-          "enum": ["Research", "Watch", "Structured", "Tactical", "Speculative", "Redline", "Reject"]
+          "enum": ["RESEARCH", "WATCH", "STRUCTURED", "TACTICAL", "SPECULATIVE", "REDLINE", "REJECT"]
         },
         "beginner_safe": {"type": "boolean"},
         "summary": {"type": "string"}
@@ -95,14 +109,8 @@
       "additionalProperties": false,
       "required": ["supporting", "opposing"],
       "properties": {
-        "supporting": {
-          "type": "array",
-          "items": {"type": "string"}
-        },
-        "opposing": {
-          "type": "array",
-          "items": {"type": "string"}
-        }
+        "supporting": {"type": "array", "items": {"type": "string"}},
+        "opposing": {"type": "array", "items": {"type": "string"}}
       }
     },
     "attention": {
@@ -110,10 +118,7 @@
       "additionalProperties": false,
       "required": ["trend", "summary"],
       "properties": {
-        "trend": {
-          "type": "string",
-          "enum": ["cold", "steady", "accelerating", "crowd_heat"]
-        },
+        "trend": {"type": "string", "enum": ["cold", "steady", "accelerating", "crowd_heat"]},
         "summary": {"type": "string"},
         "attention_receipt_id": {"type": "string"}
       }
@@ -123,10 +128,7 @@
       "additionalProperties": false,
       "required": ["status", "summary"],
       "properties": {
-        "status": {
-          "type": "string",
-          "enum": ["unknown", "poor", "acceptable", "strong"]
-        },
+        "status": {"type": "string", "enum": ["unknown", "poor", "acceptable", "strong"]},
         "summary": {"type": "string"}
       }
     },
@@ -134,46 +136,38 @@
       "type": "object",
       "additionalProperties": false,
       "required": ["summary"],
+      "properties": {"summary": {"type": "string"}}
+    },
+    "plan_readiness": {"type": "string", "enum": ["NOT_PLANNED", "DRAFT", "PAPER_READY"]},
+    "professional_wait_for": {"type": "string"},
+    "public_explanation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["what_the_claim_is", "what_a_professional_would_wait_for", "not_individualized_advice"],
       "properties": {
-        "summary": {"type": "string"}
+        "what_the_claim_is": {"type": "string"},
+        "what_a_professional_would_wait_for": {"type": "string"},
+        "not_individualized_advice": {"type": "boolean", "const": true}
       }
-    },
-    "plan_status": {
-      "type": "string",
-      "enum": ["not_planned", "draft", "paper_ready"]
-    },
-    "professional_wait_for": {
-      "type": "string"
     },
     "status": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["validation", "publication", "authority"],
+      "required": ["validation", "publication", "authority", "live_execution_allowed"],
       "properties": {
-        "validation": {
-          "type": "string",
-          "enum": ["quarantined", "promoted", "rejected"]
-        },
-        "publication": {
-          "type": "string",
-          "enum": ["public", "internal_only"]
-        },
-        "authority": {
-          "type": "string",
-          "enum": ["observe_only", "paper_only"]
-        }
+        "validation": {"type": "string", "enum": ["promoted", "resolved", "rejected"]},
+        "publication": {"type": "string", "enum": ["public"]},
+        "authority": {"type": "string", "enum": ["paper_only"]},
+        "live_execution_allowed": {"type": "boolean", "const": false}
       }
     },
     "lineage": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["public_source_ids", "snapshot_hash"],
+      "required": ["public_source_ids", "receipt_hash"],
       "properties": {
-        "public_source_ids": {
-          "type": "array",
-          "items": {"type": "string"}
-        },
-        "snapshot_hash": {"type": "string"}
+        "public_source_ids": {"type": "array", "items": {"type": "string"}},
+        "receipt_hash": {"type": "string"}
       }
     }
   }

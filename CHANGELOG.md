@@ -21,6 +21,9 @@ live track record and is demo-ready.
 - Added professional readiness and information-quality scoring that keep attention,
   evidence quality, signal confidence, edge, tradeability, entry quality, risk, plan
   readiness, and track records separate.
+- Froze Public Contract v1 with a manifest, contract changelog, contract version file,
+  v1 schemas, scenario fixtures, verified-outcome fixtures, and deterministic CoinFox
+  reference exporters for cards, scorecards, and outcomes.
 ### Security
 - Publication defaults to `INTERNAL_ONLY` and rejects private Discord content, identifiers,
   invite links, credentials, prompt injection, markup injection, and unsupported performance

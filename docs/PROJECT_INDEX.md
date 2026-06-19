@@ -51,7 +51,7 @@ location, and a GitHub issue or explicit issue placeholder.
 | Forecast Learning Spine V1 | EXISTS | `docs/forecast_learning_spine.md` |
 | FoxClaw Gym / demo readiness | EXISTS | `docs/foxclaw_gym.md`, `docs/demo_readiness_2026_06_28.md` |
 | First-encounter guide | EXISTS | `docs/first_encounter_guide.md`, `tools/foxclaw_visitor_guide.py` |
-| Public contract airlock | SCAFFOLD | `foxclaw/contract/`, `foxclaw/contract/public/` |
+| Public contract airlock | FROZEN v1 | `foxclaw/contract/`, `foxclaw/contract/public/`, `tools/export_public_intelligence.py` |
 | CoinFox social/product integration | EXISTING BONES, NEEDS WORK | `docs/integrations/coinfox.md` |
 | Planifier practice layer integration | EXISTS, NEEDS WORK | `docs/integrations/planifier.md` |
 | Public/community node validation layer | DEFERRED | `docs/integrations/foxclaw_node.md`, pin P17 |
@@ -63,7 +63,7 @@ Allowed now:
 
 - FoxClaw Core architecture and doctrine.
 - Public-safe information contracts.
-- Fixture payloads and schema validation tests.
+- Fixture payloads, schema validation tests, and deterministic CoinFox export files.
 - CoinFox integration notes.
 - GitHub issue and dependency mapping.
 
@@ -83,11 +83,11 @@ comments such as "finish CoinFox later."
 
 ```python
 # CONTEXT[EPV-COINFOX-INTELLIGENCE]:
-# Status: CONTRACT SCAFFOLD ONLY
+# Status: PUBLIC CONTRACT v1 FROZEN
 # Owner repo: EasternPineVentures/CoinFox
 # Upstream owner: EasternPineVentures/foxclaw-core
 # Purpose: Public-safe FoxClaw intelligence payload consumed by CoinFox.
-# Exists now: Schema, fixture payloads, validation tests.
+# Exists now: Schema, fixture payloads, validation tests, deterministic reference export.
 # Missing in CoinFox: persistence, API client, engagement pipeline, feed ranking, UI.
 # Boundary: CoinFox must not import foxclaw-core internals.
 # Resume from: docs/integrations/coinfox.md

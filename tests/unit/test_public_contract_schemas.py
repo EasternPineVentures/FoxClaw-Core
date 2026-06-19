@@ -4,7 +4,13 @@ import json
 from pathlib import Path
 from typing import Any
 
-from foxclaw.contract.public import PUBLIC_CONTRACT_DIR, SCHEMA_FILES, schema_path
+from foxclaw.contract.public import (
+    PUBLIC_CONTRACT_DIR,
+    PUBLIC_CONTRACT_VERSION,
+    SCHEMA_FILES,
+    manifest,
+    schema_path,
+)
 
 REPO = Path(__file__).resolve().parents[2]
 FIXTURE_DIR = REPO / "tests" / "fixtures" / "public_contract"
@@ -14,7 +20,17 @@ SCHEMA_FIXTURES = {
     "public_scorecard.schema.json": "public_scorecard.valid.json",
     "attention_receipt.schema.json": "attention_receipt.valid.json",
     "risk_classification.schema.json": "risk_classification.valid.json",
+    "verified_outcome.schema.json": "verified_outcome.valid.json",
 }
+
+CARD_SCENARIO_FIXTURES = (
+    "watch.json",
+    "good_signal_bad_trade.json",
+    "structured.json",
+    "speculative.json",
+    "redline.json",
+    "reject.json",
+)
 
 FORBIDDEN_TRUE_FLAGS = {
     "can_submit_order",
@@ -24,6 +40,10 @@ FORBIDDEN_TRUE_FLAGS = {
     "one_click_copy_trade_allowed",
     "can_change_truth",
     "can_change_source_reliability",
+    "can_promote_evidence",
+    "can_alter_edge",
+    "can_increase_sizing",
+    "can_authorize_execution",
 }
 
 
@@ -95,18 +115,54 @@ def test_public_contract_schemas_are_valid_json():
         assert schema["additionalProperties"] is False
 
 
+def test_public_contract_manifest_freezes_v1():
+    data = manifest()
+    assert data["contract_name"] == "foxclaw-public-intelligence"
+    assert data["contract_version"] == PUBLIC_CONTRACT_VERSION == "1.0.0"
+    assert data["consumer_rule"] == "Consumers must refuse unsupported major versions."
+    assert set(data["schemas"]) == {
+        "public_intelligence_card",
+        "public_scorecard",
+        "attention_receipt",
+        "risk_classification",
+        "verified_outcome",
+    }
+
+
 def test_public_contract_fixtures_match_required_schema_shape():
     for schema_name, fixture_name in SCHEMA_FIXTURES.items():
         schema = _load(schema_path(schema_name))
         fixture = _load(FIXTURE_DIR / fixture_name)
         _assert_required_shape(schema, fixture)
         _walk_public_values(fixture)
+        assert fixture["contract_version"] == "1.0.0"
+
+
+def test_public_card_scenario_fixtures_match_v1_card_schema():
+    schema = _load(schema_path("public_intelligence_card.schema.json"))
+    for fixture_name in CARD_SCENARIO_FIXTURES:
+        fixture = _load(FIXTURE_DIR / fixture_name)
+        _assert_required_shape(schema, fixture)
+        _walk_public_values(fixture)
+        assert fixture["author_display"] == "FoxClaw"
+        assert fixture["mode"] == "informational_paper"
+        assert fixture["contains_private_source_content"] is False
+        assert fixture["public_explanation"]["not_individualized_advice"] is True
+
+
+def test_resolved_postmortem_fixture_matches_verified_outcome_schema():
+    schema = _load(schema_path("verified_outcome.schema.json"))
+    fixture = _load(FIXTURE_DIR / "resolved_postmortem.json")
+    _assert_required_shape(schema, fixture)
+    _walk_public_values(fixture)
+    assert fixture["outcome_status"] == "resolved"
 
 
 def test_public_contract_readme_names_every_schema():
     readme = (PUBLIC_CONTRACT_DIR / "README.md").read_text(encoding="utf-8")
     for schema_name in SCHEMA_FIXTURES:
         assert schema_name in readme
+    assert "CoinFox must refuse unsupported major versions" in readme
 
 
 def test_unknown_public_contract_schema_is_rejected():

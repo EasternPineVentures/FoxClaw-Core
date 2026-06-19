@@ -220,6 +220,19 @@ Done in this pass:
   AttentionAggregate -> TradeabilitySnapshot -> TradeReadinessVerdict ->
   PublicationDecision -> VerifiedOutcome path with sanitized fixtures and lineage tests.
   Parser behavior still waits for A2's legacy Discord inventory.
+- Publication safety gate added under `foxclaw/policy/`: default `INTERNAL_ONLY`,
+  private-source scanning, prompt/markup/performance-claim rejection, attention-boundary
+  checks, and security tests proving private Discord content cannot cross the public gate.
+- Professional readiness layer added under `foxclaw/engine/`, `foxclaw/adapters/market/`,
+  and `foxclaw/policy/readiness.py`. It keeps attention, evidence quality, signal
+  confidence, cost-adjusted edge, tradeability, entry quality, risk, plan readiness, source
+  track record, and setup track record separate. `GOOD_SIGNAL_BAD_TRADE` is now a first-class
+  verdict.
+- Public Contract v1 frozen under `foxclaw/contract/public/` with `manifest.json`,
+  `VERSION`, contract changelog, v1 schemas, public fixtures, scenario cards, verified
+  outcomes, and deterministic CoinFox exporters:
+  `tools/export_public_intelligence.py`, `tools/export_public_scorecard.py`, and
+  `tools/render_public_intelligence_card.py`.
 
 ## Hard Rails
 
@@ -578,7 +591,10 @@ Next safe work:
 - Create or map the GitHub project fields/issues for P17 so each repo owns its work.
 - Keep Phase 1 contract-first: CoinFox attention receipts are sanitized aggregates, not
   CoinFox internals inside this repo.
-- Have A2 pull `0.4.14`, run the focused learning and public-contract tests, and send a `pulse` through the
+- Current FoxClaw foundation stop line: do not keep expanding FoxClaw indefinitely before
+  CoinFox. After A2's Discord parser inventory is reviewed, either finish the parser parity
+  slice or explicitly mark it deferred, then move to the CoinFox repo.
+- Have A2 pull `0.4.15`, run the focused learning and public-contract tests, and send a `pulse` through the
   private Apollo exchange folder.
 - Add a private trusted-roster/auth boundary if this intake becomes multi-user instead of
   operator-run.

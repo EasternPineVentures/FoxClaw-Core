@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://easternpineventures.example/foxclaw/verified_outcome.schema.json",
+  "title": "FoxClaw Public Verified Outcome",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contract_version",
+    "schema_version",
+    "verified_outcome_id",
+    "public_intelligence_id",
+    "receipt_id",
+    "outcome_status",
+    "resolved_at",
+    "claim_result",
+    "decision_quality",
+    "postmortem_summary",
+    "status"
+  ],
+  "properties": {
+    "contract_version": {"type": "string", "const": "1.0.0"},
+    "schema_version": {"type": "string", "const": "verified_outcome.v1"},
+    "verified_outcome_id": {"type": "string"},
+    "public_intelligence_id": {"type": "string"},
+    "receipt_id": {"type": "string"},
+    "outcome_status": {"type": "string", "enum": ["open", "resolved", "void"]},
+    "resolved_at": {"type": "string"},
+    "claim_result": {"type": "string", "enum": ["supported", "failed", "mixed", "unknown"]},
+    "decision_quality": {"type": "string"},
+    "postmortem_summary": {"type": "string"},
+    "status": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["authority", "live_execution_allowed", "not_individualized_advice"],
+      "properties": {
+        "authority": {"type": "string", "enum": ["paper_only"]},
+        "live_execution_allowed": {"type": "boolean", "const": false},
+        "not_individualized_advice": {"type": "boolean", "const": true}
+      }
+    }
+  }
+}

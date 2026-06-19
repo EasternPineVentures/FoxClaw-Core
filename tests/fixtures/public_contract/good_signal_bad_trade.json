@@ -37,14 +37,8 @@
     "summary": "High volatility and poor entry quality make this unsafe as a trade idea."
   },
   "evidence": {
-    "supporting": [
-      "Public market momentum remains strong.",
-      "Independent public sources report similar flow."
-    ],
-    "opposing": [
-      "Entry quality is weak after the move.",
-      "Reward-to-risk is not attractive without a reset."
-    ]
+    "supporting": ["Public market momentum remains strong."],
+    "opposing": ["Entry quality is weak after the move."]
   },
   "attention": {
     "trend": "accelerating",
@@ -53,11 +47,9 @@
   },
   "tradeability": {
     "status": "poor",
-    "summary": "Liquidity is acceptable, but entry quality and leverage risk are poor."
+    "summary": "Entry quality and leverage risk are poor."
   },
-  "invalidation": {
-    "summary": "Thesis weakens if price fails to hold the prior breakout area."
-  },
+  "invalidation": {"summary": "Thesis weakens if price fails to hold the prior breakout area."},
   "plan_readiness": "NOT_PLANNED",
   "professional_wait_for": "A defined invalidation level or a better entry after the chase fades.",
   "public_explanation": {
@@ -72,7 +64,7 @@
     "live_execution_allowed": false
   },
   "lineage": {
-    "public_source_ids": ["source_public_hash_001", "source_public_hash_002"],
+    "public_source_ids": ["source_public_hash_001"],
     "receipt_hash": "sha256:public-good-signal-bad-trade"
   }
 }

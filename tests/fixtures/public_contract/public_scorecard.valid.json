@@ -1,22 +1,29 @@
 {
-  "schema_version": "public_scorecard.v0",
-  "public_scorecard_id": "score_btc_example_001",
-  "public_intelligence_id": "pubintel_btc_example_001",
-  "built_at": "2026-06-19T17:15:00Z",
+  "contract_version": "1.0.0",
+  "schema_version": "public_scorecard.v1",
+  "public_scorecard_id": "score_btc_good_signal_bad_trade_001",
+  "public_intelligence_id": "pubintel_btc_good_signal_bad_trade_001",
+  "receipt_id": "fc_pub_btc_good_signal_bad_trade_001",
+  "built_at": "2026-06-19T18:00:00Z",
+  "author_type": "system",
+  "author_display": "FoxClaw",
+  "mode": "informational_paper",
   "measurements": {
     "attention": 94,
-    "evidence_quality": 76,
-    "signal_confidence": 81,
+    "evidence_quality": 79,
+    "signal_confidence": 84,
     "edge": 11,
-    "tradeability": 32,
+    "tradeability": 31,
+    "entry_quality": 22,
     "risk": 92,
-    "plan_readiness": 20,
+    "plan_readiness": 0,
     "source_track_record": 63,
     "setup_track_record": 58
   },
-  "verdict": "Good thesis, bad trade right now.",
+  "verdict": "GOOD_SIGNAL_BAD_TRADE",
   "status": {
     "authority": "paper_only",
-    "live_execution_allowed": false
+    "live_execution_allowed": false,
+    "not_individualized_advice": true
   }
 }

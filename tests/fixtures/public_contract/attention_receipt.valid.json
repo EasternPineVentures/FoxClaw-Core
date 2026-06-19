@@ -1,13 +1,14 @@
 {
-  "schema_version": "attention_receipt.v0",
+  "contract_version": "1.0.0",
+  "schema_version": "attention_receipt.v1",
   "attention_receipt_id": "attn_btc_example_001",
-  "public_intelligence_id": "pubintel_btc_example_001",
+  "public_intelligence_id": "pubintel_btc_good_signal_bad_trade_001",
   "source_system": "coinfox",
   "aggregation_window": {
-    "started_at": "2026-06-19T16:15:00Z",
-    "ended_at": "2026-06-19T17:15:00Z"
+    "started_at": "2026-06-19T17:00:00Z",
+    "ended_at": "2026-06-19T18:00:00Z"
   },
-  "generated_at": "2026-06-19T17:15:00Z",
+  "generated_at": "2026-06-19T18:00:00Z",
   "events": {
     "post_impression": 1250,
     "post_open": 420,
@@ -43,6 +44,10 @@
   "status": {
     "authority": "review_priority_only",
     "can_change_truth": false,
-    "can_change_source_reliability": false
+    "can_change_source_reliability": false,
+    "can_promote_evidence": false,
+    "can_alter_edge": false,
+    "can_increase_sizing": false,
+    "can_authorize_execution": false
   }
 }

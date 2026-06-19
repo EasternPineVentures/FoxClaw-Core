@@ -1,6 +1,7 @@
 {
-  "schema_version": "risk_classification.v0",
-  "risk_class": "Redline",
+  "contract_version": "1.0.0",
+  "schema_version": "risk_classification.v1",
+  "risk_class": "REDLINE",
   "meaning": "Extreme volatility, leverage, thin liquidity, binary risk, or wide outcome distribution.",
   "beginner_safe": false,
   "presentation": {
@@ -19,6 +20,7 @@
   },
   "status": {
     "authority": "paper_only",
-    "live_execution_allowed": false
+    "live_execution_allowed": false,
+    "not_individualized_advice": true
   }
 }

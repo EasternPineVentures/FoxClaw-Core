@@ -1,22 +1,27 @@
-"""Public FoxClaw contract schema resources.
-
-This package is still a contract scaffold. It exposes schema file names and paths,
-not decision logic or write authority.
-"""
+"""Public FoxClaw contract schema resources."""
 from __future__ import annotations
 
+import json
 from pathlib import Path
 
 PUBLIC_CONTRACT_DIR = Path(__file__).resolve().parent
+PUBLIC_CONTRACT_VERSION = "1.0.0"
 
 SCHEMA_FILES = (
     "public_intelligence_card.schema.json",
     "public_scorecard.schema.json",
     "attention_receipt.schema.json",
     "risk_classification.schema.json",
+    "verified_outcome.schema.json",
 )
 
-__all__ = ["PUBLIC_CONTRACT_DIR", "SCHEMA_FILES", "schema_path"]
+__all__ = [
+    "PUBLIC_CONTRACT_DIR",
+    "PUBLIC_CONTRACT_VERSION",
+    "SCHEMA_FILES",
+    "manifest",
+    "schema_path",
+]
 
 
 def schema_path(name: str) -> Path:
@@ -24,3 +29,8 @@ def schema_path(name: str) -> Path:
     if name not in SCHEMA_FILES:
         raise ValueError(f"unknown public contract schema: {name}")
     return PUBLIC_CONTRACT_DIR / name
+
+
+def manifest() -> dict[str, object]:
+    """Load the frozen public contract manifest."""
+    return json.loads((PUBLIC_CONTRACT_DIR / "manifest.json").read_text(encoding="utf-8"))

@@ -5,6 +5,7 @@
   "type": "object",
   "additionalProperties": false,
   "required": [
+    "contract_version",
     "schema_version",
     "attention_receipt_id",
     "public_intelligence_id",
@@ -17,16 +18,11 @@
     "status"
   ],
   "properties": {
-    "schema_version": {
-      "type": "string",
-      "const": "attention_receipt.v0"
-    },
+    "contract_version": {"type": "string", "const": "1.0.0"},
+    "schema_version": {"type": "string", "const": "attention_receipt.v1"},
     "attention_receipt_id": {"type": "string"},
     "public_intelligence_id": {"type": "string"},
-    "source_system": {
-      "type": "string",
-      "enum": ["coinfox"]
-    },
+    "source_system": {"type": "string", "enum": ["coinfox"]},
     "aggregation_window": {
       "type": "object",
       "additionalProperties": false,
@@ -106,14 +102,23 @@
     "status": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["authority", "can_change_truth", "can_change_source_reliability"],
+      "required": [
+        "authority",
+        "can_change_truth",
+        "can_change_source_reliability",
+        "can_promote_evidence",
+        "can_alter_edge",
+        "can_increase_sizing",
+        "can_authorize_execution"
+      ],
       "properties": {
-        "authority": {
-          "type": "string",
-          "enum": ["review_priority_only"]
-        },
+        "authority": {"type": "string", "enum": ["review_priority_only"]},
         "can_change_truth": {"type": "boolean", "const": false},
-        "can_change_source_reliability": {"type": "boolean", "const": false}
+        "can_change_source_reliability": {"type": "boolean", "const": false},
+        "can_promote_evidence": {"type": "boolean", "const": false},
+        "can_alter_edge": {"type": "boolean", "const": false},
+        "can_increase_sizing": {"type": "boolean", "const": false},
+        "can_authorize_execution": {"type": "boolean", "const": false}
       }
     }
   }

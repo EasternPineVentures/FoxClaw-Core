@@ -1,0 +1,17 @@
+{
+  "contract_version": "1.0.0",
+  "schema_version": "verified_outcome.v1",
+  "verified_outcome_id": "outcome_btc_good_signal_bad_trade_001",
+  "public_intelligence_id": "pubintel_btc_good_signal_bad_trade_001",
+  "receipt_id": "fc_pub_btc_good_signal_bad_trade_001",
+  "outcome_status": "open",
+  "resolved_at": "2026-06-19T18:00:00Z",
+  "claim_result": "unknown",
+  "decision_quality": "pending_resolution",
+  "postmortem_summary": "Open fixture; no outcome has been claimed.",
+  "status": {
+    "authority": "paper_only",
+    "live_execution_allowed": false,
+    "not_individualized_advice": true
+  }
+}

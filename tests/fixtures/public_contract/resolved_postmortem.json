@@ -1,0 +1,17 @@
+{
+  "contract_version": "1.0.0",
+  "schema_version": "verified_outcome.v1",
+  "verified_outcome_id": "outcome_event_structured_001",
+  "public_intelligence_id": "pubintel_event_structured_001",
+  "receipt_id": "fc_pub_event_structured_001",
+  "outcome_status": "resolved",
+  "resolved_at": "2026-06-19T18:00:00Z",
+  "claim_result": "mixed",
+  "decision_quality": "paper_plan_helped_limit_risk",
+  "postmortem_summary": "The public thesis partially played out, but the paper plan mattered more than the signal.",
+  "status": {
+    "authority": "paper_only",
+    "live_execution_allowed": false,
+    "not_individualized_advice": true
+  }
+}
