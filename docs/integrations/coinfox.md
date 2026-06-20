@@ -1,6 +1,6 @@
 # CoinFox Integration
 
-Status: EXISTING PRODUCT BONES; FOXCLAW CONTRACT SCAFFOLD.
+Status: EXISTING PRODUCT BONES; FOXCLAW CONTRACT + MICROSCOPE STAGING SCAFFOLD.
 Owner repo: EasternPineVentures/CoinFox.
 Upstream owner: EasternPineVentures/foxclaw-core.
 Resume location: this file.
@@ -43,6 +43,8 @@ conversation, and topic discovery. CoinFox owns that feel.
 - public-safe identifiers;
 - fixture data for CoinFox development;
 - deterministic reference exports under `runtime_exports/coinfox/`;
+- private Microscope previews for accepted-candidate review;
+- dry-run-first local staging scaffolds for future public cards;
 - explicit boundaries for attention, evidence, readiness, and publication.
 
 ## CoinFox Must Eventually Build
@@ -143,6 +145,60 @@ not_individualized_advice = true
 
 CoinFox should use these files as its first integration target before wiring a
 live FoxClaw client.
+
+## Microscope V0 Bridge
+
+Microscope V0 is now integrated in FoxClaw Core as a private assessment and safe
+staging bridge. It is not a CoinFox API client, not a webhook, and not a live
+publisher.
+
+Private operator selection:
+
+```text
+python tools/microscope.py --list-recent --limit 10 --db "$env:FOXCLAW_DB"
+```
+
+Private proof preview:
+
+```text
+python tools/microscope.py --candidate-id <accepted_candidate_id> --db "$env:FOXCLAW_DB" --private-preview
+```
+
+The preview must visibly say:
+
+```text
+PRIVATE PREVIEW
+NOT PUBLISHED
+PAPER-ONLY
+PUBLICATION CLASS
+CONTRACT VERSION
+```
+
+The preview must not expose raw Discord text, source IDs, candidate lineage,
+receipt IDs, evidence hashes, Discord links, or invented probabilities.
+
+Future local staging, after explicit approval only:
+
+```text
+python tools/microscope_batch.py --dry-run --db "$env:FOXCLAW_DB"
+python tools/microscope_batch.py --write-staging --db "$env:FOXCLAW_DB" --run-id <reviewed_run_id>
+```
+
+The write path is local-only and produces:
+
+```text
+runtime_exports/coinfox/staging/<run_id>/manifest.json
+runtime_exports/coinfox/staging/<run_id>/cards.jsonl
+runtime_exports/coinfox/staging/<run_id>/failures.jsonl
+```
+
+Only publication-approved public cards can reach `cards.jsonl`. Each card must
+validate against `public_intelligence_card.schema.json` and the semantic
+publication/privacy checks. Exact duplicate public IDs are suppressed; conflicting
+duplicate IDs produce zero cards for that ID and a sanitized retriable failure.
+
+Do not run a live `--write-staging` batch until A2's legacy Discord parser
+inventory and the publication-promotion gate are reviewed.
 
 ## Attention Events CoinFox May Aggregate Later
 

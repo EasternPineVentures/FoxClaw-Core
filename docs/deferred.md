@@ -175,6 +175,20 @@ Tactical, Speculative, Redline, or Reject and may not be beginner-safe.
 **Resume from:** `docs/trading_intelligence_fabric.md`,
 `docs/integrations/coinfox.md`, and `foxclaw/contract/public/README.md`.
 
+## P18 - Live Microscope staging batch promotion gate
+**What:** Microscope V0 can privately preview live accepted candidates and can stage
+publication-approved public cards locally, but A1 has not run a public `--write-staging`
+batch against the live Grove DB.
+**Why deferred:** live staging is the first operational bridge from private accepted
+candidates toward CoinFox artifacts. It should wait for A2's read-only legacy Discord parser
+inventory and an explicit publication-promotion review, not ride along with the private
+preview proof.
+**Trigger:** after the legacy parser inventory is reviewed, start with
+`tools\microscope_batch.py --dry-run --db "$env:FOXCLAW_DB"`, verify no private lineage in
+the summary, then explicitly approve or reject the first `--write-staging` live run.
+**Boundary:** no CoinFox API/DB/webhook, no parser change, no execution authority, and no
+raw Discord or private lineage in `cards.jsonl`, `manifest.json`, or `failures.jsonl`.
+
 ---
 
 ## Process note — layering, so things don't step on each other

@@ -9,6 +9,31 @@ preserved as the `v1-legacy` archive. Milestone map: `0.x` builds toward launch,
 bump per completed overhaul phase; **`1.0.0`** is earned at Apollo-2 cutover when v2 runs the
 live track record and is demo-ready.
 
+## [0.4.16] - 2026-06-19
+### Added
+- **Microscope V0.** Added a private, read-only assessment path for accepted candidates:
+  `tools/microscope.py --list-recent` and `--private-preview`.
+- Added safe local CoinFox staging scaffolding through `tools/microscope_batch.py`, with
+  dry-run as the default, atomic artifact writes, sanitized failure records, and cursor
+  advancement only after durable output.
+- Added schema-backed Public Contract 1.0.0 validation for public intelligence cards before
+  staging, with exact duplicate suppression and conflicting duplicate IDs failing closed.
+### Security
+- SQLite candidate and outcome reads use `mode=ro` plus `PRAGMA query_only`; the Microscope
+  path does not call `AcceptedCandidateStore` or any `init_db` write-capable store path.
+- Private previews default to `INTERNAL_ONLY`, `published=false`, `live_ready=false`, and
+  `paper_ready=false` unless the existing readiness chain proves otherwise.
+- Private preview output hides raw Discord text, source IDs, candidate lineage, receipt IDs,
+  evidence hashes, and private identifiers.
+- No parser, CoinFox API/DB/webhook, execution, release-metadata, or live-staging batch
+  change is included.
+### Verification
+- `python -m pytest -q -rs` -> 320 passed.
+- `python tools\check_invariants.py` -> green.
+- `git diff --check` -> green.
+- Private preview proof against local `$FOXCLAW_DB` showed the required private labels, no
+  forbidden private fragments, and an unchanged Grove DB fingerprint.
+
 ## [0.4.15] - 2026-06-19
 ### Added
 - **FoxClaw foundation sprint.** Added internal intelligence contract v1 schemas and

@@ -5,7 +5,7 @@ Read it before changing code, then verify with `git log --oneline -10` and the t
 
 Last updated: 2026-06-19
 Branch: `master`
-Version: `0.4.15`
+Version: `0.4.16`
 Working repo: `C:\Users\brend\dev\foxclaw-core`
 
 ## Current Lane
@@ -13,6 +13,8 @@ Working repo: `C:\Users\brend\dev\foxclaw-core`
 FoxClaw Gym / June 28 demo readiness is the active lane.
 Trading Intelligence Fabric Phase 0 / public contract foundations remains the current
 architecture lane.
+Microscope V0 is now integrated as the private accepted-candidate assessment and safe
+local CoinFox staging bridge.
 Forecast Desk / Kalshi-first event-contract intelligence remains the current implemented
 intelligence lane.
 
@@ -233,6 +235,19 @@ Done in this pass:
   outcomes, and deterministic CoinFox exporters:
   `tools/export_public_intelligence.py`, `tools/export_public_scorecard.py`, and
   `tools/render_public_intelligence_card.py`.
+- Microscope V0 integrated.
+- `tools/microscope.py --list-recent` lists sanitized accepted-candidate metadata for
+  operator selection.
+- `tools/microscope.py --private-preview` emits a private, paper-only assessment with
+  required `PRIVATE PREVIEW`, `NOT PUBLISHED`, `PAPER-ONLY`, publication class, and contract
+  version labels.
+- `tools/microscope_batch.py` provides dry-run-first local staging for future CoinFox
+  handoff artifacts under `runtime_exports/coinfox/staging/`.
+- Microscope SQLite reads use `mode=ro` plus `PRAGMA query_only`; no accepted-candidate
+  write store, parser, CoinFox API/DB/webhook, or execution path was added.
+- Public staging cards must pass Public Contract 1.0.0 schema validation and semantic
+  publication checks; exact duplicate IDs are suppressed and conflicting duplicate IDs fail
+  closed with sanitized failures.
 
 ## Hard Rails
 
@@ -567,6 +582,25 @@ python -m pytest -q -> 222 passed
 git diff --check -> no whitespace errors; CRLF normalization warning only on docs\decisions.md
 ```
 
+Microscope V0 integration checkpoint:
+
+```text
+git log --oneline 315c9c1..HEAD
+-> 41b793b Harden staged export contract validation and deduplication
+-> 3e4702e Add safe staged CoinFox export
+-> d235fc7 Harden Microscope private preview output
+-> 557df13 Add read-only Microscope assessment pipeline
+
+python -m pytest -q -rs -> 320 passed
+python tools\check_invariants.py -> green
+git diff --check -> green
+python tools\microscope.py --help -> private/list-recent CLI available
+python tools\microscope_batch.py --help -> dry-run/write-staging CLI available
+
+private preview proof against local $FOXCLAW_DB:
+required labels present, no forbidden private fragments, Grove DB length/timestamp/SHA-256 unchanged
+```
+
 FoxClaw first-encounter / gym focused result:
 
 ```text
@@ -594,7 +628,13 @@ Next safe work:
 - Current FoxClaw foundation stop line: do not keep expanding FoxClaw indefinitely before
   CoinFox. After A2's Discord parser inventory is reviewed, either finish the parser parity
   slice or explicitly mark it deferred, then move to the CoinFox repo.
-- Have A2 pull `0.4.15`, run the focused learning and public-contract tests, and send a `pulse` through the
+- Do not run `tools\microscope_batch.py --write-staging` against the live Grove DB until the
+  legacy Discord parser inventory and publication-promotion gate are reviewed.
+- A2's current isolated lane is the read-only legacy Discord parser inventory: active
+  listener, parser entrypoints, credential classes, DB/file writes, providers/models,
+  deduplication, watchdogs, obsolete-vs-active classification, and sanitized fixture
+  recommendations.
+- Have A2 pull `0.4.16`, run the focused learning, public-contract, and Microscope tests, and send a `pulse` through the
   private Apollo exchange folder.
 - Add a private trusted-roster/auth boundary if this intake becomes multi-user instead of
   operator-run.
