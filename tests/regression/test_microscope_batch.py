@@ -4,12 +4,14 @@ import json
 import sqlite3
 import subprocess
 import sys
+from copy import deepcopy
 from pathlib import Path
 
 import pytest
 
 REPO = Path(__file__).resolve().parents[2]
 BATCH_TOOL = REPO / "tools" / "microscope_batch.py"
+PUBLIC_FIXTURE_DIR = REPO / "tests" / "fixtures" / "public_contract"
 
 
 def _create_db(path: Path) -> None:
@@ -110,6 +112,10 @@ def _fixture_db(tmp_path: Path) -> Path:
         },
     )
     return db
+
+
+def _public_card(name: str = "watch.json") -> dict[str, object]:
+    return json.loads((PUBLIC_FIXTURE_DIR / name).read_text(encoding="utf-8"))
 
 
 def _run_batch(db: Path, output_root: Path, cursor: Path, *extra: str) -> subprocess.CompletedProcess[str]:
@@ -243,3 +249,129 @@ def test_public_card_validation_runs_after_publication_approval(monkeypatch: pyt
 
     with pytest.raises(staging.PublicCardStagingError, match="public card failed validation"):
         staging.public_card_for_staging(assessment)
+
+
+def test_schema_incomplete_approved_card_cannot_reach_staging() -> None:
+    from foxclaw.intelligence import staging
+
+    card = _public_card()
+    del card["claim"]["why_it_matters_now"]
+    assessment = {
+        "assessment_id": "microscope_public_fixture",
+        "assessment_version": "microscope_assessment.v0.1",
+        "contract": {"version": "1.0.0"},
+        "publication": {"allowed": True, "publication_class": "DERIVATIVE_PUBLIC_SAFE"},
+        "public_card": card,
+    }
+
+    with pytest.raises(
+        staging.PublicCardStagingError,
+        match=r"public card failed validation: \$\.claim\.why_it_matters_now: required",
+    ):
+        staging.public_card_for_staging(assessment)
+
+
+def test_staging_suppresses_exact_duplicate_public_ids(tmp_path: Path) -> None:
+    from foxclaw.intelligence.staging import write_staging_artifacts
+
+    card = _public_card()
+    output_root = tmp_path / "runtime_exports" / "coinfox" / "staging"
+
+    write_staging_artifacts(
+        output_root=output_root,
+        run_id="duplicates",
+        cards=[card, deepcopy(card), deepcopy(card)],
+        failures=[],
+        counts={"selected": 3, "assessed": 3, "cards": 3, "failures": 0},
+        generated_at="2026-06-19T18:00:00+00:00",
+    )
+
+    run_dir = output_root / "duplicates"
+    card_lines = (run_dir / "cards.jsonl").read_text(encoding="utf-8").splitlines()
+    assert len(card_lines) == 1
+    assert json.loads(card_lines[0])["public_intelligence_id"] == card["public_intelligence_id"]
+
+    manifest = json.loads((run_dir / "manifest.json").read_text(encoding="utf-8"))
+    assert manifest["counts"]["cards"] == 1
+    assert manifest["counts"]["duplicates_suppressed"] == 2
+    assert manifest["counts"]["duplicate_conflicts"] == 0
+
+
+def test_staging_conflicting_duplicate_ids_fail_closed_and_stay_sanitized(tmp_path: Path) -> None:
+    from foxclaw.intelligence.staging import write_staging_artifacts
+
+    first = _public_card("watch.json")
+    conflicting = deepcopy(first)
+    conflicting["claim"]["summary"] = "A different public-safe summary."
+    unrelated = _public_card("structured.json")
+    output_root = tmp_path / "runtime_exports" / "coinfox" / "staging"
+
+    write_staging_artifacts(
+        output_root=output_root,
+        run_id="conflicts",
+        cards=[conflicting, unrelated, first],
+        failures=[],
+        counts={"selected": 3, "assessed": 3, "cards": 3, "failures": 0},
+        generated_at="2026-06-19T18:00:00+00:00",
+    )
+
+    run_dir = output_root / "conflicts"
+    staged_cards = [
+        json.loads(line)
+        for line in (run_dir / "cards.jsonl").read_text(encoding="utf-8").splitlines()
+    ]
+    assert [card["public_intelligence_id"] for card in staged_cards] == [
+        unrelated["public_intelligence_id"]
+    ]
+
+    failure_lines = (run_dir / "failures.jsonl").read_text(encoding="utf-8").splitlines()
+    assert len(failure_lines) == 1
+    failure = json.loads(failure_lines[0])
+    assert failure["error_code"] == "duplicate_id_conflict"
+    assert failure["public_intelligence_id"] == first["public_intelligence_id"]
+
+    manifest = json.loads((run_dir / "manifest.json").read_text(encoding="utf-8"))
+    assert manifest["counts"]["cards"] == 1
+    assert manifest["counts"]["failures"] == 1
+    assert manifest["counts"]["duplicate_conflicts"] == 1
+    assert manifest["counts"]["duplicates_suppressed"] == 0
+
+    combined = (run_dir / "manifest.json").read_text(encoding="utf-8") + (
+        run_dir / "failures.jsonl"
+    ).read_text(encoding="utf-8")
+    forbidden = (
+        "private_source_alpha",
+        "candidate_uid_private",
+        "receipt_private",
+        "source_id",
+        "candidate_id",
+        "event_id",
+        "attempt_id",
+        "evidence_hash",
+    )
+    for fragment in forbidden:
+        assert fragment not in combined
+
+
+def test_staging_duplicate_ordering_is_deterministic(tmp_path: Path) -> None:
+    from foxclaw.intelligence.staging import write_staging_artifacts
+
+    cards = [_public_card("structured.json"), _public_card("watch.json")]
+    output_root = tmp_path / "runtime_exports" / "coinfox" / "staging"
+
+    write_staging_artifacts(
+        output_root=output_root,
+        run_id="ordering",
+        cards=[cards[0], cards[1], deepcopy(cards[0])],
+        failures=[],
+        counts={"selected": 3, "assessed": 3, "cards": 3, "failures": 0},
+        generated_at="2026-06-19T18:00:00+00:00",
+    )
+
+    staged_ids = [
+        json.loads(line)["public_intelligence_id"]
+        for line in (output_root / "ordering" / "cards.jsonl")
+        .read_text(encoding="utf-8")
+        .splitlines()
+    ]
+    assert staged_ids == sorted({card["public_intelligence_id"] for card in cards})

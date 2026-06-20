@@ -1,6 +1,7 @@
 """Safe local staging for Microscope public-contract handoff files."""
 from __future__ import annotations
 
+from dataclasses import dataclass
 from datetime import UTC, datetime
 import hashlib
 import json
@@ -39,6 +40,14 @@ _RUN_ID_RE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9_.-]{0,95}$")
 
 class PublicCardStagingError(RuntimeError):
     """Raised when an approved assessment cannot produce a valid public card."""
+
+
+@dataclass(frozen=True)
+class _PreparedStagingRows:
+    cards: list[dict[str, Any]]
+    failures: list[dict[str, Any]]
+    duplicates_suppressed: int
+    duplicate_conflicts: int
 
 
 def staged_card_id(assessment: Mapping[str, Any]) -> str:
@@ -120,18 +129,20 @@ def run_microscope_batch(
         "cards": len(cards),
         "failures": len(failures),
     }
+    prepared = _prepare_staging_rows(cards, failures, generated_at=generated)
+    manifest_counts = _manifest_counts(counts, prepared)
 
     cursor_updated = False
     if write_staging:
-        write_staging_artifacts(
+        _write_prepared_staging_artifacts(
             output_root=output_root,
             run_id=safe_run_id,
-            cards=cards,
-            failures=failures,
-            counts=counts,
+            cards=prepared.cards,
+            failures=prepared.failures,
+            counts=manifest_counts,
             generated_at=generated,
         )
-        if selected and not failures:
+        if selected and not prepared.failures:
             _write_cursor(
                 cursor_path,
                 {
@@ -150,7 +161,7 @@ def run_microscope_batch(
         "write_staging": write_staging,
         "cursor_updated": cursor_updated,
         "contract_version": _contract_version({}),
-        "counts": counts,
+        "counts": manifest_counts,
         "status": _status(),
         "artifacts": _artifact_names() if write_staging else [],
     }
@@ -166,6 +177,27 @@ def write_staging_artifacts(
     generated_at: str,
 ) -> dict[str, Path]:
     """Write staging artifacts with atomic file replacement."""
+    prepared = _prepare_staging_rows(cards, failures, generated_at=generated_at)
+    manifest_counts = _manifest_counts(counts, prepared)
+    return _write_prepared_staging_artifacts(
+        output_root=output_root,
+        run_id=run_id,
+        cards=prepared.cards,
+        failures=prepared.failures,
+        counts=manifest_counts,
+        generated_at=generated_at,
+    )
+
+
+def _write_prepared_staging_artifacts(
+    *,
+    output_root: str | Path,
+    run_id: str,
+    cards: Iterable[Mapping[str, Any]],
+    failures: Iterable[Mapping[str, Any]],
+    counts: Mapping[str, int],
+    generated_at: str,
+) -> dict[str, Path]:
     safe_run_id = _safe_run_id(run_id)
     run_dir = Path(output_root) / safe_run_id
     run_dir.mkdir(parents=True, exist_ok=True)
@@ -202,6 +234,75 @@ def read_cursor(path: str | Path) -> int:
     return int(payload.get("last_candidate_id") or 0)
 
 
+def _prepare_staging_rows(
+    cards: Iterable[Mapping[str, Any]],
+    failures: Iterable[Mapping[str, Any]],
+    *,
+    generated_at: str,
+) -> _PreparedStagingRows:
+    existing_failures = [dict(failure) for failure in failures]
+    grouped: dict[str, dict[str, Any]] = {}
+    duplicate_conflict_ids: set[str] = set()
+    duplicates_suppressed = 0
+
+    for card in cards:
+        staged = dict(card)
+        try:
+            validate_public_card(staged)
+        except ValueError as exc:
+            existing_failures.append(
+                _public_card_validation_failure(exc, generated_at=generated_at)
+            )
+            continue
+
+        public_id = str(staged["public_intelligence_id"])
+        canonical = _canonical_json(staged)
+        current = grouped.get(public_id)
+        if current is None:
+            grouped[public_id] = {"canonical": canonical, "card": staged, "count": 1}
+            continue
+        current["count"] += 1
+        if current["canonical"] == canonical:
+            duplicates_suppressed += 1
+        else:
+            duplicate_conflict_ids.add(public_id)
+
+    final_cards: list[dict[str, Any]] = []
+    duplicate_failures: list[dict[str, Any]] = []
+    for public_id, record in sorted(grouped.items()):
+        if public_id in duplicate_conflict_ids:
+            duplicate_failures.append(
+                _duplicate_id_conflict_failure(public_id, generated_at=generated_at)
+            )
+        else:
+            final_cards.append(dict(record["card"]))
+
+    return _PreparedStagingRows(
+        cards=final_cards,
+        failures=sorted(
+            [*existing_failures, *duplicate_failures],
+            key=lambda failure: str(failure.get("failure_id") or ""),
+        ),
+        duplicates_suppressed=duplicates_suppressed,
+        duplicate_conflicts=len(duplicate_conflict_ids),
+    )
+
+
+def _manifest_counts(
+    counts: Mapping[str, int], prepared: _PreparedStagingRows
+) -> dict[str, int]:
+    return {
+        "selected": int(counts.get("selected", 0)),
+        "assessed": int(counts.get("assessed", 0)),
+        "cards": len(prepared.cards),
+        "failures": len(prepared.failures),
+        "duplicates_suppressed": int(counts.get("duplicates_suppressed", 0))
+        + prepared.duplicates_suppressed,
+        "duplicate_conflicts": int(counts.get("duplicate_conflicts", 0))
+        + prepared.duplicate_conflicts,
+    }
+
+
 def _manifest(
     *,
     run_id: str,
@@ -235,6 +336,8 @@ def _manifest(
             "assessed": int(counts.get("assessed", 0)),
             "cards": int(counts.get("cards", 0)),
             "failures": int(counts.get("failures", 0)),
+            "duplicates_suppressed": int(counts.get("duplicates_suppressed", 0)),
+            "duplicate_conflicts": int(counts.get("duplicate_conflicts", 0)),
         },
         "status": _status(),
     }
@@ -261,6 +364,36 @@ def _failure_record(candidate_id: int, exc: BaseException, *, generated_at: str)
         "failure_id": "microscope_failure_" + digest[:24],
         "error_code": error_code,
         "message": _safe_failure_message(exc),
+        "retriable": True,
+        "occurred_at": generated_at,
+    }
+
+
+def _public_card_validation_failure(exc: ValueError, *, generated_at: str) -> dict[str, Any]:
+    message = str(exc)
+    digest = hashlib.sha256(
+        f"foxclaw.microscope.public_card_validation\n{message}".encode("utf-8")
+    ).hexdigest()
+    return {
+        "schema_version": "microscope_failure.v0",
+        "failure_id": "microscope_failure_" + digest[:24],
+        "error_code": "public_card_validation_error",
+        "message": "public card failed validation: " + message,
+        "retriable": True,
+        "occurred_at": generated_at,
+    }
+
+
+def _duplicate_id_conflict_failure(public_intelligence_id: str, *, generated_at: str) -> dict[str, Any]:
+    digest = hashlib.sha256(
+        f"foxclaw.microscope.duplicate_public_id\n{public_intelligence_id}".encode("utf-8")
+    ).hexdigest()
+    return {
+        "schema_version": "microscope_failure.v0",
+        "failure_id": "microscope_failure_" + digest[:24],
+        "error_code": "duplicate_id_conflict",
+        "message": "duplicate public_intelligence_id has conflicting payloads",
+        "public_intelligence_id": public_intelligence_id,
         "retriable": True,
         "occurred_at": generated_at,
     }

@@ -2,7 +2,10 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
+from copy import deepcopy
 from typing import Any
+
+import pytest
 
 from foxclaw.contract.public import (
     PUBLIC_CONTRACT_DIR,
@@ -11,6 +14,7 @@ from foxclaw.contract.public import (
     manifest,
     schema_path,
 )
+from foxclaw.contract.public.export import validate_public_card
 
 REPO = Path(__file__).resolve().parents[2]
 FIXTURE_DIR = REPO / "tests" / "fixtures" / "public_contract"
@@ -49,6 +53,28 @@ FORBIDDEN_TRUE_FLAGS = {
 
 def _load(path: Path) -> Any:
     return json.loads(path.read_text(encoding="utf-8"))
+
+
+def _public_card_fixtures() -> list[dict[str, Any]]:
+    names = ("public_intelligence_card.valid.json", *CARD_SCENARIO_FIXTURES)
+    return [_load(FIXTURE_DIR / name) for name in names]
+
+
+def _delete_path(value: dict[str, Any], path: tuple[str, ...]) -> dict[str, Any]:
+    clone = deepcopy(value)
+    target: dict[str, Any] = clone
+    for key in path[:-1]:
+        target = target[key]
+    del target[path[-1]]
+    return clone
+
+
+def _required_paths(schema: dict[str, Any], prefix: tuple[str, ...] = ()) -> list[tuple[str, ...]]:
+    paths = [(*prefix, key) for key in schema.get("required", [])]
+    for key, child in schema.get("properties", {}).items():
+        if child.get("type") == "object":
+            paths.extend(_required_paths(child, (*prefix, key)))
+    return paths
 
 
 def _assert_type(value: Any, expected: str, path: str) -> None:
@@ -148,6 +174,85 @@ def test_public_card_scenario_fixtures_match_v1_card_schema():
         assert fixture["mode"] == "informational_paper"
         assert fixture["contains_private_source_content"] is False
         assert fixture["public_explanation"]["not_individualized_advice"] is True
+
+
+def test_validate_public_card_accepts_every_v1_public_card_fixture():
+    for fixture in _public_card_fixtures():
+        validate_public_card(fixture)
+
+
+def test_validate_public_card_rejects_each_required_top_level_field_when_missing():
+    schema = _load(schema_path("public_intelligence_card.schema.json"))
+    card = _load(FIXTURE_DIR / "public_intelligence_card.valid.json")
+
+    for key in schema["required"]:
+        with pytest.raises(ValueError, match=rf"^\$\.{key}: required$"):
+            validate_public_card(_delete_path(card, (key,)))
+
+
+def test_validate_public_card_rejects_required_nested_fields_when_missing():
+    schema = _load(schema_path("public_intelligence_card.schema.json"))
+    card = _load(FIXTURE_DIR / "public_intelligence_card.valid.json")
+    nested_required = [path for path in _required_paths(schema) if len(path) > 1]
+
+    assert nested_required
+    for path in nested_required:
+        dotted = r"\.".join(path)
+        with pytest.raises(ValueError, match=rf"^\$\.{dotted}: required$"):
+            validate_public_card(_delete_path(card, path))
+
+
+def test_validate_public_card_rejects_wrong_types_and_bool_is_not_integer():
+    card = _load(FIXTURE_DIR / "public_intelligence_card.valid.json")
+    wrong_string = deepcopy(card)
+    wrong_string["claim"]["summary"] = 123
+    with pytest.raises(ValueError, match=r"^\$\.claim\.summary: type string$"):
+        validate_public_card(wrong_string)
+
+    wrong_integer = deepcopy(card)
+    wrong_integer["snapshot_version"] = True
+    with pytest.raises(ValueError, match=r"^\$\.snapshot_version: type integer$"):
+        validate_public_card(wrong_integer)
+
+
+def test_validate_public_card_rejects_invalid_enums_and_consts():
+    card = _load(FIXTURE_DIR / "public_intelligence_card.valid.json")
+    invalid_enum = deepcopy(card)
+    invalid_enum["publication_class"] = "INTERNAL_ONLY"
+    with pytest.raises(ValueError, match=r"^\$\.publication_class: enum$"):
+        validate_public_card(invalid_enum)
+
+    invalid_const = deepcopy(card)
+    invalid_const["contains_private_source_content"] = True
+    with pytest.raises(ValueError, match=r"^\$\.contains_private_source_content: const$"):
+        validate_public_card(invalid_const)
+
+
+def test_validate_public_card_rejects_extra_properties_where_schema_forbids_them():
+    card = _load(FIXTURE_DIR / "public_intelligence_card.valid.json")
+    top_level_extra = deepcopy(card)
+    top_level_extra["raw_excerpt"] = "must not cross public boundary"
+    with pytest.raises(ValueError, match=r"^\$\.raw_excerpt: additionalProperties$"):
+        validate_public_card(top_level_extra)
+
+    nested_extra = deepcopy(card)
+    nested_extra["claim"]["source_id"] = "private_source_alpha"
+    with pytest.raises(ValueError, match=r"^\$\.claim\.source_id: additionalProperties$"):
+        validate_public_card(nested_extra)
+
+
+def test_validate_public_card_errors_do_not_echo_private_values():
+    card = _load(FIXTURE_DIR / "public_intelligence_card.valid.json")
+    poisoned = deepcopy(card)
+    poisoned["claim"]["summary"] = {"token": "SECRET_PRIVATE_VALUE"}
+
+    with pytest.raises(ValueError) as excinfo:
+        validate_public_card(poisoned)
+
+    message = str(excinfo.value)
+    assert "$.claim.summary: type string" in message
+    assert "SECRET_PRIVATE_VALUE" not in message
+    assert "token" not in message
 
 
 def test_resolved_postmortem_fixture_matches_verified_outcome_schema():
