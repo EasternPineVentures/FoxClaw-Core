@@ -1,0 +1,21 @@
+{
+  "schema_version": "internal.parser_rejection.v1",
+  "parser_rejection_id": "parser_rejection_sanitized_001",
+  "raw_event_id": "raw_sanitized_discord_001",
+  "parse_attempt_id": "parse_rejected_sanitized_001",
+  "reason_code": "malformed_payload",
+  "diagnostic_category": "malformed_payload",
+  "retryable": false,
+  "parser": {
+    "name": "discord_compatibility_parser",
+    "version": "pending_a2_inventory",
+    "mode": "fixture"
+  },
+  "created_at": "2026-06-19T17:00:06Z",
+  "safe_diagnostic": "structured parser output was malformed",
+  "lineage": {
+    "raw_event_id": "raw_sanitized_discord_001",
+    "parse_attempt_id": "parse_rejected_sanitized_001",
+    "content_hash": "sha256:raw-sanitized-discord-001"
+  }
+}

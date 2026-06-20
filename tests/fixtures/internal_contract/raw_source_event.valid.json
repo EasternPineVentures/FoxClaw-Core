@@ -4,6 +4,7 @@
   "source_kind": "discord",
   "observed_at": "2026-06-19T17:00:00Z",
   "captured_at": "2026-06-19T17:00:02Z",
+  "ingested_at": "2026-06-19T17:00:03Z",
   "private_source_ref": {
     "source_ref_id": "private_ref_hash_001",
     "source_ref_type": "discord_message",
@@ -15,6 +16,22 @@
     "content_excerpt": "Sanitized claim says BTC momentum is strong but entry is extended.",
     "content_mime": "text/plain",
     "sanitized": true
+  },
+  "synthetic": true,
+  "deduplication": {
+    "duplicate": false,
+    "duplicate_of_raw_event_id": null,
+    "dedupe_key": "sha256:dedupe-sanitized-discord-001"
+  },
+  "payload_classification": {
+    "data_classification": "sanitized_fixture",
+    "redistribution": "do_not_export",
+    "contains_private_source_content": true
+  },
+  "publicability": {
+    "publication_class": "INTERNAL_ONLY",
+    "public_export_allowed": false,
+    "reason_codes": ["raw_source_default_internal_only"]
   },
   "quarantine": {
     "state": "quarantined",

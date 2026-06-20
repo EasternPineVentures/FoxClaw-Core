@@ -7,8 +7,18 @@
     "version": "pending_a2_inventory",
     "mode": "fixture"
   },
+  "created_at": "2026-06-19T17:00:04Z",
+  "accepted": true,
   "status": "accepted",
   "reason_codes": ["fixture_claim_shape_detected"],
+  "normalized_payload": {
+    "candidate_type": "market_news",
+    "subject": "BTC/USD",
+    "direction_or_outcome": "up",
+    "summary": "Sanitized fixture claim; no private quotation."
+  },
+  "rejection_reason": null,
+  "error_class": null,
   "diagnostics": {
     "confidence": 83,
     "field_warnings": [],

@@ -1,0 +1,63 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://easternpineventures.example/foxclaw/internal/parser_rejection.schema.json",
+  "title": "FoxClaw Internal ParserRejection",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "parser_rejection_id",
+    "raw_event_id",
+    "parse_attempt_id",
+    "reason_code",
+    "diagnostic_category",
+    "retryable",
+    "parser",
+    "created_at",
+    "safe_diagnostic",
+    "lineage"
+  ],
+  "properties": {
+    "schema_version": {"type": "string", "const": "internal.parser_rejection.v1"},
+    "parser_rejection_id": {"type": "string"},
+    "raw_event_id": {"type": "string"},
+    "parse_attempt_id": {"type": "string"},
+    "reason_code": {"type": "string"},
+    "diagnostic_category": {
+      "type": "string",
+      "enum": [
+        "malformed_payload",
+        "provider_timeout",
+        "provider_error",
+        "unsupported_content",
+        "duplicate",
+        "policy_rejected",
+        "security_rejected",
+        "UNKNOWN_PENDING_A2_INVENTORY"
+      ]
+    },
+    "retryable": {"type": "boolean"},
+    "parser": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "version", "mode"],
+      "properties": {
+        "name": {"type": "string"},
+        "version": {"type": "string"},
+        "mode": {"type": "string", "enum": ["live_listener", "offline_replay", "fixture"]}
+      }
+    },
+    "created_at": {"type": "string", "format": "date-time"},
+    "safe_diagnostic": {"type": "string"},
+    "lineage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["raw_event_id", "parse_attempt_id", "content_hash"],
+      "properties": {
+        "raw_event_id": {"type": "string"},
+        "parse_attempt_id": {"type": "string"},
+        "content_hash": {"type": "string"}
+      }
+    }
+  }
+}

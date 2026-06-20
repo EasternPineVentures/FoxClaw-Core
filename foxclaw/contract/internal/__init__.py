@@ -12,6 +12,8 @@ INTERNAL_CONTRACT_DIR = Path(__file__).resolve().parent
 SCHEMA_FILES = (
     "raw_source_event.schema.json",
     "parse_attempt.schema.json",
+    "accepted_candidate.schema.json",
+    "parser_rejection.schema.json",
     "claim_packet.schema.json",
     "evidence_bundle.schema.json",
     "attention_aggregate.schema.json",

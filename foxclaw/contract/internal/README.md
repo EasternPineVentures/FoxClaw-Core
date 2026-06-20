@@ -11,6 +11,7 @@ Flow:
 ```text
 RawSourceEvent
 -> ParseAttempt
+-> AcceptedCandidate
 -> ClaimPacket
 -> EvidenceBundle
 -> AttentionAggregate
@@ -21,6 +22,9 @@ RawSourceEvent
 -> VerifiedOutcome
 ```
 
+Rejected parse attempts stop at `ParserRejection` until replay or operator review
+decides whether they are retryable.
+
 Rules:
 
 - internal objects are not public exports;
@@ -28,4 +32,6 @@ Rules:
 - every transformation preserves lineage;
 - parser replay fixtures must be sanitized before commit;
 - private parser fixtures belong under ignored private fixture folders;
+- Discord parser behavior that is not proven by A2 inventory is marked
+  `UNKNOWN_PENDING_A2_INVENTORY`;
 - no parser publishes directly to CoinFox.

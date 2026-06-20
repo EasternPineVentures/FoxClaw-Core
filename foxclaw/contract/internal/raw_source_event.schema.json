@@ -10,8 +10,13 @@
     "source_kind",
     "observed_at",
     "captured_at",
+    "ingested_at",
     "private_source_ref",
     "content",
+    "synthetic",
+    "deduplication",
+    "payload_classification",
+    "publicability",
     "quarantine",
     "lineage"
   ],
@@ -19,8 +24,9 @@
     "schema_version": {"type": "string", "const": "internal.raw_source_event.v1"},
     "raw_event_id": {"type": "string"},
     "source_kind": {"type": "string", "enum": ["discord", "coinfox", "news", "market", "manual"]},
-    "observed_at": {"type": "string"},
-    "captured_at": {"type": "string"},
+    "observed_at": {"type": "string", "format": "date-time"},
+    "captured_at": {"type": "string", "format": "date-time"},
+    "ingested_at": {"type": "string", "format": "date-time"},
     "private_source_ref": {
       "type": "object",
       "additionalProperties": false,
@@ -44,6 +50,46 @@
         "content_excerpt": {"type": "string"},
         "content_mime": {"type": "string"},
         "sanitized": {"type": "boolean"}
+      }
+    },
+    "synthetic": {"type": "boolean"},
+    "deduplication": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["duplicate", "duplicate_of_raw_event_id", "dedupe_key"],
+      "properties": {
+        "duplicate": {"type": "boolean"},
+        "duplicate_of_raw_event_id": {"type": ["string", "null"]},
+        "dedupe_key": {"type": "string"}
+      }
+    },
+    "payload_classification": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["data_classification", "redistribution", "contains_private_source_content"],
+      "properties": {
+        "data_classification": {
+          "type": "string",
+          "enum": ["private", "public", "sanitized_fixture", "UNKNOWN_PENDING_A2_INVENTORY"]
+        },
+        "redistribution": {
+          "type": "string",
+          "enum": ["do_not_export", "public_contract_only", "UNKNOWN_PENDING_A2_INVENTORY"]
+        },
+        "contains_private_source_content": {"type": "boolean"}
+      }
+    },
+    "publicability": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["publication_class", "public_export_allowed", "reason_codes"],
+      "properties": {
+        "publication_class": {
+          "type": "string",
+          "enum": ["INTERNAL_ONLY", "UNKNOWN_REVIEW", "DERIVATIVE_PUBLIC_SAFE", "PUBLIC_SOURCE"]
+        },
+        "public_export_allowed": {"type": "boolean", "const": false},
+        "reason_codes": {"type": "array", "items": {"type": "string"}}
       }
     },
     "quarantine": {

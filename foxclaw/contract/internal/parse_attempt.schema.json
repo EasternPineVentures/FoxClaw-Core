@@ -9,8 +9,13 @@
     "parse_attempt_id",
     "raw_event_id",
     "parser",
+    "created_at",
+    "accepted",
     "status",
     "reason_codes",
+    "normalized_payload",
+    "rejection_reason",
+    "error_class",
     "diagnostics",
     "lineage"
   ],
@@ -28,8 +33,13 @@
         "mode": {"type": "string", "enum": ["live_listener", "offline_replay", "fixture"]}
       }
     },
+    "created_at": {"type": "string", "format": "date-time"},
+    "accepted": {"type": "boolean"},
     "status": {"type": "string", "enum": ["accepted", "rejected", "needs_review"]},
     "reason_codes": {"type": "array", "items": {"type": "string"}},
+    "normalized_payload": {"type": "object"},
+    "rejection_reason": {"type": ["string", "null"]},
+    "error_class": {"type": ["string", "null"]},
     "diagnostics": {
       "type": "object",
       "additionalProperties": false,

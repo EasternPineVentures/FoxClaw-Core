@@ -1,10 +1,15 @@
 from __future__ import annotations
 
 import json
+import re
+from copy import deepcopy
 from pathlib import Path
 from typing import Any
 
+import pytest
+
 from foxclaw.contract.internal import INTERNAL_CONTRACT_DIR, SCHEMA_FILES, schema_path
+from foxclaw.contract.public.schema_validation import validate_json_schema
 
 REPO = Path(__file__).resolve().parents[2]
 FIXTURE_DIR = REPO / "tests" / "fixtures" / "internal_contract"
@@ -12,6 +17,8 @@ FIXTURE_DIR = REPO / "tests" / "fixtures" / "internal_contract"
 SCHEMA_FIXTURES = {
     "raw_source_event.schema.json": "raw_source_event.valid.json",
     "parse_attempt.schema.json": "parse_attempt.valid.json",
+    "accepted_candidate.schema.json": "accepted_candidate.valid.json",
+    "parser_rejection.schema.json": "parser_rejection.valid.json",
     "claim_packet.schema.json": "claim_packet.valid.json",
     "evidence_bundle.schema.json": "evidence_bundle.valid.json",
     "attention_aggregate.schema.json": "attention_aggregate.valid.json",
@@ -99,13 +106,16 @@ def test_internal_contract_fixtures_match_required_schema_shape():
     for schema_name, fixture_name in SCHEMA_FIXTURES.items():
         schema = _load(schema_path(schema_name))
         fixture = _load(FIXTURE_DIR / fixture_name)
+        validate_json_schema(fixture, schema)
         _assert_required_shape(schema, fixture)
         _walk_internal_values(fixture)
 
 
-def test_internal_fixture_lineage_runs_to_publication_and_outcome():
+def test_internal_fixture_lineage_runs_from_parser_to_publication_and_outcome():
     raw = _load(FIXTURE_DIR / "raw_source_event.valid.json")
     parse = _load(FIXTURE_DIR / "parse_attempt.valid.json")
+    candidate = _load(FIXTURE_DIR / "accepted_candidate.valid.json")
+    rejection = _load(FIXTURE_DIR / "parser_rejection.valid.json")
     claim = _load(FIXTURE_DIR / "claim_packet.valid.json")
     evidence = _load(FIXTURE_DIR / "evidence_bundle.valid.json")
     tradeability = _load(FIXTURE_DIR / "tradeability_snapshot.valid.json")
@@ -114,6 +124,12 @@ def test_internal_fixture_lineage_runs_to_publication_and_outcome():
     outcome = _load(FIXTURE_DIR / "verified_outcome.valid.json")
 
     assert parse["raw_event_id"] == raw["raw_event_id"]
+    assert parse["lineage"]["raw_event_id"] == raw["raw_event_id"]
+    assert candidate["raw_event_id"] == raw["raw_event_id"]
+    assert candidate["parse_attempt_id"] == parse["parse_attempt_id"]
+    assert candidate["lineage"]["content_hash"] == raw["content"]["content_hash"]
+    assert rejection["raw_event_id"] == raw["raw_event_id"]
+    assert rejection["lineage"]["content_hash"] == raw["content"]["content_hash"]
     assert claim["parse_attempt_id"] == parse["parse_attempt_id"]
     assert claim["claim_packet_id"] in evidence["claim_packet_ids"]
     assert tradeability["evidence_bundle_id"] == evidence["evidence_bundle_id"]
@@ -123,6 +139,78 @@ def test_internal_fixture_lineage_runs_to_publication_and_outcome():
     assert publication["publication_class"] == "DERIVATIVE_PUBLIC_SAFE"
 
 
+def test_parser_contract_defaults_private_and_internal_only():
+    raw = _load(FIXTURE_DIR / "raw_source_event.valid.json")
+    parse = _load(FIXTURE_DIR / "parse_attempt.valid.json")
+
+    assert raw["payload_classification"]["contains_private_source_content"] is True
+    assert raw["payload_classification"]["redistribution"] == "do_not_export"
+    assert raw["publicability"]["publication_class"] == "INTERNAL_ONLY"
+    assert raw["publicability"]["public_export_allowed"] is False
+    assert raw["synthetic"] is True
+    assert parse["accepted"] is True
+    assert parse["status"] == "accepted"
+
+
+def test_parser_rejection_fixture_covers_malformed_payload_contract():
+    rejection = _load(FIXTURE_DIR / "parser_rejection.valid.json")
+
+    assert rejection["reason_code"] == "malformed_payload"
+    assert rejection["diagnostic_category"] == "malformed_payload"
+    assert rejection["retryable"] is False
+    assert "raw" not in rejection["safe_diagnostic"].lower()
+
+
+def test_internal_schema_validation_rejects_bool_for_numeric_fields():
+    parse_schema = _load(schema_path("parse_attempt.schema.json"))
+    parse = _load(FIXTURE_DIR / "parse_attempt.valid.json")
+    parse_bad = deepcopy(parse)
+    parse_bad["diagnostics"]["confidence"] = True
+    with pytest.raises(ValueError, match=r"^\$\.diagnostics\.confidence: type integer$"):
+        validate_json_schema(parse_bad, parse_schema)
+
+    candidate_schema = _load(schema_path("accepted_candidate.schema.json"))
+    candidate = _load(FIXTURE_DIR / "accepted_candidate.valid.json")
+    candidate_bad = deepcopy(candidate)
+    candidate_bad["confidence"] = True
+    with pytest.raises(ValueError, match=r"^\$\.confidence: type number$"):
+        validate_json_schema(candidate_bad, candidate_schema)
+
+
+def test_committed_internal_parser_fixtures_hide_private_discord_and_token_patterns():
+    forbidden = (
+        re.compile(r"discord(?:app)?\.com/channels", re.I),
+        re.compile(r"discord\.gg/", re.I),
+        re.compile(r"\b(?:user|channel|server|guild|message)_id\s*[:=]?\s*\d{5,}", re.I),
+        re.compile(r"<[@#]!?\d{5,}>", re.I),
+        re.compile(r"\b(?:token|secret|api[_-]?key|password)\s*[:=]", re.I),
+        re.compile(r"\b(?:sk-[A-Za-z0-9]{12,}|xox[baprs]-[A-Za-z0-9-]+)\b", re.I),
+        re.compile(r"private_source_alpha", re.I),
+    )
+    for fixture_path in FIXTURE_DIR.glob("*.json"):
+        text = fixture_path.read_text(encoding="utf-8")
+        for pattern in forbidden:
+            assert not pattern.search(text), f"{fixture_path.name} contains {pattern.pattern}"
+
+
+def test_parser_migration_docs_mark_unknowns_and_stop_lines():
+    docs = [
+        REPO / "docs" / "migration" / "discord_parser_port_plan.md",
+        REPO / "docs" / "migration" / "discord_parser_fixture_policy.md",
+        REPO / "docs" / "migration" / "discord_auth_cutover.md",
+        REPO / "docs" / "migration" / "parser_parity_standard.md",
+        REPO / "docs" / "handoffs" / "a1_parser_contract_foundation.md",
+    ]
+    for path in docs:
+        assert path.exists(), f"{path} missing"
+
+    combined = "\n".join(path.read_text(encoding="utf-8") for path in docs)
+    assert "UNKNOWN_PENDING_A2_INVENTORY" in combined
+    assert "No normal user token" in combined
+    assert "Do not set required sample size" in combined
+    assert "No new live Discord listener" in combined
+
+
 def test_internal_contract_readme_and_schemas_name_private_boundaries():
     readme = (INTERNAL_CONTRACT_DIR / "README.md").read_text(encoding="utf-8")
     assert "CoinFox must not consume these objects directly" in readme
@@ -130,6 +218,8 @@ def test_internal_contract_readme_and_schemas_name_private_boundaries():
     assert "private_source_ref" in blob
     assert "provider_metadata" in blob
     assert "quarantine" in blob
+    assert "accepted_candidate.schema.json" in SCHEMA_FILES
+    assert "parser_rejection.schema.json" in SCHEMA_FILES
 
 
 def test_private_parser_fixture_folders_are_ignored():

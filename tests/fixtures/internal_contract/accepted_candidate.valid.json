@@ -1,0 +1,30 @@
+{
+  "schema_version": "internal.accepted_candidate.v1",
+  "accepted_candidate_id": "candidate_sanitized_discord_001",
+  "raw_event_id": "raw_sanitized_discord_001",
+  "parse_attempt_id": "parse_sanitized_discord_001",
+  "source_ref": {
+    "source_ref_id": "private_ref_hash_001",
+    "source_ref_type": "discord_message",
+    "privacy_classification": "sanitized_fixture"
+  },
+  "parser_version": "pending_a2_inventory",
+  "candidate_type": "market_news",
+  "normalized_payload": {
+    "candidate_type": "market_news",
+    "subject": "BTC/USD",
+    "direction_or_outcome": "up",
+    "summary": "Sanitized fixture claim; no private quotation."
+  },
+  "confidence": 0.83,
+  "admission_policy_version": "accepted_candidate_v0",
+  "admission_reason": "fixture_parse_attempt_promoted",
+  "evidence_hash": "sha256:accepted-candidate-sanitized-001",
+  "status": "accepted",
+  "created_at": "2026-06-19T17:00:05Z",
+  "lineage": {
+    "raw_event_id": "raw_sanitized_discord_001",
+    "parse_attempt_id": "parse_sanitized_discord_001",
+    "content_hash": "sha256:raw-sanitized-discord-001"
+  }
+}
