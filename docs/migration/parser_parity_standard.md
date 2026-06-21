@@ -9,15 +9,17 @@ Anchor commit: 85deb62d7e11f3d440c87eed37e7df88379b5996.
 ## Purpose
 
 Parser parity compares v1 legacy parser behavior with the v2 compatibility
-parser. It measures preservation before improvement.
-
-Do not set required sample size or acceptable mismatch rate until A2 supplies
-runtime evidence.
+parser. It measures preservation before improvement. The v1 reference is the
+A2-verified deterministic rule parser:
 
 ```text
-required_sample_size = UNKNOWN_PENDING_A2_INVENTORY
-acceptable_mismatch_rate = UNKNOWN_PENDING_A2_INVENTORY
+live_raw_parser_admission_v13
+src/parsers/signal_parser.py::parse_trade_signal
 ```
+
+The compatibility threshold is strict for every replay case in the approved
+fixture corpus: zero unexplained safety-relevant mismatches. Additional replay
+volume can expand the corpus, but it cannot weaken the acceptance standard.
 
 ## Comparison Record
 
@@ -32,10 +34,12 @@ Each parity record should include:
 - raw event reference;
 - parse attempt reference;
 - accepted or rejected;
+- exact rejection reason when rejected;
 - candidate type;
 - subject or symbol;
 - direction or outcome;
 - entry data;
+- quantity;
 - stop or invalidation;
 - target data;
 - time horizon;
@@ -45,6 +49,10 @@ Each parity record should include:
 - lineage relationships;
 - duplicate disposition;
 - mismatch class.
+
+Canonical numeric comparison is required for entry, quantity, stop, and target
+fields. Formatting differences such as `"65000"`, `65000`, and `65000.0` may
+match only after canonical decimal normalization.
 
 Duplicate disposition values:
 
@@ -90,3 +98,13 @@ UNKNOWN_REVIEW
 
 If evidence is missing, classify it as `UNKNOWN_REVIEW`. Do not silently
 normalize differences away and do not guess v1 behavior.
+
+## Intentional Differences
+
+Every intentional difference must be documented with:
+
+- fixture id or replay case id;
+- old v1 behavior;
+- new v2 behavior;
+- safety classification;
+- operator approval status.

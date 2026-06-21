@@ -8,7 +8,7 @@
   "retryable": false,
   "parser": {
     "name": "discord_compatibility_parser",
-    "version": "pending_a2_inventory",
+    "version": "live_raw_parser_admission_v13",
     "mode": "fixture"
   },
   "created_at": "2026-06-19T17:00:06Z",

@@ -26,33 +26,40 @@ internal.parser_rejection.v1
 
 ## Unknowns Awaiting A2
 
-```text
-UNKNOWN_PENDING_A2_INVENTORY
-```
+Resolved by A2 runtime inventory:
 
-This marker is intentional for:
+- live listener: `trading/app/user_ingest.py`;
+- credential: `NORMAL_USER_TOKEN` via `USER_TOKEN`, classified
+  `REPLACE_URGENT` / `DO_NOT_PORT` / `DO_NOT_EXPAND`;
+- parser wrapper: `tools/raw_parser.py`;
+- parser implementation:
+  `src/parsers/signal_parser.py::parse_trade_signal`;
+- parser version: `live_raw_parser_admission_v13`;
+- parser kind: deterministic/rule-based, not LLM-backed;
+- dedup key: normalized content hash plus `source_id`; message id is lineage
+  only;
+- source filtering: watched channels plus watched parent threads;
+- writes: `raw_events` and `parse_attempts`;
+- promotion: `tools/promote_accepted_candidates.py`;
+- downstream: paper-only;
+- explicit rejection reasons must be preserved.
 
-- live listener entrypoint;
-- parser entrypoint;
-- credential type and environment variable;
-- source/channel filter semantics;
-- duplicate key and reconnect behavior;
-- provider/model, timeout, retry, and fallback chain;
-- exact v1 normalized payload semantics;
-- required parity sample size and acceptable mismatch rate.
+Remaining runtime unknowns:
+
+- whether multiple `user_ingest.py` processes are duplicate gateway listeners;
+- exact operator-approved private replay corpus path.
 
 ## A2 Inputs Needed Before Implementation
 
-- legacy runtime inventory;
-- component manifest;
+- operator-approved private replay corpus path;
+- duplicate listener/process interpretation;
 - sanitized parser fixture corpus;
-- parser-version distribution;
 - accepted/rejected distribution;
 - duplicate disposition evidence;
-- provider failure evidence;
 - edited/deleted message evidence where present.
 
 ## Stop Line
 
-A1 should not implement the v2 compatibility parser until A2 evidence is
-reviewed and reconciled.
+A1 may implement the offline v13 compatibility parser after this reconciliation.
+It must not connect Discord, port `USER_TOKEN`, write live DB rows, publish to
+CoinFox, or grant execution authority.

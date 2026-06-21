@@ -8,15 +8,29 @@ Anchor commit: 85deb62d7e11f3d440c87eed37e7df88379b5996.
 
 ## Scope
 
-This plan defines the v2 parser migration boundary. It does not port the
-legacy parser, connect Discord, read private Discord messages, publish to
-CoinFox, or change execution authority.
+This plan defines the v2 parser migration boundary. It does not connect
+Discord, read private Discord messages, publish to CoinFox, or change execution
+authority. A2's read-only runtime inventory now identifies the active parser
+surface that v2 must match offline.
 
-A2 owns the legacy runtime inventory. Any behavior not proven by A2 remains:
+## A2 Verified Runtime Facts
 
-```text
-UNKNOWN_PENDING_A2_INVENTORY
-```
+| Runtime surface | Verified fact |
+| --- | --- |
+| Live listener | `trading/app/user_ingest.py` |
+| Credential | `NORMAL_USER_TOKEN` via `USER_TOKEN` |
+| Credential classification | `REPLACE_URGENT` / `DO_NOT_PORT` / `DO_NOT_EXPAND` |
+| Live parser wrapper | `tools/raw_parser.py` |
+| Parser version | `live_raw_parser_admission_v13` |
+| Parser implementation | `src/parsers/signal_parser.py::parse_trade_signal` |
+| Parser kind | deterministic rule-based parser, not LLM-backed |
+| Source filtering | watched channels plus watched parent threads |
+| Dedup key | normalized content hash plus `source_id`; message id is lineage only |
+| Raw write table | `raw_events` |
+| Parse write table | `parse_attempts` |
+| Promotion tool | `tools/promote_accepted_candidates.py` |
+| Downstream authority | paper-only |
+| Rejection behavior | explicit rejection reasons must be preserved |
 
 ## Target Flow
 
@@ -43,7 +57,9 @@ Discord transport event or replay fixture
 
 RawSourceEvent carries the opaque source event, timestamps, content hash,
 synthetic flag, deduplication metadata, payload classification, private/public
-state, quarantine, and lineage.
+state, quarantine, and lineage. For Discord compatibility, the dedupe key is
+derived from normalized content plus source id; message id stays private
+lineage and must not become the dedupe key.
 
 ParseAttempt carries parser identity, mode, created timestamp, accepted boolean,
 status, reason codes, normalized structured payload, rejection reason, error
@@ -58,18 +74,10 @@ ParserRejection carries rejected event and attempt references, reason code, safe
 diagnostic category, retryability, parser identity, timestamp, safe diagnostic,
 and lineage.
 
-## Unknowns Awaiting A2
+## Remaining Runtime Unknowns
 
-- Live listener entrypoint.
-- Active parser function/class.
-- Discord credential type and environment variable name.
-- Source/channel filter semantics.
-- Duplicate processing key.
-- Provider/model, timeout, retry, and fallback chain.
-- Edited/deleted message behavior.
-- Which parse failures are explicit versus swallowed.
-- Candidate promotion trigger.
-- Exact v1 normalized payload semantics.
+- whether multiple `user_ingest.py` processes are duplicate gateway listeners;
+- exact operator-approved private replay corpus path.
 
 ## Non-Goals
 

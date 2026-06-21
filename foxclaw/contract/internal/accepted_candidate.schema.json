@@ -35,7 +35,7 @@
         "source_ref_type": {"type": "string"},
         "privacy_classification": {
           "type": "string",
-          "enum": ["private", "public", "sanitized_fixture", "UNKNOWN_PENDING_A2_INVENTORY"]
+          "enum": ["private", "public", "sanitized_fixture"]
         }
       }
     },

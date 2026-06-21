@@ -70,11 +70,11 @@
       "properties": {
         "data_classification": {
           "type": "string",
-          "enum": ["private", "public", "sanitized_fixture", "UNKNOWN_PENDING_A2_INVENTORY"]
+          "enum": ["private", "public", "sanitized_fixture"]
         },
         "redistribution": {
           "type": "string",
-          "enum": ["do_not_export", "public_contract_only", "UNKNOWN_PENDING_A2_INVENTORY"]
+          "enum": ["do_not_export", "public_contract_only"]
         },
         "contains_private_source_content": {"type": "boolean"}
       }

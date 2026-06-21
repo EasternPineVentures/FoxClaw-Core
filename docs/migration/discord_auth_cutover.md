@@ -12,10 +12,15 @@ The v2 target is bot-token only.
 
 ```text
 NORMAL_USER_TOKEN = REPLACE_URGENT, DO_NOT_PORT, DO_NOT_EXPAND
+USER_TOKEN = legacy v1 environment variable, DO_NOT_PORT
 ```
 
 No normal user token, self-bot behavior, OAuth user-token scraping, or credential
 workaround may be ported into FoxClaw Core.
+
+A2 verified that the legacy runtime uses `NORMAL_USER_TOKEN` through the
+`USER_TOKEN` environment variable. This is a cutover liability, not a migration
+dependency.
 
 ## Required Cutover Properties
 
@@ -43,7 +48,7 @@ A2 must not report token values or token fragments.
 
 ## Cutover Ladder
 
-1. A2 completes read-only runtime inventory.
+1. A2 completed read-only runtime inventory.
 2. A2 freezes sanitized v1 replay evidence.
 3. A1 implements offline compatibility parser.
 4. Independent security review approves private shadow.
@@ -58,10 +63,7 @@ Rollback means v1 remains or returns as the only live listener. V2 replay and
 shadow tools must be offline-only and must not hold credentials required to
 continue processing captured fixtures.
 
-## Unknowns Awaiting A2
+## Remaining Runtime Unknowns
 
-- current credential type;
-- current environment-variable name;
-- token rotation status;
-- listener restart owner;
-- duplicate listener risk on reconnect.
+- whether multiple `user_ingest.py` processes are duplicate gateway listeners;
+- exact operator-approved private replay corpus path.

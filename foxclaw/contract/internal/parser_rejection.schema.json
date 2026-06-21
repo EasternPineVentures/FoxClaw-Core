@@ -26,14 +26,15 @@
     "diagnostic_category": {
       "type": "string",
       "enum": [
+        "context_only",
+        "missing_required_field",
         "malformed_payload",
-        "provider_timeout",
-        "provider_error",
         "unsupported_content",
+        "unsupported_symbol",
+        "ambiguous_direction",
         "duplicate",
         "policy_rejected",
-        "security_rejected",
-        "UNKNOWN_PENDING_A2_INVENTORY"
+        "security_rejected"
       ]
     },
     "retryable": {"type": "boolean"},

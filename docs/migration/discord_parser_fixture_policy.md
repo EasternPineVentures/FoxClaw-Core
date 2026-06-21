@@ -29,6 +29,9 @@ Rules:
   token fragments;
 - never paste private fixture contents into chat.
 
+Remaining local-only setup item: the exact operator-approved private replay
+corpus path is not committed and must be chosen outside cloud-sync paths.
+
 ### SANITIZED_COMMITTABLE
 
 Committed fixtures must be synthetic or fully redacted.
@@ -52,9 +55,11 @@ Required exclusions:
 - no raw private message body;
 - no internal prompts or hidden model instructions.
 
-## Required Categories Later
+## Required Categories
 
-A2 fixture evidence should eventually cover:
+A2's inventory confirms the active parser is deterministic and rule-based, so
+V0 fixtures focus on observed parser outcomes and admission boundaries rather
+than provider failure modes. Fixture evidence should cover:
 
 ```text
 accepted
@@ -67,19 +72,14 @@ missing_target
 multiple_targets
 edited_message
 deleted_message
-provider_timeout
-provider_invalid_json
-provider_error
 unsupported_symbol
 ambiguous_direction
 prompt_injection_attempt
 ```
 
-If A2 cannot prove a category exists in v1, mark it:
-
-```text
-UNKNOWN_PENDING_A2_INVENTORY
-```
+The initial committed corpus may be synthetic and smaller than the private
+replay corpus, but parity reports must name any missing category explicitly
+instead of implying coverage.
 
 ## Committed Fixture Metadata
 
@@ -97,3 +97,7 @@ artifact must include:
 
 Committed fixtures must pass private-source scanning and schema validation.
 Validation failures should expose field paths, not private values.
+
+Committed fixture summaries may include `source_id` only as a synthetic or
+hashed source reference. Message id lineage may exist in private replay records
+but must not appear in committed fixture bodies or become the dedupe key.

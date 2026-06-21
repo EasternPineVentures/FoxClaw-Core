@@ -193,7 +193,7 @@ def test_committed_internal_parser_fixtures_hide_private_discord_and_token_patte
             assert not pattern.search(text), f"{fixture_path.name} contains {pattern.pattern}"
 
 
-def test_parser_migration_docs_mark_unknowns_and_stop_lines():
+def test_parser_migration_docs_reconcile_a2_runtime_inventory():
     docs = [
         REPO / "docs" / "migration" / "discord_parser_port_plan.md",
         REPO / "docs" / "migration" / "discord_parser_fixture_policy.md",
@@ -205,10 +205,53 @@ def test_parser_migration_docs_mark_unknowns_and_stop_lines():
         assert path.exists(), f"{path} missing"
 
     combined = "\n".join(path.read_text(encoding="utf-8") for path in docs)
-    assert "UNKNOWN_PENDING_A2_INVENTORY" in combined
+    assert "UNKNOWN_PENDING_A2_INVENTORY" not in combined
+    assert "pending_a2_inventory" not in combined
+    assert "trading/app/user_ingest.py" in combined
+    assert "tools/raw_parser.py" in combined
+    assert "src/parsers/signal_parser.py::parse_trade_signal" in combined
+    assert "live_raw_parser_admission_v13" in combined
+    assert "NORMAL_USER_TOKEN" in combined
+    assert "USER_TOKEN" in combined
+    assert "deterministic rule-based" in combined
+    assert "normalized content hash plus `source_id`" in combined
+    assert "watched channels plus watched parent threads" in combined
+    assert "raw_events" in combined
+    assert "parse_attempts" in combined
+    assert "tools/promote_accepted_candidates.py" in combined
+    assert "duplicate gateway listeners" in combined
+    assert "operator-approved private replay corpus path" in combined
     assert "No normal user token" in combined
-    assert "Do not set required sample size" in combined
     assert "No new live Discord listener" in combined
+
+
+def test_parser_contract_fixtures_use_verified_v13_identity():
+    parse = _load(FIXTURE_DIR / "parse_attempt.valid.json")
+    candidate = _load(FIXTURE_DIR / "accepted_candidate.valid.json")
+    rejection = _load(FIXTURE_DIR / "parser_rejection.valid.json")
+
+    assert parse["parser"]["version"] == "live_raw_parser_admission_v13"
+    assert parse["diagnostics"]["provider_metadata"] == {
+        "provider": "rule_based",
+        "model": "none",
+        "prompt_version": "live_raw_parser_admission_v13",
+    }
+    assert candidate["parser_version"] == "live_raw_parser_admission_v13"
+    assert rejection["parser"]["version"] == "live_raw_parser_admission_v13"
+
+
+def test_internal_parser_contracts_do_not_carry_stale_a2_unknown_or_provider_failures():
+    blob = "\n".join(
+        [
+            schema_path("raw_source_event.schema.json").read_text(encoding="utf-8"),
+            schema_path("accepted_candidate.schema.json").read_text(encoding="utf-8"),
+            schema_path("parser_rejection.schema.json").read_text(encoding="utf-8"),
+        ]
+    )
+    assert "UNKNOWN_PENDING_A2_INVENTORY" not in blob
+    assert "pending_a2_inventory" not in blob
+    assert "provider_timeout" not in blob
+    assert "provider_error" not in blob
 
 
 def test_internal_contract_readme_and_schemas_name_private_boundaries():

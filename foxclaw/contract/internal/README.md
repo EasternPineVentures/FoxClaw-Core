@@ -32,6 +32,6 @@ Rules:
 - every transformation preserves lineage;
 - parser replay fixtures must be sanitized before commit;
 - private parser fixtures belong under ignored private fixture folders;
-- Discord parser behavior that is not proven by A2 inventory is marked
-  `UNKNOWN_PENDING_A2_INVENTORY`;
+- A2-verified Discord parser behavior is treated as compatibility input, and
+  unresolved behavior stays `UNKNOWN_REVIEW` until replay evidence exists;
 - no parser publishes directly to CoinFox.

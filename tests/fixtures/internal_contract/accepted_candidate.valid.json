@@ -8,7 +8,7 @@
     "source_ref_type": "discord_message",
     "privacy_classification": "sanitized_fixture"
   },
-  "parser_version": "pending_a2_inventory",
+  "parser_version": "live_raw_parser_admission_v13",
   "candidate_type": "market_news",
   "normalized_payload": {
     "candidate_type": "market_news",
