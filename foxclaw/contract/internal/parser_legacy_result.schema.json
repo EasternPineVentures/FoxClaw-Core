@@ -1,0 +1,133 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://easternpineventures.example/foxclaw/internal/parser_legacy_result.schema.json",
+  "title": "FoxClaw Internal ParserLegacyResult",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "case_id",
+    "foxclaw_core_target_commit",
+    "generated_at",
+    "runtime",
+    "parser",
+    "source",
+    "result",
+    "safety"
+  ],
+  "properties": {
+    "schema_version": {"type": "string", "const": "parser_legacy_result.v1"},
+    "case_id": {"type": "string", "minLength": 1},
+    "foxclaw_core_target_commit": {"type": "string", "pattern": "^[0-9a-f]{7,40}$"},
+    "generated_at": {"type": "string", "format": "date-time"},
+    "runtime": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "machine",
+        "listener_entrypoint",
+        "canonical_listener_pid",
+        "duplicate_listener_state",
+        "raw_events_advancing",
+        "token_or_env_exposed"
+      ],
+      "properties": {
+        "machine": {"type": "string"},
+        "listener_entrypoint": {"type": "string", "const": "trading/app/user_ingest.py"},
+        "canonical_listener_pid": {"type": "integer", "minimum": 1},
+        "duplicate_listener_state": {"type": "string", "enum": ["single_listener_confirmed"]},
+        "raw_events_advancing": {"type": "boolean", "const": true},
+        "token_or_env_exposed": {"type": "boolean", "const": false}
+      }
+    },
+    "parser": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["wrapper", "implementation", "version", "kind"],
+      "properties": {
+        "wrapper": {"type": "string", "const": "tools/raw_parser.py"},
+        "implementation": {
+          "type": "string",
+          "const": "src/parsers/signal_parser.py::parse_trade_signal"
+        },
+        "version": {"type": "string", "const": "live_raw_parser_admission_v13"},
+        "kind": {"type": "string", "const": "deterministic_rule_based"}
+      }
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "source_ref_id",
+        "source_filter_semantics",
+        "content_hash",
+        "dedupe_key",
+        "message_id_is_lineage_only"
+      ],
+      "properties": {
+        "source_ref_id": {"type": "string", "minLength": 1},
+        "source_filter_semantics": {
+          "type": "string",
+          "const": "watched_channels_and_parent_threads"
+        },
+        "content_hash": {"type": "string", "pattern": "^sha256:[0-9a-fA-F-]{8,}$"},
+        "dedupe_key": {"type": "string", "pattern": "^sha256:[0-9a-fA-F-]{8,}$"},
+        "message_ref_hash": {"type": ["string", "null"]},
+        "message_id_is_lineage_only": {"type": "boolean", "const": true}
+      }
+    },
+    "result": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "accepted",
+        "reason_code",
+        "duplicate_disposition",
+        "parser_confidence",
+        "normalized_payload"
+      ],
+      "properties": {
+        "accepted": {"type": "boolean"},
+        "reason_code": {"type": "string", "minLength": 1},
+        "duplicate_disposition": {
+          "type": "string",
+          "enum": ["accepted_once", "rejected_duplicate", "merged_duplicate", "unknown_review"]
+        },
+        "parser_confidence": {"type": "integer", "minimum": 0, "maximum": 100},
+        "normalized_payload": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "candidate_type": {"type": ["string", "null"]},
+            "symbol": {"type": ["string", "null"]},
+            "side": {"type": ["string", "null"]},
+            "entry_price": {"type": ["string", "number", "integer", "null"]},
+            "quantity": {"type": ["string", "number", "integer", "null"]},
+            "stop_loss": {"type": ["string", "number", "integer", "null"]},
+            "take_profit": {"type": ["string", "number", "integer", "null"]}
+          }
+        }
+      }
+    },
+    "safety": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "raw_content_included",
+        "discord_ids_included",
+        "discord_links_included",
+        "token_values_included",
+        "coinfox_touched",
+        "live_execution_touched"
+      ],
+      "properties": {
+        "raw_content_included": {"type": "boolean", "const": false},
+        "discord_ids_included": {"type": "boolean", "const": false},
+        "discord_links_included": {"type": "boolean", "const": false},
+        "token_values_included": {"type": "boolean", "const": false},
+        "coinfox_touched": {"type": "boolean", "const": false},
+        "live_execution_touched": {"type": "boolean", "const": false}
+      }
+    }
+  }
+}

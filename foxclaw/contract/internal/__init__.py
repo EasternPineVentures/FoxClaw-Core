@@ -14,6 +14,8 @@ SCHEMA_FILES = (
     "parse_attempt.schema.json",
     "accepted_candidate.schema.json",
     "parser_rejection.schema.json",
+    "parser_legacy_result.schema.json",
+    "parser_parity_report.schema.json",
     "claim_packet.schema.json",
     "evidence_bundle.schema.json",
     "attention_aggregate.schema.json",

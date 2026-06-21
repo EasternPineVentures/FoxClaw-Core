@@ -19,6 +19,8 @@ SCHEMA_FIXTURES = {
     "parse_attempt.schema.json": "parse_attempt.valid.json",
     "accepted_candidate.schema.json": "accepted_candidate.valid.json",
     "parser_rejection.schema.json": "parser_rejection.valid.json",
+    "parser_legacy_result.schema.json": "parser_legacy_result.valid.json",
+    "parser_parity_report.schema.json": "parser_parity_report.valid.json",
     "claim_packet.schema.json": "claim_packet.valid.json",
     "evidence_bundle.schema.json": "evidence_bundle.valid.json",
     "attention_aggregate.schema.json": "attention_aggregate.valid.json",
@@ -263,6 +265,8 @@ def test_internal_contract_readme_and_schemas_name_private_boundaries():
     assert "quarantine" in blob
     assert "accepted_candidate.schema.json" in SCHEMA_FILES
     assert "parser_rejection.schema.json" in SCHEMA_FILES
+    assert "parser_legacy_result.schema.json" in SCHEMA_FILES
+    assert "parser_parity_report.schema.json" in SCHEMA_FILES
 
 
 def test_private_parser_fixture_folders_are_ignored():

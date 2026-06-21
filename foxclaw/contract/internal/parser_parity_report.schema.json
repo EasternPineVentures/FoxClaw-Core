@@ -1,0 +1,115 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://easternpineventures.example/foxclaw/internal/parser_parity_report.schema.json",
+  "title": "FoxClaw Internal ParserParityReport",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "parser_version",
+    "fixture_count",
+    "legacy_result_count",
+    "matched",
+    "mismatch_count",
+    "mismatches",
+    "records",
+    "standard",
+    "writes",
+    "network",
+    "coinfox",
+    "execution_authority"
+  ],
+  "properties": {
+    "schema_version": {"type": "string", "const": "parser_parity_report.v1"},
+    "parser_version": {"type": "string", "const": "live_raw_parser_admission_v13"},
+    "fixture_count": {"type": "integer", "minimum": 0},
+    "legacy_result_count": {"type": "integer", "minimum": 0},
+    "matched": {"type": "integer", "minimum": 0},
+    "mismatch_count": {"type": "integer", "minimum": 0},
+    "mismatches": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "case_id",
+          "field",
+          "mismatch_class",
+          "expected_path",
+          "actual_path"
+        ],
+        "properties": {
+          "case_id": {"type": "string"},
+          "field": {"type": "string"},
+          "mismatch_class": {
+            "type": "string",
+            "enum": [
+              "PARSER_BEHAVIOR_REGRESSION",
+              "DATA_QUALITY_DIFFERENCE",
+              "SECURITY_IMPROVEMENT",
+              "UNKNOWN_REVIEW"
+            ]
+          },
+          "expected_path": {"type": "string"},
+          "actual_path": {"type": "string"}
+        }
+      }
+    },
+    "records": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "case_id",
+          "parser_version",
+          "accepted",
+          "reason_code",
+          "duplicate_disposition",
+          "mismatch_class"
+        ],
+        "properties": {
+          "case_id": {"type": "string"},
+          "fixture_id": {"type": ["string", "null"]},
+          "parser_version": {"type": "string"},
+          "accepted": {"type": "boolean"},
+          "reason_code": {"type": "string"},
+          "duplicate_disposition": {
+            "type": "string",
+            "enum": ["accepted_once", "rejected_duplicate", "merged_duplicate", "unknown_review"]
+          },
+          "mismatch_class": {
+            "type": "string",
+            "enum": ["MATCH", "PARSER_BEHAVIOR_REGRESSION", "UNKNOWN_REVIEW"]
+          }
+        }
+      }
+    },
+    "standard": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "accepted_status",
+        "rejection_reason",
+        "candidate_type",
+        "symbol",
+        "side",
+        "numeric",
+        "safety_relevant_unexplained_mismatches"
+      ],
+      "properties": {
+        "accepted_status": {"type": "string", "const": "exact"},
+        "rejection_reason": {"type": "string", "const": "exact"},
+        "candidate_type": {"type": "string", "const": "exact"},
+        "symbol": {"type": "string", "const": "exact_normalized"},
+        "side": {"type": "string", "const": "exact"},
+        "numeric": {"type": "string", "const": "canonical_decimal"},
+        "safety_relevant_unexplained_mismatches": {"type": "integer", "const": 0}
+      }
+    },
+    "writes": {"type": "array", "items": {"type": "string"}, "maxItems": 0},
+    "network": {"type": "boolean", "const": false},
+    "coinfox": {"type": "boolean", "const": false},
+    "execution_authority": {"type": "boolean", "const": false}
+  }
+}

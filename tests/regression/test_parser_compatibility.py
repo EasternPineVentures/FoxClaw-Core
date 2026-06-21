@@ -11,9 +11,11 @@ from foxclaw.adapters.market.signals.legacy_v13 import PARSER_VERSION, parse_raw
 from foxclaw.contract.internal import schema_path
 from foxclaw.contract.public.schema_validation import validate_json_schema
 from tools.compare_parser_parity import compare_fixture_dir
+from tools.validate_parser_legacy_results import validate_legacy_jsonl
 
 REPO = Path(__file__).resolve().parents[2]
 FIXTURE_DIR = REPO / "tests" / "fixtures" / "parser_v1"
+LEGACY_JSONL = FIXTURE_DIR / "legacy_parser_results.valid.jsonl"
 
 
 def _fixture(name: str) -> dict[str, Any]:
@@ -116,8 +118,9 @@ def test_deterministic_ids_are_stable_across_reruns():
 def test_parity_report_matches_committed_fixture_expectations():
     report = compare_fixture_dir(FIXTURE_DIR)
 
-    assert report["schema_version"] == "parser_parity_report.v0"
+    assert report["schema_version"] == "parser_parity_report.v1"
     assert report["fixture_count"] == 5
+    assert report["legacy_result_count"] == 0
     assert report["matched"] == 5
     assert report["mismatch_count"] == 0
     assert report["mismatches"] == []
@@ -129,6 +132,24 @@ def test_parity_report_matches_committed_fixture_expectations():
     assert report["network"] is False
     assert report["coinfox"] is False
     assert report["execution_authority"] is False
+
+
+def test_legacy_parser_jsonl_validates_and_compares_to_v2_replay():
+    validation = validate_legacy_jsonl(LEGACY_JSONL)
+    assert validation["valid"] is True
+    assert validation["records"] == 5
+    assert validation["errors"] == []
+
+    report = compare_fixture_dir(FIXTURE_DIR, legacy_jsonl=LEGACY_JSONL)
+    assert report["schema_version"] == "parser_parity_report.v1"
+    assert report["fixture_count"] == 5
+    assert report["legacy_result_count"] == 5
+    assert report["matched"] == 5
+    assert report["mismatch_count"] == 0
+    validate_json_schema(
+        report,
+        json.loads(schema_path("parser_parity_report.schema.json").read_text(encoding="utf-8")),
+    )
 
 
 def test_replay_and_compare_clis_are_offline_and_json_safe():
@@ -167,3 +188,39 @@ def test_replay_and_compare_clis_are_offline_and_json_safe():
     parity_payload = json.loads(parity.stdout)
     assert parity_payload["mismatch_count"] == 0
     assert parity_payload["standard"]["numeric"] == "canonical_decimal"
+
+    validation = subprocess.run(
+        [
+            sys.executable,
+            "tools/validate_parser_legacy_results.py",
+            "--jsonl",
+            str(LEGACY_JSONL),
+            "--json",
+        ],
+        cwd=REPO,
+        text=True,
+        capture_output=True,
+        check=True,
+    )
+    validation_payload = json.loads(validation.stdout)
+    assert validation_payload["valid"] is True
+    assert validation_payload["records"] == 5
+
+    parity_with_legacy = subprocess.run(
+        [
+            sys.executable,
+            "tools/compare_parser_parity.py",
+            "--legacy-jsonl",
+            str(LEGACY_JSONL),
+            "--fixtures-dir",
+            str(FIXTURE_DIR),
+            "--json",
+        ],
+        cwd=REPO,
+        text=True,
+        capture_output=True,
+        check=True,
+    )
+    parity_with_legacy_payload = json.loads(parity_with_legacy.stdout)
+    assert parity_with_legacy_payload["legacy_result_count"] == 5
+    assert parity_with_legacy_payload["mismatch_count"] == 0

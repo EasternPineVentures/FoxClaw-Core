@@ -21,6 +21,29 @@ The compatibility threshold is strict for every replay case in the approved
 fixture corpus: zero unexplained safety-relevant mismatches. Additional replay
 volume can expand the corpus, but it cannot weaken the acceptance standard.
 
+## Contract Package
+
+A2 legacy replay emits one JSON object per line using:
+
+```text
+foxclaw/contract/internal/parser_legacy_result.schema.json
+schema_version = parser_legacy_result.v1
+```
+
+A1 comparison emits:
+
+```text
+foxclaw/contract/internal/parser_parity_report.schema.json
+schema_version = parser_parity_report.v1
+```
+
+Validation and comparison stay offline:
+
+```powershell
+python tools\validate_parser_legacy_results.py --jsonl C:\path\legacy_parser_results.jsonl --json
+python tools\compare_parser_parity.py --legacy-jsonl C:\path\legacy_parser_results.jsonl --fixtures-dir C:\path\sanitized_replay_fixtures --json
+```
+
 ## Comparison Record
 
 Each parity record should include:

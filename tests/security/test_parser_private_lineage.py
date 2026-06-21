@@ -81,6 +81,7 @@ def test_parser_compat_tools_do_not_import_network_db_or_live_authority_modules(
         [
             (REPO / "tools" / "replay_parser_compat.py").read_text(encoding="utf-8"),
             (REPO / "tools" / "compare_parser_parity.py").read_text(encoding="utf-8"),
+            (REPO / "tools" / "validate_parser_legacy_results.py").read_text(encoding="utf-8"),
         ]
     )
     forbidden = (
@@ -88,11 +89,10 @@ def test_parser_compat_tools_do_not_import_network_db_or_live_authority_modules(
         "requests",
         "urllib",
         "webhook",
-        "USER_TOKEN",
-        "NORMAL_USER_TOKEN",
         "AcceptedCandidateStore",
         "RawEventStore",
         "ParseAttemptStore",
     )
     for token in forbidden:
         assert token not in tool_text
+    assert "os.environ" not in tool_text

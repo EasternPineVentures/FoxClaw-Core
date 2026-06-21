@@ -1,0 +1,33 @@
+{
+  "schema_version": "parser_parity_report.v1",
+  "parser_version": "live_raw_parser_admission_v13",
+  "fixture_count": 1,
+  "legacy_result_count": 1,
+  "matched": 1,
+  "mismatch_count": 0,
+  "mismatches": [],
+  "records": [
+    {
+      "case_id": "accepted_btc_long",
+      "fixture_id": "accepted_btc_long",
+      "parser_version": "live_raw_parser_admission_v13",
+      "accepted": true,
+      "reason_code": "accepted_trade_signal",
+      "duplicate_disposition": "accepted_once",
+      "mismatch_class": "MATCH"
+    }
+  ],
+  "standard": {
+    "accepted_status": "exact",
+    "rejection_reason": "exact",
+    "candidate_type": "exact",
+    "symbol": "exact_normalized",
+    "side": "exact",
+    "numeric": "canonical_decimal",
+    "safety_relevant_unexplained_mismatches": 0
+  },
+  "writes": [],
+  "network": false,
+  "coinfox": false,
+  "execution_authority": false
+}
