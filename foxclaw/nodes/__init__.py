@@ -8,6 +8,15 @@ from .apollo import (
     git_snapshot,
     render_markdown,
 )
+from .branch_sync import (
+    BranchSyncPlan,
+    BranchSyncResult,
+    BranchSyncState,
+    apply_branch_sync,
+    fetch_remote,
+    inspect_branch_sync,
+    plan_branch_sync,
+)
 from .mesh import (
     ALLOWED_EVENT_KINDS,
     ApolloMeshEvent,
@@ -26,8 +35,15 @@ __all__ = [
     "ApolloNodeBrief",
     "GitSnapshot",
     "NodeAuthorityLocks",
+    "BranchSyncPlan",
+    "BranchSyncResult",
+    "BranchSyncState",
+    "apply_branch_sync",
     "build_node_brief",
+    "fetch_remote",
     "git_snapshot",
+    "inspect_branch_sync",
+    "plan_branch_sync",
     "render_markdown",
     "ALLOWED_EVENT_KINDS",
     "ApolloMeshEvent",

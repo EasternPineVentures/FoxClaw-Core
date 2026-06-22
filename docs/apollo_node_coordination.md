@@ -8,6 +8,8 @@ is a signed-in-practice operator packet: current repo truth, current slice, next
 blockers, and the rails that stay locked.
 
 For structured node-to-node events, use Apollo Mesh V0 in `docs/apollo_mesh_v0.md`.
+For branch positioning and the operator-friendly wrapper, use Apollo Courier V0 in
+`docs/apollo_courier_v0.md`.
 For founder-node IP/security posture, read `docs/founder_node_security.md`.
 
 ## Nodes
@@ -19,6 +21,15 @@ Both are clones of the same clean `foxclaw-core` repo. The old A2 FoxClaw checko
 legacy/reference runtime unless explicitly touched.
 
 ## Tool
+
+Inspect or align a node to the expected branch:
+
+```powershell
+python tools\apollo_courier.py branch-sync `
+  --target-branch feature/parser-compat-v0 `
+  --fetch `
+  --json
+```
 
 Generate a Markdown brief:
 

@@ -303,6 +303,101 @@ def test_apollo_mesh_cli_heartbeat_writes_outbox(tmp_path: Path):
     assert payload["events"][0]["kind"] == "node.heartbeat"
 
 
+def test_apollo_mesh_cli_courier_verbs_write_private_outbox(tmp_path: Path):
+    mesh_dir = tmp_path / "mesh"
+    identity_file = mesh_dir / "identity.json"
+
+    commands = (
+        (
+            "manifest",
+            "--capability",
+            "branch-sync",
+            "--status",
+            "available",
+            "--note",
+            "safe ff-only branch positioning",
+        ),
+        (
+            "ask",
+            "--to-node",
+            "A2",
+            "--question",
+            "which branch is parser parity using?",
+            "--priority",
+            "high",
+            "--context-ref",
+            "feature/parser-compat-v0",
+        ),
+        (
+            "answer",
+            "--to-node",
+            "A1",
+            "--question-event-id",
+            "sha256:question",
+            "--answer",
+            "A2 is on feature/parser-compat-v0",
+        ),
+        (
+            "alert",
+            "--severity",
+            "warning",
+            "--message",
+            "A2 has a dirty tree",
+            "--source",
+            "branch-sync",
+        ),
+        (
+            "receipt",
+            "--title",
+            "A2 branch aligned",
+            "--summary",
+            "feature branch is tracking origin",
+            "--status",
+            "ready",
+        ),
+    )
+
+    for command in commands:
+        _run(
+            "--mesh-dir",
+            str(mesh_dir),
+            "--identity-file",
+            str(identity_file),
+            "--node-id",
+            "A1",
+            "--fixture",
+            "--json",
+            *command,
+        )
+
+    outbox = _run(
+        "--mesh-dir",
+        str(mesh_dir),
+        "--identity-file",
+        str(identity_file),
+        "--node-id",
+        "A1",
+        "--fixture",
+        "--json",
+        "inbox",
+        "--log",
+        "outbox",
+    )
+    payload = json.loads(outbox.stdout)
+
+    assert payload["count"] == 5
+    assert [event["kind"] for event in payload["events"]] == [
+        "node.capability_manifest",
+        "question.ask",
+        "question.answer",
+        "runtime.alert",
+        "context.receipt",
+    ]
+    assert all(event["data_classification"] == "founder_private" for event in payload["events"])
+    assert all(event["public_export_allowed"] is False for event in payload["events"])
+    assert all(event["authority"]["can_remote_command"] is False for event in payload["events"])
+
+
 def test_apollo_mesh_cli_rekey_and_doctor_do_not_print_secret(tmp_path: Path):
     mesh_dir = tmp_path / "mesh"
     identity_file = mesh_dir / "identity.json"
