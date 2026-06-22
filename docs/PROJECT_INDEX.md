@@ -25,8 +25,10 @@ repository boundaries; implementation details do not.
    partner-facing work.
 9. `docs/partner_operating_overview_coinfox_foxclaw.md` for the plain-English
    partner-facing operating overview.
-10. `docs/integrations/coinfox.md` before doing any CoinFox-facing work.
-11. `docs/first_encounter_guide.md`, `docs/foxclaw_gym.md`, and
+10. `docs/coinfox_one_page_overview.md`, `docs/coinfox_linkedin_about.md`, and
+   `docs/eastern_pine_ventures_landing_page_copy.md` for compressed public copy.
+11. `docs/integrations/coinfox.md` before doing any CoinFox-facing work.
+12. `docs/first_encounter_guide.md`, `docs/foxclaw_gym.md`, and
    `docs/security_public_demo_threat_model.md` before demo/showing work.
 
 ## Status Markers
@@ -58,6 +60,7 @@ location, and a GitHub issue or explicit issue placeholder.
 | Receipt intelligence thesis | EXISTS | `docs/receipt_intelligence_thesis.md` |
 | Security and IP readiness | EXISTS | `docs/security_ip_readiness.md` |
 | Partner operating overview | EXISTS | `docs/partner_operating_overview_coinfox_foxclaw.md` |
+| Compressed partner/public copy | EXISTS | `docs/coinfox_one_page_overview.md`, `docs/coinfox_linkedin_about.md`, `docs/eastern_pine_ventures_landing_page_copy.md` |
 | FoxClaw Gym / demo readiness | EXISTS | `docs/foxclaw_gym.md`, `docs/demo_readiness_2026_06_28.md` |
 | First-encounter guide | EXISTS | `docs/first_encounter_guide.md`, `tools/foxclaw_visitor_guide.py` |
 | Public contract airlock | FROZEN v1 | `foxclaw/contract/`, `foxclaw/contract/public/`, `tools/export_public_intelligence.py` |

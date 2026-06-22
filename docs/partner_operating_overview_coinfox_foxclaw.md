@@ -1,221 +1,143 @@
-# FoxClaw And CoinFox Operating Overview
+# Eastern Pine Ventures / CoinFox Operating Overview
 
 Status: partner-facing working draft.
 Last updated: 2026-06-22.
 
-This document explains, in plain English, how the Eastern Pine market-intelligence system
-works today, how FoxClaw and CoinFox fit together, what the system can learn over time, and
-where a serious partner could help.
+This document explains the public product direction in plain English. It is written for
+potential partners, advisors, mentors, and early collaborators. It intentionally avoids
+private source details, credentials, proprietary scoring rules, internal IDs, raw private
+data, and implementation-specific system mechanics.
 
-It intentionally avoids private source details, credentials, proprietary thresholds, and
-internal-only implementation specifics.
+## Executive Summary
 
-## Short Version
+Eastern Pine Ventures is building CoinFox, a receipt-first trading social platform designed
+to make market discussion more structured, trackable, and useful over time.
 
-Eastern Pine is building a receipt-backed market intelligence system.
+Trading communities generate a constant flood of posts, opinions, screenshots, calls,
+reactions, and trade ideas. Most of that information disappears into a feed. CoinFox is
+built around a different idea: market discussion should be easier to follow, easier to
+challenge, easier to review, and easier to learn from.
 
-The core idea is simple:
+CoinFox gives users a familiar social surface for market discussion, including posts,
+comments, votes, watchlists, public market reads, and paper-first practice. The goal is not
+to provide financial advice, execute trades, or custody assets. The goal is to help people
+share market ideas with context, track outcomes, and build reputation through receipts
+instead of hype.
+
+We are currently seeking mentorship around product validation, compliance-safe positioning,
+market-data access, early community design, moderation, and AI-assisted evaluation.
+
+FoxClaw is the internal intelligence and R&D layer behind this vision. It began as an
+agentic AI research project focused on structured decision support, local-first workflows,
+audit trails, and learning receipts. FoxClaw helps organize market claims, evidence, risk,
+outcomes, and review memory while keeping private system mechanics protected.
+
+The simple version:
 
 ```text
-Markets create a flood of claims, opinions, setups, data, and reactions.
-Most platforms let that information disappear into a feed.
-We want to turn useful market discussion into structured, auditable intelligence.
+CoinFox is the product people use.
+FoxClaw is the intelligence backbone.
+Eastern Pine Ventures is the company building both.
 ```
 
-FoxClaw is the guarded intelligence engine. It keeps the receipts: what was claimed, what
-evidence existed, what was missing, how risky the setup was, what happened later, and what
-should be learned.
+The long-term bet is that the next generation of market intelligence will not be built only
+from faster feeds or louder communities. It will come from better structured memory: what
+was claimed, what evidence existed, what was missing, what happened later, and what should
+be learned.
 
-CoinFox is the public-facing market discussion and intelligence product. It gives people a
-familiar social surface to post ideas, ask questions, comment, vote, follow theses, and see
-plain-English market reads.
+## Founder Note
 
-The long-term goal is for CoinFox to become a high-quality public intelligence network where
-market ideas are not just posted and forgotten. They become trackable, reviewable, and useful
-for better AI-assisted decision support.
+Eastern Pine Ventures is being built by a working founder with a manufacturing and
+operations background. That matters because CoinFox is not being approached as a hype
+product. It is being built around process, review, reliability, and accountability.
 
-## The Main Products
+My background as a printing press operator shaped how I think about systems: inputs matter,
+setup matters, quality control matters, machine behavior matters, and every bad run teaches
+something if the process captures it.
 
-### FoxClaw
+That same mindset is behind CoinFox and FoxClaw. Market discussion should not disappear into
+noise. It should become something structured enough to review, learn from, and improve.
 
-FoxClaw is the private/guarded decision-intelligence layer.
+## The Problem
 
-It is not a social app. It is not a brokerage. It does not need to place trades to be useful.
-Its job is to organize messy information into structured decision support.
+Trading communities are full of market calls, screenshots, opinions, emotional reactions,
+and partial ideas. Some of that information is useful. Much of it is noisy. Almost none of
+it is consistently structured, followed up on, or measured.
 
-FoxClaw watches incoming claims and turns them into a receipt chain:
+That creates several problems:
 
-- what came in;
-- where it came from;
-- whether it parsed cleanly;
-- whether it had enough evidence;
-- whether it was public-safe;
-- whether it was actionable or only worth watching;
-- what happened after the fact;
-- what the system should learn.
+- useful ideas get buried;
+- bad calls disappear without review;
+- creators can build attention without accountability;
+- beginners see confidence but not context;
+- strong comments and warnings are hard to recover later;
+- nobody can easily ask what worked, what failed, and why.
 
-FoxClaw is deliberately paper-first and receipt-first. That means the system can practice,
-measure, and learn without pretending it has live execution authority.
+AI can summarize noisy discussion, but it cannot reliably learn from noise unless the
+information is structured. CoinFox is built for that gap: turning market conversation into
+structured memory that humans and AI can review later.
 
-### CoinFox
+## The First Users
 
-CoinFox is the public market-intelligence and social layer.
+The first target users are market learners and active retail traders who already follow
+trading communities, but want better structure, accountability, and paper-first practice
+before risking real money.
 
-It is designed to feel familiar: a feed, posts, comments, votes, share links, market reads,
-and public discussion around trade ideas. The current public answer contract is intentionally
-simple:
+That includes:
+
+- beginner and intermediate retail traders;
+- people learning markets through Discord, X, Reddit, YouTube, or trading communities;
+- creators who share trade ideas and want a clearer track record;
+- users who want to follow a thesis over days, weeks, or months;
+- people who want paper practice before live risk;
+- experienced users who want better discussion quality and fewer throwaway claims.
+
+CoinFox should feel familiar enough that a trader understands it quickly, but disciplined
+enough that it does not become another hype feed.
+
+## The Product: CoinFox
+
+CoinFox is the public trading-social product.
+
+Users should be able to post trade ideas, ask questions, comment on market events, vote on
+ideas, follow symbols or users, watch a thesis develop, and review what happened later. The
+social feel matters. It should not feel like a rigid form or a private machine log. It
+should feel like a modern discussion network built specifically for markets.
+
+The first public market-read labels are intentionally simple:
 
 - `LONG`: current evidence leans upward;
 - `SHORT`: current evidence leans downward;
 - `NEUTRAL`: evidence is mixed, weak, or not directional enough.
 
-CoinFox also has the direction of setup posts, opinion posts, question posts, comments,
-Boost/Fade-style voting, shareable links, account gates, and play-money practice through
-NYFE. The product should stay open for browsing while requiring verified accounts for
-posting, voting, commenting, predictions, and play-money exchange actions.
+These are market-read labels, not trade instructions. CoinFox is paper-first and
+education-first. It is designed to support learning and review, not live execution.
 
-CoinFox is where the public data flywheel can form. If users post ideas, update theses,
-challenge claims, vote, follow, and return after outcomes, the platform can learn from the
-entire lifecycle of market conversation.
+Over time, CoinFox should help answer questions like:
 
-### Planifier
+- What are people watching?
+- What is the actual claim?
+- What evidence supports it?
+- What would prove it wrong?
+- Who challenged it well?
+- Did the idea play out?
+- What should be remembered?
 
-Planifier is the planning and practice layer.
+## The Intelligence Layer: FoxClaw
 
-If FoxClaw says, "Here is the intelligence," and CoinFox says, "Here is the discussion,"
-Planifier asks, "What is your plan?"
+FoxClaw is the internal intelligence backbone.
 
-Planifier should help users turn public intelligence into checklists, journals, routines,
-and self-awareness. It should not become FoxClaw's scoring authority or CoinFox's feed
-ranking engine.
+It is not a brokerage, not a copy-trading system, and not a public social network. Its job is
+to help structure market information into claims, evidence, risk, outcomes, and learning.
 
-### Redshift
+The basic unit is a receipt.
 
-Redshift is the research and simulation lane.
+A receipt is a timestamped record of what was claimed, what evidence existed, what risk was
+identified, what happened later, and what the system learned.
 
-It is for higher-risk ideas, paper execution rehearsal, market experiments, and protected
-research. Redshift can return paper outcomes and context back to the system, but it should
-not become the source of public truth or capital authority.
-
-### Apollo / Courier
-
-Apollo and Courier are the node-coordination layer for internal work.
-
-They help A1/A2-style founder nodes know which branch, lane, and work state they are on.
-They are not public user infrastructure. They are there to keep development and internal
-coordination clean as the system gets larger.
-
-## How Information Moves Through The System
-
-The core flow looks like this:
-
-```text
-Discord / CoinFox posts / public data / news / trusted evidence
-  -> raw source event
-  -> parse attempt
-  -> claim packet
-  -> evidence bundle or quarantine
-  -> readiness and risk review
-  -> publication decision
-  -> public-safe CoinFox card or private-only preview
-  -> paper outcome / resolved outcome
-  -> learning receipt
-```
-
-In plain English:
-
-1. Something enters the system.
-   It might be a Discord signal today, a CoinFox post tomorrow, a public market feed, a news
-   event, or a trusted evidence packet.
-
-2. The system records that it saw it.
-   This is the first receipt. We do not want important market information floating around
-   without a timestamp and origin.
-
-3. The system tries to understand it.
-   Is it a trade setup, a question, an opinion, a news claim, a market event, or noise?
-
-4. The system separates evidence from attention.
-   A post can be popular without being true. A quiet post can be valuable. CoinFox attention
-   can tell FoxClaw where to look, but attention does not become evidence by itself.
-
-5. The system checks risk and readiness.
-   A good thesis is not automatically a good trade. A setup may have strong evidence but poor
-   timing, bad liquidity, missing invalidation, or too much event risk.
-
-6. The system decides what can be public.
-   Private source details, raw Discord content, internal IDs, and private lineage stay
-   private. Public outputs must be sanitized and contract-valid.
-
-7. Outcomes are recorded.
-   If a paper thesis plays out, resolves, fails, or gets voided, that outcome is attached to
-   the original idea.
-
-8. The learning loop updates review memory.
-   The system can later ask, "Have we seen this kind of setup before? Did it work? What was
-   missing? Did the crowd catch something useful? Did the market baseline do better?"
-
-## Why The Discord Parser Still Matters
-
-The Discord parser is still useful because it gives the system a starting stream of market
-claims and setups while CoinFox is still growing.
-
-It is a bridge, not the final center of gravity.
-
-Right now, Discord-style sources can help provide:
-
-- early market ideas;
-- parser compatibility examples;
-- accepted/rejected examples;
-- reason codes;
-- paper outcome history;
-- training examples for future claim extraction.
-
-Over time, if CoinFox works, the most valuable input should shift toward CoinFox itself:
-
-- user setup posts;
-- question threads;
-- comments that challenge a thesis;
-- Boost/Fade votes;
-- saved/followed ideas;
-- revisions over time;
-- postmortems;
-- play-money practice outcomes;
-- public evidence added by the community.
-
-The transition is important. We do not want to depend forever on private Discord flow. But we
-also do not want to turn off useful data before CoinFox has enough public activity to replace
-it.
-
-The practical plan is:
-
-```text
-Discord/parser data fills the early pipeline.
-CoinFox user activity gradually becomes the public-native data source.
-FoxClaw keeps both behind the same receipt and privacy rules.
-```
-
-## What CoinFox Data Can Teach
-
-A normal social network learns what gets attention.
-
-CoinFox should learn more than that.
-
-It can learn:
-
-- which users make useful calls over time;
-- which setup types work in which market regimes;
-- which theses attract hype but fail;
-- which quiet ideas later prove valuable;
-- which comments identify missing risk;
-- which invalidation levels mattered;
-- which symbols attract poor-quality crowd behavior;
-- which posts led users to make better plans;
-- which sources or evidence types improved outcomes;
-- which public reads were helpful, confusing, or ignored.
-
-That is valuable because it gives AI a structured memory to reason over. Instead of asking an
-AI to summarize a noisy feed, we can ask it to review a chain of receipts:
+Receipts matter because market discussion is usually short-lived. Without a receipt, an idea
+can become a screenshot, a memory, or a vague reputation claim. With a receipt, the system
+can ask better questions later:
 
 ```text
 What was claimed?
@@ -226,7 +148,37 @@ What happened?
 What should we learn?
 ```
 
-That is a better AI problem.
+FoxClaw helps make that possible while protecting private data and internal IP. CoinFox does
+not need to see FoxClaw's private internals. It needs public-safe outputs.
+
+## How The System Learns
+
+The clean product flow is:
+
+```text
+CoinFox users post ideas
+        ->
+Ideas become structured market claims
+        ->
+FoxClaw attaches evidence, risk, and receipts
+        ->
+CoinFox shows public-safe cards and discussion
+        ->
+Outcomes are tracked
+        ->
+The system learns what was useful
+```
+
+The learning loop is the real difference.
+
+A normal social network learns what gets attention. CoinFox should learn more than that. It
+should learn which ideas were useful, which evidence mattered, which warnings were ignored,
+which users added value, which setups failed, and which outcomes should change future
+review.
+
+This can become valuable because AI works better when it is reviewing structured history
+instead of loose conversation. The system is not trying to make AI louder. It is trying to
+give AI better memory.
 
 ## Attention Is Useful, But It Is Not Truth
 
@@ -237,14 +189,13 @@ CoinFox will naturally produce social signals:
 - votes;
 - saves;
 - shares;
+- follows;
 - watchlist adds;
-- prediction actions;
 - return visits after outcomes.
 
-These are important signals. They show where the crowd is looking and where review may be
-needed.
+Those signals matter. They show where people are looking and where review may be needed.
 
-But they cannot directly decide whether a claim is true.
+But popularity cannot decide whether a claim is true.
 
 The rule is:
 
@@ -254,165 +205,225 @@ Evidence must still earn promotion.
 Outcome learning must come from resolved results.
 ```
 
-This protects the platform from becoming a hype machine.
+This is one of the core boundaries. CoinFox should be social and alive, but it should not
+become a popularity contest pretending to be intelligence.
 
-## Public Versus Private
+## Public And Private Boundary
 
-The system is designed with a public/private boundary.
-
-Private FoxClaw may store:
-
-- internal lineage;
-- private source references;
-- raw parser diagnostics;
-- rejected examples;
-- evidence hashes;
-- model and policy diagnostics;
-- private replay data.
+CoinFox and FoxClaw are designed with a strict public/private boundary.
 
 CoinFox may show:
 
-- public-safe cards;
-- market read summaries;
+- user posts and public discussion;
+- public-safe market cards;
+- simple market-read labels;
 - evidence and risk categories;
 - paper-only labels;
-- public outcome summaries;
+- outcome summaries;
 - sanitized attention aggregates;
-- user posts and public discussion;
 - plain-English explanations.
 
-CoinFox should not consume FoxClaw internals directly. It should consume public contracts and
-exported artifacts. That is how we protect private data and IP while still giving users
-something useful.
+FoxClaw may keep private:
 
-## What The User Sees
+- private source lineage;
+- internal diagnostics;
+- protected evidence references;
+- internal review history;
+- proprietary scoring details;
+- replay data and private evaluation artifacts;
+- data that should not appear in public outputs.
+
+The principle is simple: public products should consume public contracts, not private
+internals.
+
+That boundary protects users, partners, the company, and the IP.
+
+## What Users See
 
 A user should not feel like they are reading an internal machine log.
 
-They should see:
+They should see a clear market discussion experience:
 
-- a clear `LONG`, `SHORT`, or `NEUTRAL` market read;
-- why CoinFox leans that way;
-- what would weaken the thesis;
-- whether sources are healthy;
-- what the community is discussing;
-- what evidence is strong, weak, or missing;
-- whether a setup is research, watch, structured, tactical, speculative, redline, or rejected;
-- comments and votes from other users;
-- outcome history and postmortems;
-- play-money practice context when appropriate.
+- a feed of posts, theses, questions, and market ideas;
+- comments and branching replies;
+- Boost/Fade-style voting as an attention signal;
+- watch/follow actions for symbols, users, and ideas;
+- public-safe CoinFox cards;
+- market reads labeled as `LONG`, `SHORT`, or `NEUTRAL`;
+- reasons the read leans that way;
+- what would weaken or invalidate the thesis;
+- paper outcome history when available;
+- postmortems and follow-up discussion;
+- profile and reputation surfaces over time.
 
-The product should feel social and alive, but the intelligence layer should stay disciplined.
+The user experience should be social first, but structured enough that ideas can be tracked.
 
-## What A Partner Should Understand
+## Initial MVP Scope
 
-This is not only a trading app.
+The first version of CoinFox should prove that users want a better market-discussion layer:
+one where ideas are structured, challenged, followed, and reviewed instead of being posted
+once and forgotten.
 
-It is a market-intelligence memory system with a social front end.
+The MVP should include:
 
-The potential value is not just "people can post trade ideas." The value is that those ideas
-can be:
+- public market read pages with simple `LONG`, `SHORT`, and `NEUTRAL` framing;
+- user posts for trade ideas, questions, market opinions, and setup discussions;
+- comments and replies so users can challenge or add context;
+- Boost/Fade-style voting as an attention signal, not a truth signal;
+- watch or follow actions for ideas, symbols, and users;
+- paper-first outcome tracking for selected ideas;
+- basic user profiles and reputation surfaces;
+- public-safe CoinFox cards generated from structured receipts;
+- verified-account gates for posting, voting, commenting, predictions, and play-money actions.
 
-- timestamped;
-- discussed;
-- challenged;
-- followed;
-- compared to evidence;
-- connected to outcomes;
-- reviewed by AI later;
-- used to improve future decision support.
+The MVP should not include:
 
-That creates a data asset that normal feeds do not have.
+- live trade execution;
+- custody of user funds or assets;
+- personalized financial advice;
+- copy trading;
+- paid signal selling;
+- private FoxClaw lineage or internal scoring details;
+- raw private source data in public surfaces.
 
-## Where A Partner Could Help
+This keeps the product focused, safer, and easier to explain.
 
-A serious partner could help in several ways.
+## Competitive Positioning
+
+CoinFox is not trying to replace charting platforms, brokerages, Discord servers, financial
+news sites, or general social networks.
+
+It is focused on the missing layer between public market discussion and accountable learning:
+structured ideas, paper outcomes, reputation, and reviewable receipts.
+
+The intended position is:
+
+```text
+Not a brokerage.
+Not a paid signal room.
+Not a financial-advice engine.
+Not another feed that forgets everything.
+
+CoinFox is a receipt-first market discussion network.
+```
+
+## Why Now
+
+Markets move faster than most people can process. Trading communities are fragmented across
+Discord, X, Reddit, Telegram, YouTube, TradingView, and private chats. AI can summarize some
+of that activity, but summarization alone does not create accountability.
+
+The opportunity is to build the structure around the discussion:
+
+- what was said;
+- what evidence existed;
+- what people challenged;
+- what happened later;
+- what the system should remember.
+
+That structure can become a data advantage.
+
+## Current Progress
+
+CoinFox is currently in the early MVP and validation stage. The core product direction,
+public/private system boundary, receipt-first learning model, and initial social-product
+concepts are defined. The next step is turning that foundation into a polished public
+prototype, early beta flow, and partner-safe demo.
+
+Current progress includes early working foundations for public market reads, social posts,
+comments, votes, paper-practice concepts, public/private data boundaries, and receipt-first
+learning logic.
+
+The important progress is not only code. It is the operating discipline:
+
+- market reads are framed as public context, not instructions;
+- paper-first learning is separated from live trading;
+- public outputs are separated from private intelligence;
+- attention is treated as review priority, not evidence;
+- receipts are treated as the foundation for future learning.
+
+The product still needs major work before public launch. The social experience, onboarding,
+moderation, public card design, account gates, and user-facing polish all need to become much
+cleaner.
+
+## What We Are Looking For Now
+
+Eastern Pine Ventures is looking for guidance, validation, and early partner conversations
+around CoinFox.
+
+The most useful help right now would be:
+
+- product and UX mentorship for turning CoinFox into a clean social MVP;
+- fintech compliance guidance around educational market discussion, user-generated claims,
+  and public market reads;
+- market-data access or sandbox support for reliable public market context;
+- community and moderation guidance for building a safer trading discussion environment;
+- AI and evaluation support for claim extraction, receipt review, outcome tracking, and trust
+  scoring;
+- early beta users, mentors, or advisors who understand trading communities, social
+  products, fintech, AI tools, or education.
+
+We are not looking to launch live trading, custody assets, provide personalized financial
+advice, or expose private system internals. The focus is product validation, public-safe
+market intelligence, paper-first learning, and community quality.
+
+## Partner Help Areas
 
 ### Product And UX
 
 CoinFox needs to feel like a real social product, not a rigid workflow.
 
-Useful help:
+Useful help includes social feed design, post and comment UX, mobile polish, profile and
+reputation surfaces, onboarding, notification design, watch/follow flows, and making charts,
+media, and market cards feel native.
 
-- social feed design;
-- post/comment/reply UX;
-- mobile and web polish;
-- profile and reputation surfaces;
-- notification and follow/watch flows;
-- onboarding and plain-English education;
-- making charts/media/posts feel native.
+### Compliance And Safety
+
+CoinFox operates around market discussion, user-generated claims, public reads, and
+paper-first learning. It needs careful language, clear boundaries, and strong account rules.
+
+Useful help includes educational-disclaimer review, social-fintech risk review, moderation
+policy, contributor agreements, user-generated content policy, data retention guidance, and
+IP/trademark review.
 
 ### Data And Market Coverage
 
-Early CoinFox must provide useful data before its own community is large.
+CoinFox needs useful market context before its own community is large enough to create a
+strong data flywheel.
 
-Useful help:
-
-- public market-data partnerships;
-- symbol coverage;
-- news and event feeds;
-- asset-class expansion;
-- cleaner source-health monitoring;
-- historical outcome datasets;
-- replay/evaluation data.
+Useful help includes public market-data partnerships, symbol coverage, news and event feeds,
+historical outcome datasets, source-health monitoring, and sandbox data access.
 
 ### Community And Moderation
 
-If CoinFox becomes active, moderation and community quality become core infrastructure.
+If CoinFox becomes active, moderation is product infrastructure.
 
-Useful help:
-
-- verified-account flows;
-- anti-spam systems;
-- report/moderation queues;
-- reputation models;
-- creator/trader onboarding;
-- beta community management;
-- safe rules for public claims.
+Useful help includes verified-account flows, anti-spam systems, reporting queues, reputation
+models, creator onboarding, beta community management, and rules for public claims.
 
 ### AI And Evaluation
 
 The system needs AI that can reason over receipts, not just generate commentary.
 
-Useful help:
+Useful help includes retrieval over historical receipts, setup clustering, postmortem
+generation, claim extraction from user posts, evidence-gap detection,
+attention-versus-evidence analysis, model evaluation, and privacy-preserving learning
+workflows.
 
-- retrieval over historical receipts;
-- setup clustering;
-- postmortem generation;
-- claim extraction from user posts;
-- evidence-gap detection;
-- attention-versus-evidence analysis;
-- model evaluation and calibration;
-- privacy-preserving learning workflows.
+## What We Will Not Do
 
-### Security, Compliance, And IP
+To keep the project durable, CoinFox should not:
 
-This system touches market discussion, user-generated content, public claims, and private
-intelligence.
-
-Useful help:
-
-- public wording review;
-- privacy review;
-- IP/trademark review;
-- security review;
-- contributor agreements;
-- data-retention policy;
-- terms and moderation policy.
-
-## What We Should Not Do
-
-To keep the project durable, we should avoid:
-
-- presenting CoinFox as financial advice;
-- implying live trading authority;
-- letting votes become truth;
-- exposing private FoxClaw lineage;
-- copying private parser data into public fixtures;
-- relying forever on Discord instead of building CoinFox-native data;
-- over-sharing proprietary scoring internals too early;
-- building a beautiful feed with no outcome learning;
-- building a powerful engine with no human-friendly social surface.
+- present public reads as personalized financial advice;
+- imply live trading authority;
+- custody user funds or assets;
+- sell paid trade signals at launch;
+- let votes become truth;
+- expose private FoxClaw lineage;
+- publish private source data;
+- over-share proprietary scoring internals too early;
+- build a beautiful feed with no outcome learning;
+- build a powerful engine with no human-friendly product surface.
 
 The product only becomes special if both sides work:
 
@@ -421,73 +432,49 @@ CoinFox makes market conversation accessible.
 FoxClaw makes market conversation accountable.
 ```
 
-## Current Reality
+## Long-Term Vision
 
-What exists now:
+The long-term vision is a market-intelligence network that can remember.
 
-- FoxClaw Core has the receipt-first engine direction, public/private contract boundary,
-  Microscope private preview and staged export scaffolding, parser compatibility work, and
-  learning-receipt doctrine.
-- CoinFox has real product bones: public `LONG` / `SHORT` / `NEUTRAL` reads, FastAPI
-  surfaces, social post/comment/vote endpoints, mobile screens, play-money NYFE direction,
-  source-health concepts, feedback learning, and public sharing plans.
-- The Discord parser remains a useful bridge while CoinFox-native activity is still early.
-- Security and IP boundaries are documented and should stay visible before broader launch or
-  partnership work.
+CoinFox can generate the public discussion layer: ideas, comments, votes, follows, challenges,
+updates, and outcome conversations.
 
-What still needs work:
+FoxClaw can turn that activity into structured receipts: claims, evidence, risk, attention,
+outcomes, and learning.
 
-- CoinFox needs a polished web/social experience.
-- Auth and verified-email contribution gates need production hardening.
-- Public CoinFox cards and FoxClaw exports need a professional presentation layer.
-- CoinFox attention receipts need to be defined and integrated.
-- Parser compatibility needs to finish so early data can be replayed safely.
-- Outcome learning needs to expand from deterministic examples into real reviewed histories.
-- Moderation, reporting, trust, and partner-safe data access need more structure.
+Planifier can help users turn public intelligence into personal planning, routines,
+checklists, and practice.
 
-## The Near-Term Plan
+Redshift can remain a protected research lane for higher-risk experiments and paper-only
+simulation before anything becomes a product promise.
 
-This week should be CoinFox-focused.
+Together, these pieces can create something more durable than a feed:
 
-The practical order:
+```text
+market discussion
+  -> structured claims
+  -> evidence and challenge
+  -> paper outcomes
+  -> learning receipts
+  -> better future review
+```
 
-1. Stabilize the CoinFox public product shape.
-   Make the Read, Community, Post, Account, and NYFE surfaces understandable.
+That is the company-level direction.
 
-2. Define the CoinFox-to-FoxClaw contract.
-   Decide exactly what post, vote, comment, attention, and outcome data can become public-safe
-   receipts.
+## Appendix: Internal Systems In Plain English
 
-3. Keep Discord/parser data as bridge input.
-   Do not over-invest in Discord as the future, but preserve useful data until CoinFox has
-   enough native activity.
+This section is intentionally short. The details belong in internal documentation, not the
+partner-facing front door.
 
-4. Build public-safe intelligence cards.
-   Make FoxClaw output readable inside CoinFox without exposing private lineage.
+FoxClaw is the internal R&D and intelligence layer. It keeps the receipt discipline, evidence
+boundaries, public/private contracts, paper-only learning posture, and protected review
+memory.
 
-5. Make the social feed feel natural.
-   Posting, commenting, voting, following, and revisiting outcomes need to feel like a modern
-   social product.
+Current bridge data may include legacy trading-community inputs while CoinFox is still
+growing. That bridge is useful for early examples and replay, but the long-term center of
+gravity should become CoinFox-native activity.
 
-6. Add learning loops.
-   The platform should remember whether a thesis worked, failed, changed, or never became
-   actionable.
-
-7. Prepare partner-safe demos.
-   Show public surfaces, proof markers, and learning logic. Do not show private databases,
-   raw Discord content, internal IDs, or protected scoring details.
-
-## The Big Bet
-
-The big bet is that the next generation of market intelligence will not be won only by the
-best model or the fastest feed.
-
-It will be won by the system with the best structured memory.
-
-CoinFox can generate the public discussion layer. FoxClaw can turn that discussion into
-receipts, evidence, outcomes, and learning. Planifier can help users turn intelligence into
-personal discipline. Redshift can test harder ideas in protected simulation.
-
-Together, that becomes more than a dashboard.
-
-It becomes a market-intelligence network that can learn.
+Internal node coordination, parser compatibility work, staged exports, private replay, and
+development-lane tooling are useful engineering infrastructure. They are not the public
+product story. Partners should understand the outcome: Eastern Pine is building a public
+market-discussion product with a protected receipt-first intelligence backbone.
