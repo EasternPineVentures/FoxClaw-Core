@@ -23,8 +23,10 @@ repository boundaries; implementation details do not.
    thesis and proof ladder.
 8. `docs/security_ip_readiness.md` for the security/IP posture before public or
    partner-facing work.
-9. `docs/integrations/coinfox.md` before doing any CoinFox-facing work.
-10. `docs/first_encounter_guide.md`, `docs/foxclaw_gym.md`, and
+9. `docs/partner_operating_overview_coinfox_foxclaw.md` for the plain-English
+   partner-facing operating overview.
+10. `docs/integrations/coinfox.md` before doing any CoinFox-facing work.
+11. `docs/first_encounter_guide.md`, `docs/foxclaw_gym.md`, and
    `docs/security_public_demo_threat_model.md` before demo/showing work.
 
 ## Status Markers
@@ -55,6 +57,7 @@ location, and a GitHub issue or explicit issue placeholder.
 | Forecast Learning Spine V1 | EXISTS | `docs/forecast_learning_spine.md` |
 | Receipt intelligence thesis | EXISTS | `docs/receipt_intelligence_thesis.md` |
 | Security and IP readiness | EXISTS | `docs/security_ip_readiness.md` |
+| Partner operating overview | EXISTS | `docs/partner_operating_overview_coinfox_foxclaw.md` |
 | FoxClaw Gym / demo readiness | EXISTS | `docs/foxclaw_gym.md`, `docs/demo_readiness_2026_06_28.md` |
 | First-encounter guide | EXISTS | `docs/first_encounter_guide.md`, `tools/foxclaw_visitor_guide.py` |
 | Public contract airlock | FROZEN v1 | `foxclaw/contract/`, `foxclaw/contract/public/`, `tools/export_public_intelligence.py` |
