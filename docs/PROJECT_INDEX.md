@@ -1,7 +1,7 @@
 # FoxClaw Core Project Index
 
 Status: EXISTS as the repo orientation layer.
-Last updated: 2026-06-19.
+Last updated: 2026-06-22.
 
 This file is the starting point for future ChatGPT, Codex, Copilot, and human
 handoffs. Use it when the whole system is too large to keep in one chat window.
@@ -19,8 +19,10 @@ repository boundaries; implementation details do not.
 4. `docs/deferred.md` for named pins and deliberate deferrals.
 5. `docs/project_boundaries.md` for repo ownership and cross-repo limits.
 6. `docs/trading_intelligence_fabric.md` for the new multi-stage framework.
-7. `docs/integrations/coinfox.md` before doing any CoinFox-facing work.
-8. `docs/first_encounter_guide.md`, `docs/foxclaw_gym.md`, and
+7. `docs/receipt_intelligence_thesis.md` for the receipt-backed intelligence
+   thesis and proof ladder.
+8. `docs/integrations/coinfox.md` before doing any CoinFox-facing work.
+9. `docs/first_encounter_guide.md`, `docs/foxclaw_gym.md`, and
    `docs/security_public_demo_threat_model.md` before demo/showing work.
 
 ## Status Markers
@@ -49,6 +51,7 @@ location, and a GitHub issue or explicit issue placeholder.
 | Apollo founder node coordination | EXISTS | `docs/apollo_node_coordination.md`, `docs/apollo_mesh_v0.md` |
 | Founder node security | EXISTS | `docs/founder_node_security.md` |
 | Forecast Learning Spine V1 | EXISTS | `docs/forecast_learning_spine.md` |
+| Receipt intelligence thesis | EXISTS | `docs/receipt_intelligence_thesis.md` |
 | FoxClaw Gym / demo readiness | EXISTS | `docs/foxclaw_gym.md`, `docs/demo_readiness_2026_06_28.md` |
 | First-encounter guide | EXISTS | `docs/first_encounter_guide.md`, `tools/foxclaw_visitor_guide.py` |
 | Public contract airlock | FROZEN v1 | `foxclaw/contract/`, `foxclaw/contract/public/`, `tools/export_public_intelligence.py` |

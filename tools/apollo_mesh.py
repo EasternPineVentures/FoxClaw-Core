@@ -59,6 +59,12 @@ def main(argv: list[str] | None = None) -> int:
     heartbeat.add_argument("--message", default="alive")
     heartbeat.add_argument("--tag", action="append", default=[])
 
+    manifest = sub.add_parser("manifest")
+    manifest.add_argument("--capability", action="append", default=[])
+    manifest.add_argument("--status", default="available")
+    manifest.add_argument("--note", action="append", default=[])
+    manifest.add_argument("--tag", action="append", default=[])
+
     pulse = sub.add_parser("pulse")
     pulse.add_argument("--message", default="alive")
     pulse.add_argument("--tag", action="append", default=[])
@@ -69,6 +75,37 @@ def main(argv: list[str] | None = None) -> int:
     handoff.add_argument("--next-request", required=True)
     handoff.add_argument("--current-slice", default="handoff")
     handoff.add_argument("--tag", action="append", default=[])
+
+    ask = sub.add_parser("ask")
+    ask.add_argument("--to-node", required=True)
+    ask.add_argument("--question", required=True)
+    ask.add_argument("--priority", choices=("low", "normal", "high"), default="normal")
+    ask.add_argument("--current-slice", default="")
+    ask.add_argument("--context-ref", action="append", default=[])
+    ask.add_argument("--tag", action="append", default=[])
+
+    answer = sub.add_parser("answer")
+    answer.add_argument("--to-node", required=True)
+    answer.add_argument("--question-event-id", required=True)
+    answer.add_argument("--answer", required=True)
+    answer.add_argument("--status", choices=("answered", "partial", "blocked"), default="answered")
+    answer.add_argument("--context-ref", action="append", default=[])
+    answer.add_argument("--tag", action="append", default=[])
+
+    alert = sub.add_parser("alert")
+    alert.add_argument("--severity", choices=("info", "warning", "critical"), default="info")
+    alert.add_argument("--message", required=True)
+    alert.add_argument("--source", default="")
+    alert.add_argument("--current-slice", default="")
+    alert.add_argument("--ref", action="append", default=[])
+    alert.add_argument("--tag", action="append", default=[])
+
+    receipt = sub.add_parser("receipt")
+    receipt.add_argument("--title", required=True)
+    receipt.add_argument("--summary", required=True)
+    receipt.add_argument("--status", choices=("observed", "ready", "blocked", "resolved"), default="observed")
+    receipt.add_argument("--ref", action="append", default=[])
+    receipt.add_argument("--tag", action="append", default=[])
 
     receive = sub.add_parser("receive")
     receive.add_argument("--event-file", required=True)
@@ -109,6 +146,20 @@ def main(argv: list[str] | None = None) -> int:
         )
         store.append("outbox", event)
         return _emit(event, json_mode=args.json)
+    if args.command == "manifest":
+        event = create_mesh_event(
+            identity=identity,
+            kind="node.capability_manifest",
+            content={
+                "status": args.status,
+                "capabilities": tuple(args.capability),
+                "notes": tuple(args.note),
+            },
+            tags=tuple(args.tag),
+            created_at=FIXTURE_TIME if args.fixture else None,
+        )
+        store.append("outbox", event)
+        return _emit(event, json_mode=args.json)
     if args.command == "pulse":
         event = create_mesh_event(
             identity=identity,
@@ -139,6 +190,69 @@ def main(argv: list[str] | None = None) -> int:
                 "next_request": args.next_request,
             },
             tags=tuple([f"to:{args.to_node}", *args.tag]),
+            created_at=FIXTURE_TIME if args.fixture else None,
+        )
+        store.append("outbox", event)
+        return _emit(event, json_mode=args.json)
+    if args.command == "ask":
+        event = create_mesh_event(
+            identity=identity,
+            kind="question.ask",
+            content={
+                "to_node": args.to_node,
+                "question": args.question,
+                "priority": args.priority,
+                "current_slice": args.current_slice,
+                "context_refs": tuple(args.context_ref),
+            },
+            tags=tuple([f"to:{args.to_node}", *args.tag]),
+            created_at=FIXTURE_TIME if args.fixture else None,
+        )
+        store.append("outbox", event)
+        return _emit(event, json_mode=args.json)
+    if args.command == "answer":
+        event = create_mesh_event(
+            identity=identity,
+            kind="question.answer",
+            content={
+                "to_node": args.to_node,
+                "question_event_id": args.question_event_id,
+                "answer": args.answer,
+                "status": args.status,
+                "context_refs": tuple(args.context_ref),
+            },
+            tags=tuple([f"to:{args.to_node}", f"reply:{args.question_event_id}", *args.tag]),
+            created_at=FIXTURE_TIME if args.fixture else None,
+        )
+        store.append("outbox", event)
+        return _emit(event, json_mode=args.json)
+    if args.command == "alert":
+        event = create_mesh_event(
+            identity=identity,
+            kind="runtime.alert",
+            content={
+                "severity": args.severity,
+                "message": args.message,
+                "source": args.source,
+                "current_slice": args.current_slice,
+                "refs": tuple(args.ref),
+            },
+            tags=tuple([f"severity:{args.severity}", *args.tag]),
+            created_at=FIXTURE_TIME if args.fixture else None,
+        )
+        store.append("outbox", event)
+        return _emit(event, json_mode=args.json)
+    if args.command == "receipt":
+        event = create_mesh_event(
+            identity=identity,
+            kind="context.receipt",
+            content={
+                "title": args.title,
+                "summary": args.summary,
+                "status": args.status,
+                "refs": tuple(args.ref),
+            },
+            tags=tuple([f"status:{args.status}", *args.tag]),
             created_at=FIXTURE_TIME if args.fixture else None,
         )
         store.append("outbox", event)

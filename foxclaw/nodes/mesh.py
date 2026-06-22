@@ -11,6 +11,7 @@ import hashlib
 import hmac
 import json
 import os
+import re
 import secrets
 from dataclasses import dataclass, fields, is_dataclass
 from datetime import UTC, datetime
@@ -60,6 +61,16 @@ FORBIDDEN_CONTENT_FIELDS = frozenset(
         "submit_order",
         "token",
     }
+)
+
+FORBIDDEN_CONTENT_VALUE_PATTERNS = tuple(
+    re.compile(pattern, re.IGNORECASE)
+    for pattern in (
+        r"\b(?:api[_-]?key|token|password|private[_-]?key|secret)\s*[:=]",
+        r"\bbearer\s+[A-Za-z0-9._~+/=-]{8,}",
+        r"\bmfa\.[A-Za-z0-9_-]{8,}",
+        r"discord(?:app)?\.com/api/webhooks/",
+    )
 )
 
 
@@ -376,6 +387,10 @@ def reject_forbidden_content(value: Any, *, path: str = "content") -> None:
     elif isinstance(value, list | tuple):
         for idx, item in enumerate(value):
             reject_forbidden_content(item, path=f"{path}[{idx}]")
+    elif isinstance(value, str):
+        for pattern in FORBIDDEN_CONTENT_VALUE_PATTERNS:
+            if pattern.search(value):
+                raise ValueError(f"mesh event content cannot include credential-like value at: {path}")
 
 
 def to_jsonable(value: Any) -> Any:

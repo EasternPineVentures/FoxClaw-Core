@@ -98,6 +98,24 @@ def test_mesh_event_rejects_remote_command_or_secret_fields():
         )
 
 
+def test_mesh_event_rejects_credential_like_content_values():
+    with pytest.raises(ValueError, match="credential-like value"):
+        create_mesh_event(
+            identity=_identity(),
+            kind="question.ask",
+            content={"question": "can you use token=abc123456789 for the test?"},
+            created_at=NOW,
+        )
+
+    with pytest.raises(ValueError, match="credential-like value"):
+        create_mesh_event(
+            identity=_identity(),
+            kind="runtime.alert",
+            content={"message": "Bearer abcdefghijklmnop"},
+            created_at=NOW,
+        )
+
+
 def test_mesh_store_appends_outbox_and_receives_verified_inbox(tmp_path: Path):
     store = ApolloMeshStore(tmp_path / "mesh")
     event = create_mesh_event(

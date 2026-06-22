@@ -103,6 +103,9 @@ mesh. The key ID is safe to compare; the secret is not.
 
 ## Commands
 
+`tools/apollo_courier.py` is the preferred operator wrapper. It delegates mesh commands and
+also exposes branch sync. Direct `tools/apollo_mesh.py` commands remain supported.
+
 Initialize a local identity:
 
 ```powershell
