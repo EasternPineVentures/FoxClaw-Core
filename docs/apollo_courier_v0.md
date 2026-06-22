@@ -5,6 +5,7 @@ Apollo Courier is the operator-facing wrapper around Apollo node coordination.
 V0 has two jobs:
 
 - keep A1/A2 on the expected Git branch without paste-heavy PowerShell handoffs;
+- let each node resolve its expected branch from a shared lane manifest;
 - send signed founder-private mesh events when a node needs to ask, answer, alert, or
   leave a receipt.
 
@@ -45,6 +46,44 @@ It refuses to act when:
 - the target branch does not exist locally or on the remote;
 - the current branch has diverged from upstream;
 - the branch is ahead and needs a human-approved push.
+
+## Lane Sync
+
+The shared lane map lives at:
+
+```text
+config/apollo_courier_lanes.json
+```
+
+List known lanes:
+
+```powershell
+python tools\apollo_courier.py lanes --json
+```
+
+Ask where one node should be for a lane:
+
+```powershell
+python tools\apollo_courier.py lane-sync `
+  --node-id A2 `
+  --lane parser-compat-v0 `
+  --fetch `
+  --json
+```
+
+Apply the safe branch move:
+
+```powershell
+python tools\apollo_courier.py lane-sync `
+  --node-id A2 `
+  --lane parser-compat-v0 `
+  --apply `
+  --json
+```
+
+This resolves `A2 + parser-compat-v0` to the manifest's target branch, then uses the same
+safe branch-sync rules above. The manifest is intentionally small and explicit so the
+project can change lane ownership without rewriting commands in chat.
 
 ## Signed Courier Messages
 

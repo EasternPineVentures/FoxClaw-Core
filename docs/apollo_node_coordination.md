@@ -25,8 +25,9 @@ legacy/reference runtime unless explicitly touched.
 Inspect or align a node to the expected branch:
 
 ```powershell
-python tools\apollo_courier.py branch-sync `
-  --target-branch feature/parser-compat-v0 `
+python tools\apollo_courier.py lane-sync `
+  --node-id A2 `
+  --lane parser-compat-v0 `
   --fetch `
   --json
 ```

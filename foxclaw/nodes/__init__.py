@@ -17,6 +17,14 @@ from .branch_sync import (
     inspect_branch_sync,
     plan_branch_sync,
 )
+from .lane_manifest import (
+    CourierLane,
+    CourierLaneManifest,
+    CourierNodeLane,
+    lane_summary,
+    load_lane_manifest,
+    resolve_node_lane,
+)
 from .mesh import (
     ALLOWED_EVENT_KINDS,
     ApolloMeshEvent,
@@ -38,12 +46,18 @@ __all__ = [
     "BranchSyncPlan",
     "BranchSyncResult",
     "BranchSyncState",
+    "CourierLane",
+    "CourierLaneManifest",
+    "CourierNodeLane",
     "apply_branch_sync",
     "build_node_brief",
     "fetch_remote",
     "git_snapshot",
     "inspect_branch_sync",
+    "lane_summary",
+    "load_lane_manifest",
     "plan_branch_sync",
+    "resolve_node_lane",
     "render_markdown",
     "ALLOWED_EVENT_KINDS",
     "ApolloMeshEvent",

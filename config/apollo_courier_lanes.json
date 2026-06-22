@@ -1,0 +1,69 @@
+{
+  "contract_version": "apollo_courier_lanes.v1",
+  "default_remote": "origin",
+  "lanes": {
+    "master": {
+      "description": "Shared truth baseline. Use this before starting or after finishing a focused lane.",
+      "nodes": {
+        "A1": {
+          "target_branch": "master",
+          "role": "integration, release, shared truth",
+          "repo_path_hint": "C:\\Users\\brend\\dev\\foxclaw-core",
+          "notes": [
+            "A1 owns master and final integration checkpoints."
+          ]
+        },
+        "A2": {
+          "target_branch": "master",
+          "role": "pull latest shared tooling and report runtime reality",
+          "repo_path_hint": "C:\\Users\\fox1i\\Desktop\\FoxClaw-Core-master",
+          "notes": [
+            "Start here to get Apollo Courier before switching to older feature branches."
+          ]
+        }
+      }
+    },
+    "parser-compat-v0": {
+      "description": "Offline parser migration and parity lane. No Discord connection, no parser mutation, no CoinFox.",
+      "nodes": {
+        "A1": {
+          "target_branch": "feature/parser-compat-v0",
+          "role": "Core parser compatibility implementation and parity comparison",
+          "repo_path_hint": "C:\\Users\\brend\\dev\\foxclaw-core",
+          "notes": [
+            "This branch predates Courier on some clones; return to master for Courier updates."
+          ]
+        },
+        "A2": {
+          "target_branch": "feature/parser-compat-v0",
+          "role": "Legacy JSONL validation and private corpus parity evidence",
+          "repo_path_hint": "C:\\Users\\fox1i\\Desktop\\FoxClaw-Core-master",
+          "notes": [
+            "Run validation only against private legacy JSONL; do not connect Discord from Core."
+          ]
+        }
+      }
+    },
+    "courier-v0": {
+      "description": "Apollo Courier branch positioning and founder-private node communication.",
+      "nodes": {
+        "A1": {
+          "target_branch": "master",
+          "role": "Courier integration and lane map ownership",
+          "repo_path_hint": "C:\\Users\\brend\\dev\\foxclaw-core",
+          "notes": [
+            "Keep Courier available from master so A2 can bootstrap with a normal pull."
+          ]
+        },
+        "A2": {
+          "target_branch": "master",
+          "role": "Courier bootstrap and branch-state reporting",
+          "repo_path_hint": "C:\\Users\\fox1i\\Desktop\\FoxClaw-Core-master",
+          "notes": [
+            "Use lane-sync from master to move into older feature lanes when needed."
+          ]
+        }
+      }
+    }
+  }
+}

@@ -99,3 +99,82 @@ def test_apollo_courier_branch_sync_refuses_dirty_tree(tmp_path: Path):
     assert payload["after"] is None
     assert payload["executed"] == []
     assert _git(node, "branch", "--show-current") == "master"
+
+
+def test_apollo_courier_lane_sync_resolves_manifest_target(tmp_path: Path):
+    remote = _seed_remote(tmp_path)
+    node = tmp_path / "node"
+    _git(tmp_path, "clone", str(remote), str(node))
+    manifest = tmp_path / "lanes.json"
+    manifest.write_text(
+        json.dumps(
+            {
+                "contract_version": "apollo_courier_lanes.v1",
+                "default_remote": "origin",
+                "lanes": {
+                    "parser": {
+                        "description": "parser lane",
+                        "nodes": {
+                            "A2": {
+                                "target_branch": "feature/demo",
+                                "role": "validate parser fixtures",
+                                "repo_path_hint": str(node),
+                                "notes": ["fixture only"],
+                            }
+                        },
+                    }
+                },
+            }
+        ),
+        encoding="utf-8",
+    )
+
+    completed = _run_courier(
+        "lane-sync",
+        "--repo",
+        str(node),
+        "--manifest",
+        str(manifest),
+        "--lane",
+        "parser",
+        "--node-id",
+        "A2",
+        "--apply",
+        "--json",
+    )
+    payload = json.loads(completed.stdout)
+
+    assert payload["lane"]["target_branch"] == "feature/demo"
+    assert payload["lane"]["role"] == "validate parser fixtures"
+    assert payload["applied"] is True
+    assert payload["after"]["current_branch"] == "feature/demo"
+
+
+def test_apollo_courier_lanes_lists_manifest(tmp_path: Path):
+    manifest = tmp_path / "lanes.json"
+    manifest.write_text(
+        json.dumps(
+            {
+                "contract_version": "apollo_courier_lanes.v1",
+                "default_remote": "origin",
+                "lanes": {
+                    "master": {
+                        "description": "baseline",
+                        "nodes": {
+                            "A1": {
+                                "target_branch": "master",
+                                "role": "integration",
+                                "repo_path_hint": "C:/repo",
+                            }
+                        },
+                    }
+                },
+            }
+        ),
+        encoding="utf-8",
+    )
+
+    completed = _run_courier("lanes", "--manifest", str(manifest), "--json")
+    payload = json.loads(completed.stdout)
+
+    assert payload["lanes"]["master"]["nodes"]["A1"]["target_branch"] == "master"
