@@ -56,9 +56,12 @@ financial-advice engine. It is a receipt-first market discussion network.
 
 Eastern Pine Ventures is being built by a working founder with a manufacturing and
 operations background. That matters because CoinFox is being approached through process,
-review, reliability, and accountability rather than hype. Manufacturing teaches that inputs
-matter, setup matters, quality control matters, and every bad run can teach something if the
-process captures it. That same mindset is being applied to market discussion.
+review, reliability, and accountability rather than hype. This is my first company, and
+becoming a small business owner has been a long-term personal goal. I want that to show in
+the pace of the build: careful, useful, accountable, and durable enough to earn trust before
+it asks for it. Manufacturing teaches that inputs matter, setup matters, quality control
+matters, and every bad run can teach something if the process captures it. That same mindset
+is being applied to market discussion.
 
 Current progress includes early working foundations for public market reads, social posts,
 comments, votes, paper-practice concepts, public/private data boundaries, and receipt-first

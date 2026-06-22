@@ -51,6 +51,10 @@ Eastern Pine Ventures is being built by a working founder with a manufacturing a
 operations background. That matters because CoinFox is not being approached as a hype
 product. It is being built around process, review, reliability, and accountability.
 
+This is my first company, and becoming a small business owner has been a long-term personal
+goal. I want that to show in the way the company is built: careful, useful, accountable, and
+durable enough to earn trust before it asks for it.
+
 My background as a printing press operator shaped how I think about systems: inputs matter,
 setup matters, quality control matters, machine behavior matters, and every bad run teaches
 something if the process captures it.

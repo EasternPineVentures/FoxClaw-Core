@@ -113,6 +113,9 @@ and partner-safe demo.
 Eastern Pine Ventures is being built by a working founder with a manufacturing and
 operations background.
 
+It is also the founder's first company, built from a long-term goal of joining the small
+business owner community in a serious, durable way.
+
 That background matters. Manufacturing teaches that inputs matter, setup matters, quality
 control matters, machine behavior matters, and every bad run teaches something if the
 process captures it.
@@ -140,4 +143,3 @@ Get In Touch
 
 CoinFox is the product people use. FoxClaw is the intelligence backbone. Eastern Pine
 Ventures is the company building both.
-

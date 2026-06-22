@@ -25,6 +25,10 @@ operator. That shaped how I think about systems: inputs matter, setup matters, q
 control matters, and every bad run should teach something if the process captures it. I am
 bringing that same operating mindset to market discussion and AI-assisted decision support.
 
+Eastern Pine Ventures is my first company, and becoming a small business owner has been a
+long-term personal goal. I want the company to reflect that: careful, useful, accountable,
+and built to earn trust before it asks for it.
+
 CoinFox is currently in the early MVP and validation stage. I am looking for conversations
 with people who understand product validation, fintech compliance, market data, community
 design, moderation, social products, trading education, or AI evaluation.
@@ -47,7 +51,10 @@ instead of hype.
 FoxClaw is the internal intelligence and R&D backbone behind the product, helping structure
 claims, evidence, risk, outcomes, and learning while protecting private system mechanics.
 
+Eastern Pine Ventures is a first company built from a long-term small-business goal. The
+company is being approached with a process-first mindset: careful, useful, accountable, and
+durable enough to earn trust before it asks for it.
+
 CoinFox is currently in the early MVP and validation stage. Eastern Pine Ventures is seeking
 partner conversations around product validation, compliance-safe positioning, market data,
 community design, moderation, and AI-assisted evaluation.
-
