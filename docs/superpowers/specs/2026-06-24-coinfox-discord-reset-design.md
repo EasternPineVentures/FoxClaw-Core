@@ -35,6 +35,8 @@ published into CoinFox public channels.
   prototype room with guests added.
 - Treat cleanup as a controlled migration with a temporary staging area,
   rollback rule, role visibility test, and soft launch before wider invites.
+- Track every legacy-channel decision before cleanup so archive status,
+  attachments, pins, final visibility, and delete/lock/vault choices are explicit.
 
 ## Non-Goals
 
@@ -51,7 +53,8 @@ published into CoinFox public channels.
 Use a clean public launch with one founder vault:
 
 1. Export and verify a founder-plus-signals archive.
-2. Create a portable local archive package with an index and checksums.
+2. Create a portable local archive package with an index, channel decision
+   tracker, and checksums.
 3. Create a temporary reset-staging category before deleting or locking legacy
    channels.
 4. Rebuild the existing Discord into the public CoinFox server.
@@ -99,6 +102,8 @@ The package should contain:
 - `README.md` explaining what was archived, when, and why;
 - `manifest.json` listing exported channels, date ranges, file counts, and export
   method;
+- `channel_decision_tracker.csv` or `channel_decision_tracker.md` listing every
+  reviewed legacy channel and its reset decision;
 - `checksums.sha256` covering every exported file;
 - `founder-footnotes.md` with curated private notes about the creation story;
 - raw export files stored under clearly named channel folders;
@@ -108,6 +113,19 @@ The package should contain:
 
 The archive should be useful later without requiring the old Discord server to
 remain intact.
+
+The channel decision tracker should include:
+
+| Field | Required meaning |
+| --- | --- |
+| Channel | Original channel name. |
+| Category | Original category name. |
+| Archive status | `not_started`, `exported`, `verified`, or `skipped_pure_clutter`. |
+| Attachments saved? | `yes`, `no`, or `none_found`. |
+| Pins saved? | `yes`, `no`, or `none_found`. |
+| Decision | `keep`, `vault`, `lock`, or `delete`. |
+| Public visibility after reset | `public`, `private_founder_vault`, `private_staging`, or `deleted`. |
+| Notes | Short founder/operator note explaining the decision. |
 
 ## Server Shape
 
@@ -123,12 +141,12 @@ The converted CoinFox Discord should have a small, legible public surface:
   - market-talk
   - trade-ideas
   - questions
-  - wins-losses-postmortems
+  - wins-and-lessons
 - `FOXCLAW IDEAS`
   - public-intelligence
   - paper-only-notes
   - no-edge-rejects
-  - postmortems
+  - foxclaw-postmortems
 - `LEARN`
   - risk-management
   - good-signal-bad-trade
@@ -197,6 +215,17 @@ private material, permissions mistakes, or accidental deletion spreads.
 
 Cleanup only begins after the archive package is created and checksum-verified.
 
+No channel may be deleted until:
+
+- it appears in `manifest.json`;
+- its export file exists locally;
+- `checksums.sha256` includes the export file and saved media files;
+- checksum verification passes;
+- the founder/operator confirms the channel has no obvious missing attachments,
+  images, screenshots, charts, or docs;
+- the channel appears in the channel decision tracker;
+- the channel has been moved to `RESET STAGING` or marked pure clutter.
+
 After verification:
 
 - delete channels that are pure clutter and already archived;
@@ -212,11 +241,42 @@ After verification:
 The server should feel intentionally public, not like a private workspace with
 some channels hidden.
 
+## Bot Freeze
+
+Before any public invite:
+
+- disable or permission-review every bot;
+- remove any parser bot from the public server surface;
+- remove any old signal bot from the public server surface;
+- remove admin from every bot unless that permission is explicitly required;
+- confirm no bot can see `FOUNDER VAULT` unless the founder/operator approves it;
+- confirm no bot can see local archive exports, staged private channels, or
+  hidden legacy logs unless there is a documented internal reason.
+
+## Invite Reset
+
+Before the soft launch:
+
+1. Revoke every old invite.
+2. Create one new invite after permissions pass.
+3. Set the invite to land in `START HERE`.
+4. Use that invite for the soft launch only.
+5. Create broader public invites only after the soft-launch review is complete.
+
 ## Public Launch Copy
 
 Write and pin the public-safe welcome, rules, risk disclaimer, and "signals are
 not trades" explanation before cleanup finishes. This gives the rebuilt server a
 target identity while old channels are being sorted.
+
+The first pinned posts are required deliverables:
+
+- welcome;
+- rules;
+- risk disclaimer;
+- signals are not trades;
+- how to use trade-ideas;
+- what FoxClaw public intelligence means.
 
 Welcome copy:
 
@@ -256,6 +316,11 @@ Rules copy:
 
 The archive is private source material. Public history must be curated.
 
+The archive is not the public story. It is a private source vault that can later
+support carefully redacted origin posts, founder notes, and screenshots. The
+public Discord should show the curated CoinFox identity, not raw archive
+material.
+
 Allowed future public story material:
 
 - a short "how CoinFox started" post;
@@ -284,6 +349,10 @@ Before the first public invite:
 - confirm no credentials or private exports are attached in Discord;
 - confirm no public role can see archive exports, bot logs, parser logs, or
   `RESET STAGING`;
+- confirm all bots have been disabled or permission-reviewed;
+- confirm no bot has admin unless explicitly needed;
+- confirm old invites have been revoked and the one soft-launch invite lands in
+  `START HERE`;
 - confirm public rules state that CoinFox discussion is informational and not
   individualized financial advice.
 
@@ -303,6 +372,21 @@ them:
 - whether any old private material is visible.
 
 Fix channel names, permissions, and pinned copy before broader public invites.
+
+## Run Order
+
+1. Freeze invites and permissions.
+2. Archive founder, signals, images, files, and history.
+3. Verify checksums.
+4. Create `FOUNDER VAULT` and `RESET STAGING`.
+5. Move questionable channels into staging.
+6. Build public CoinFox categories.
+7. Add welcome, rules, disclaimer, and explainer pins.
+8. Review, disable, or remove bots.
+9. Test role visibility.
+10. Revoke old invites and create one soft-launch invite.
+11. Invite 3 to 10 trusted people.
+12. Fix issues before broader public invite.
 
 ## Success Criteria
 
