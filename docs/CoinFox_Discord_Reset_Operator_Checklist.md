@@ -18,7 +18,9 @@ Run Phase 1 through Phase 3 first:
 2. Archive founder, signals, images, files, and history.
 3. Verify checksums.
 
-Do not delete, lock, or publicly restructure legacy channels until Phase 3 is complete and the archive evidence passes.
+Do not create a new public invite, delete channels, lock channels, move channels,
+or publicly restructure legacy channels until Phase 3 is complete and the
+archive evidence passes.
 
 ## Files And Artifacts
 
@@ -40,9 +42,16 @@ Do not delete, lock, or publicly restructure legacy channels until Phase 3 is co
 - `channel_decision_tracker.csv`
 - `founder-footnotes.md`
 - `redaction-log.md`
-- `checksums.sha256`
-- `exports\`
-- `media\`
+- `checksums.sha256` after Phase 3 verification
+- `exports\founder-notes\`
+- `exports\signal-history\`
+- `exports\important-decisions\`
+- `exports\pins\`
+- `exports\server-snapshot\`
+- `media\screenshots\`
+- `media\charts\`
+- `media\docs\`
+- `media\brand-assets\`
 - `settings\`
 
 ## Delete Gate
@@ -63,16 +72,16 @@ No channel may be deleted until all of these are true:
 Create `channel_decision_tracker.csv` with this exact header:
 
 ```csv
-Channel,Category,Archive status,Attachments saved?,Pins saved?,Decision,Public visibility after reset,Notes
+channel_name,category,archive_status,pins_saved,attachments_saved,decision,public_after_reset,notes
 ```
 
 Allowed values:
 
-- `Archive status`: `not_started`, `exported`, `verified`, `skipped_pure_clutter`
-- `Attachments saved?`: `yes`, `no`, `none_found`
-- `Pins saved?`: `yes`, `no`, `none_found`
-- `Decision`: `keep`, `vault`, `lock`, `delete`
-- `Public visibility after reset`: `public`, `private_founder_vault`, `private_staging`, `deleted`
+- `archive_status`: `not_started`, `exported`, `verified`, `skipped_pure_clutter`
+- `pins_saved`: `yes`, `no`, `none_found`
+- `attachments_saved`: `yes`, `no`, `none_found`
+- `decision`: `keep_public`, `move_founder_vault`, `move_reset_staging`, `lock_then_delete`, `delete_after_verified`, `review_later`
+- `public_after_reset`: `public`, `private_founder_vault`, `private_staging`, `deleted`
 
 ## Phase 1: Freeze Invites And Permissions
 
@@ -81,6 +90,7 @@ Allowed values:
 - [ ] Open Discord server settings and review active invite links.
 - [ ] Revoke all old invite links.
 - [ ] Confirm no active public invite remains.
+- [ ] Do not create the new public invite yet.
 - [ ] Review the current admin list.
 - [ ] Remove admin from any account that should not control the reset.
 - [ ] Confirm the founder/operator account has full control.
@@ -88,39 +98,72 @@ Allowed values:
 - [ ] Record the current role list in `settings\roles-before-reset.md`.
 - [ ] Record the current bot list in `settings\bots-before-reset.md`.
 - [ ] Record the current category and channel list in `settings\channels-before-reset.md`.
+- [ ] Record invite changes and any access freeze notes in `manifest.json` notes or `redaction-log.md`.
 - [ ] Create the local archive root outside git.
-- [ ] Create these folders under the archive root: `exports`, `media`, `settings`.
+- [ ] Create the Phase 1-3 folder buckets under `exports\`, `media\`, and `settings\`.
 - [ ] Create an empty `README.md` in the archive root.
 - [ ] Create an empty `redaction-log.md` in the archive root.
 - [ ] Create `channel_decision_tracker.csv` with the required header.
+- [ ] Create `manifest.json` with archive status `phase_1_3_archive_in_progress`.
 
 PowerShell setup command:
 
 ```powershell
 $ArchiveRoot = "C:\Users\fox1i\CoinFox_Discord_Archive_2026-06-24"
-New-Item -ItemType Directory -Force -Path $ArchiveRoot, "$ArchiveRoot\exports", "$ArchiveRoot\media", "$ArchiveRoot\settings" | Out-Null
+New-Item -ItemType Directory -Force -Path `
+  $ArchiveRoot, `
+  "$ArchiveRoot\exports\founder-notes", `
+  "$ArchiveRoot\exports\signal-history", `
+  "$ArchiveRoot\exports\important-decisions", `
+  "$ArchiveRoot\exports\pins", `
+  "$ArchiveRoot\exports\server-snapshot", `
+  "$ArchiveRoot\media\screenshots", `
+  "$ArchiveRoot\media\charts", `
+  "$ArchiveRoot\media\docs", `
+  "$ArchiveRoot\media\brand-assets", `
+  "$ArchiveRoot\settings" | Out-Null
 Set-Content -Encoding utf8 -Path "$ArchiveRoot\README.md" -Value "# CoinFox Discord Private Archive`n`nCreated: 2026-06-24`nPurpose: Founder, signal, image, attachment, and origin-history archive before CoinFox public reset.`n"
 Set-Content -Encoding utf8 -Path "$ArchiveRoot\redaction-log.md" -Value "# Redaction Log`n`nRecord omitted credentials, private identifiers, unsafe screenshots, and other deliberate exclusions here without copying private values.`n"
-Set-Content -Encoding utf8 -Path "$ArchiveRoot\channel_decision_tracker.csv" -Value "Channel,Category,Archive status,Attachments saved?,Pins saved?,Decision,Public visibility after reset,Notes"
+Set-Content -Encoding utf8 -Path "$ArchiveRoot\channel_decision_tracker.csv" -Value "channel_name,category,archive_status,pins_saved,attachments_saved,decision,public_after_reset,notes"
+@'
+{
+  "archive_name": "CoinFox_Discord_Archive_2026-06-24",
+  "created_for": "CoinFox Discord reset",
+  "status": "phase_1_3_archive_in_progress",
+  "contains_private_material": true,
+  "public_safe": false,
+  "git_tracked": false,
+  "checksum_file": "checksums.sha256",
+  "notes": [
+    "Phase 1-3 only: freeze invites, export/archive, fill manifest/tracker, verify checksums.",
+    "No channel cleanup or public invite creation before archive verification."
+  ],
+  "channels": []
+}
+'@ | Set-Content -Encoding utf8 -Path "$ArchiveRoot\manifest.json"
 ```
 
 Expected result:
 
 ```text
-Archive root exists outside git with README.md, redaction-log.md, channel_decision_tracker.csv, exports\, media\, and settings\.
+Archive root exists outside git with README.md, redaction-log.md, manifest.json,
+channel_decision_tracker.csv, exports\, media\, and settings\.
 ```
 
 ## Phase 2: Archive Founder, Signals, Images, Files, And History
 
 **Purpose:** Preserve the company memory before any cleanup.
 
-- [ ] Export founder/operator chats and notes into `exports\`.
-- [ ] Export signal channels and signal-adjacent discussion into `exports\`.
-- [ ] Export important pinned messages into `exports\` or `settings\pins-before-reset.md`.
-- [ ] Save all important attachments into `media\`.
-- [ ] Save all images, screenshots, chart images, and docs into `media\`.
-- [ ] Save the server icon and banner into `media\server-branding\`.
-- [ ] Save channel imagery and brand assets into `media\server-branding\`.
+- [ ] Export founder/operator chats and notes into `exports\founder-notes\`.
+- [ ] Export signal channels and signal-adjacent discussion into `exports\signal-history\`.
+- [ ] Export important decisions into `exports\important-decisions\`.
+- [ ] Export important pinned messages into `exports\pins\` or `settings\pins-before-reset.md`.
+- [ ] Save server snapshot exports into `exports\server-snapshot\`.
+- [ ] Save all important attachments into the matching `media\` folder.
+- [ ] Save screenshots into `media\screenshots\`.
+- [ ] Save chart images into `media\charts\`.
+- [ ] Save docs into `media\docs\`.
+- [ ] Save the server icon, banner, channel imagery, and brand assets into `media\brand-assets\`.
 - [ ] Save server settings screenshots or notes into `settings\server-settings-before-reset.md`.
 - [ ] Save role screenshots or notes into `settings\roles-before-reset.md`.
 - [ ] Save bot screenshots or notes into `settings\bots-before-reset.md`.
@@ -135,26 +178,14 @@ Minimum `manifest.json` shape:
 
 ```json
 {
-  "archive_name": "CoinFox Discord Private Archive",
-  "created_date": "2026-06-24",
-  "archive_root": "C:\\Users\\fox1i\\CoinFox_Discord_Archive_2026-06-24",
-  "scope": "founder-plus-signals archive before in-place CoinFox Discord reset",
-  "channels": [],
-  "settings_files": [
-    "settings/admin-list.md",
-    "settings/roles-before-reset.md",
-    "settings/bots-before-reset.md",
-    "settings/channels-before-reset.md",
-    "settings/invites-before-reset.md",
-    "settings/server-settings-before-reset.md",
-    "settings/trust-boundary-notes.md"
-  ],
-  "media_roots": [
-    "media",
-    "media/server-branding"
-  ],
-  "redaction_log": "redaction-log.md",
-  "decision_tracker": "channel_decision_tracker.csv"
+  "archive_name": "CoinFox_Discord_Archive_2026-06-24",
+  "created_for": "CoinFox Discord reset",
+  "status": "phase_1_3_archive_in_progress",
+  "contains_private_material": true,
+  "public_safe": false,
+  "git_tracked": false,
+  "checksum_file": "checksums.sha256",
+  "channels": []
 }
 ```
 
@@ -186,8 +217,10 @@ Founder, signals, important pins, images, files, server settings, role list, bot
 
 **Purpose:** Prove the archive can be trusted before cleanup starts.
 
+- [ ] Run checksum generation only after Discord exports and important media have been saved.
 - [ ] Generate `checksums.sha256` over all archive files except `checksums.sha256` itself.
 - [ ] Verify `checksums.sha256`.
+- [ ] Confirm `checksums.sha256` exists and has content.
 - [ ] Open a sample of channel exports locally.
 - [ ] Open a sample of saved images and attachments locally.
 - [ ] Confirm `manifest.json` references the expected exported channels.
@@ -244,11 +277,33 @@ Expected result:
 Checksum verification passed
 ```
 
+Confirm checksum file exists and has content:
+
+```powershell
+Set-Location "C:\Users\fox1i\CoinFox_Discord_Archive_2026-06-24"
+Get-Item .\checksums.sha256
+Get-Content .\checksums.sha256 | Select-Object -First 10
+```
+
 Hard stop:
 
 ```text
 Do not start Phase 4 until checksum verification passes and the founder/operator confirms the archive has no obvious missing images, attachments, pins, charts, or docs.
 ```
+
+## Stop Gate Before Cleanup
+
+Do not delete, lock, move, or publicly restructure channels until all are true:
+
+- [ ] Archive folder has Discord exports.
+- [ ] Important pins are saved.
+- [ ] Important media is saved.
+- [ ] `manifest.json` is updated.
+- [ ] `channel_decision_tracker.csv` is updated.
+- [ ] `checksums.sha256` is generated.
+- [ ] Archive opens locally.
+- [ ] Founder/operator can find founder footnotes without Discord.
+- [ ] No public invites are active.
 
 ## Phase 4: Create Founder Vault And Reset Staging
 

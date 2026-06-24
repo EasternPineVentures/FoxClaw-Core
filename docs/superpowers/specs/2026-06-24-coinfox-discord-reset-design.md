@@ -114,18 +114,18 @@ The package should contain:
 The archive should be useful later without requiring the old Discord server to
 remain intact.
 
-The channel decision tracker should include:
+The channel decision tracker should use machine-friendly column names:
 
 | Field | Required meaning |
 | --- | --- |
-| Channel | Original channel name. |
-| Category | Original category name. |
-| Archive status | `not_started`, `exported`, `verified`, or `skipped_pure_clutter`. |
-| Attachments saved? | `yes`, `no`, or `none_found`. |
-| Pins saved? | `yes`, `no`, or `none_found`. |
-| Decision | `keep`, `vault`, `lock`, or `delete`. |
-| Public visibility after reset | `public`, `private_founder_vault`, `private_staging`, or `deleted`. |
-| Notes | Short founder/operator note explaining the decision. |
+| `channel_name` | Original channel name. |
+| `category` | Original category name. |
+| `archive_status` | `not_started`, `exported`, `verified`, or `skipped_pure_clutter`. |
+| `pins_saved` | `yes`, `no`, or `none_found`. |
+| `attachments_saved` | `yes`, `no`, or `none_found`. |
+| `decision` | `keep_public`, `move_founder_vault`, `move_reset_staging`, `lock_then_delete`, `delete_after_verified`, or `review_later`. |
+| `public_after_reset` | `public`, `private_founder_vault`, `private_staging`, or `deleted`. |
+| `notes` | Short founder/operator note explaining the decision. |
 
 ## Server Shape
 
