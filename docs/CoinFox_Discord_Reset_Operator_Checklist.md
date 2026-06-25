@@ -651,18 +651,25 @@ There is one active soft-launch invite, and it lands users in START HERE.
 
 **Purpose:** Test the real join experience before broader public invites.
 
+- [ ] Review `docs/superpowers/specs/2026-06-25-coinfox-week-1-community-games-design.md`.
 - [ ] Invite 3 to 10 trusted people.
 - [ ] Ask what channels they can see.
 - [ ] Ask what feels confusing.
 - [ ] Ask what feels too trading-heavy.
 - [ ] Ask whether the server feels safe and understandable.
 - [ ] Ask whether any old private material is visible.
+- [ ] Run Week 1 community games manually inside existing public channels.
+- [ ] Do not create an `ARENA` category during Week 1.
+- [ ] Do not use profit-only leaderboards or real-money contest framing.
+- [ ] Review participation, moderation burden, channel clutter, safety issues, and user feedback.
 - [ ] Record findings in `settings\soft-launch-feedback.md` in the local archive.
 
 Expected result:
 
 ```text
-Trusted invitees report no private visibility issues and identify any confusing public copy or channel names.
+Trusted invitees report no private visibility issues, identify any confusing
+public copy or channel names, and generate enough Week 1 feedback to decide
+whether an ARENA category is justified later.
 ```
 
 ## Phase 12: Fix Issues Before Broader Public Invite
@@ -707,5 +714,5 @@ If anything feels wrong:
 - Spec requirement: bot freeze. Covered by Phase 8.
 - Spec requirement: role visibility test. Covered by Phase 9.
 - Spec requirement: invite reset. Covered by Phase 10.
-- Spec requirement: soft launch. Covered by Phase 11.
+- Spec requirement: soft launch and Week 1 manual games. Covered by Phase 11.
 - Spec requirement: broader public invite only after fixes. Covered by Phase 12.
