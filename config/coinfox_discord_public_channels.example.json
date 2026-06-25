@@ -1,0 +1,12 @@
+{
+  "channels": [
+    {"id": "REPLACE_WITH_WELCOME_CHANNEL_ID", "name": "welcome"},
+    {"id": "REPLACE_WITH_RULES_CHANNEL_ID", "name": "rules"},
+    {"id": "REPLACE_WITH_GENERAL_CHANNEL_ID", "name": "general"},
+    {"id": "REPLACE_WITH_TRADE_IDEAS_CHANNEL_ID", "name": "trade-ideas"},
+    {"id": "REPLACE_WITH_QUESTIONS_CHANNEL_ID", "name": "questions"},
+    {"id": "REPLACE_WITH_PUBLIC_INTELLIGENCE_CHANNEL_ID", "name": "public-intelligence"},
+    {"id": "REPLACE_WITH_HELP_CHANNEL_ID", "name": "help"},
+    {"id": "REPLACE_WITH_REPORTS_CHANNEL_ID", "name": "reports"}
+  ]
+}

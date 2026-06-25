@@ -67,6 +67,36 @@ Expected `setup-structure` behavior:
   `SUPPORT` categories/channels if missing;
 - does not move, lock, or delete legacy channels.
 
+## Optional Mention-Only Representative Bot
+
+`tools/coinfox_discord_rep.py` runs the CoinFox bot as a public-channel
+representative. It is mention-only and dry-run by default.
+
+Safety boundary:
+
+- only channels listed in the JSON allowlist are polled;
+- no private archive files are read;
+- no Founder Vault, Reset Staging, raw feed, parser log, bot log, or old signal
+  channel should appear in the allowlist;
+- live posting requires `--send`;
+- no trade advice, trade execution, signal parsing, moderation automation, or
+  public invite creation.
+
+Dry run:
+
+```powershell
+python tools\coinfox_discord_rep.py --channels-config config\coinfox_discord_public_channels.local.json
+```
+
+Live send:
+
+```powershell
+python tools\coinfox_discord_rep.py --channels-config config\coinfox_discord_public_channels.local.json --send
+```
+
+Keep `config\coinfox_discord_public_channels.local.json` out of git if it
+contains live Discord channel IDs.
+
 Discord setup requirements:
 
 - the bot must be invited to the server with read access to the channels being archived;
