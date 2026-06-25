@@ -10,6 +10,39 @@
 
 ---
 
+## Optional Read-Only Bot Helper
+
+`tools/coinfox_discord_archive.py` can help with archive metadata, channel export,
+attachment download, checksums, and stop-gate reporting.
+
+Safety boundary:
+
+- bot token only through `COINFOX_DISCORD_BOT_TOKEN`;
+- legacy `USER_TOKEN` is ignored;
+- no self-bot behavior;
+- no channel deletion, movement, locking, creation, or invite creation;
+- no token values printed in reports.
+
+Commands:
+
+```powershell
+python tools\coinfox_discord_archive.py --archive-root C:\Users\fox1i\CoinFox_Discord_Archive_2026-06-24 doctor
+python tools\coinfox_discord_archive.py --archive-root C:\Users\fox1i\CoinFox_Discord_Archive_2026-06-24 snapshot --guild-id <guild_id>
+python tools\coinfox_discord_archive.py --archive-root C:\Users\fox1i\CoinFox_Discord_Archive_2026-06-24 export-channel --channel-id <channel_id> --bucket signal-history
+python tools\coinfox_discord_archive.py --archive-root C:\Users\fox1i\CoinFox_Discord_Archive_2026-06-24 checksum
+python tools\coinfox_discord_archive.py --archive-root C:\Users\fox1i\CoinFox_Discord_Archive_2026-06-24 verify
+python tools\coinfox_discord_archive.py --archive-root C:\Users\fox1i\CoinFox_Discord_Archive_2026-06-24 stop-gate
+```
+
+Discord setup requirements:
+
+- the bot must be invited to the server with read access to the channels being archived;
+- `Read Message History` is required for channel export;
+- message content and attachment metadata may be empty unless the app has the
+  required Message Content Intent enabled in the Discord Developer Portal;
+- if `snapshot` cannot read invites, record invite state manually in
+  `settings\invites-before-reset.md`.
+
 ## Stop Line
 
 Run Phase 1 through Phase 3 first:
