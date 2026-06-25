@@ -56,6 +56,8 @@ Commands:
 python tools\coinfox_discord_reset.py --guild-id <guild_id> doctor
 python tools\coinfox_discord_reset.py --guild-id <guild_id> revoke-invites
 python tools\coinfox_discord_reset.py --guild-id <guild_id> setup-structure
+python tools\coinfox_discord_reset.py --guild-id <guild_id> rename-server --name CoinFox
+python tools\coinfox_discord_reset.py --guild-id <guild_id> hide-legacy-surface
 ```
 
 Expected `setup-structure` behavior:
@@ -66,6 +68,18 @@ Expected `setup-structure` behavior:
 - creates the public `START HERE`, `COINFOX`, `FOXCLAW IDEAS`, `LEARN`, and
   `SUPPORT` categories/channels if missing;
 - does not move, lock, or delete legacy channels.
+
+Expected `hide-legacy-surface` behavior:
+
+- skips `START HERE`, `COINFOX`, `FOXCLAW IDEAS`, `LEARN`, `SUPPORT`,
+  `FOUNDER VAULT`, and `RESET STAGING`;
+- denies `View Channel` for `@everyone` on legacy categories and channels where
+  Discord permissions allow it;
+- reports per-channel failures instead of aborting the whole pass;
+- does not delete, rename, or move legacy channels;
+- requires a fresh snapshot/visibility check after running, because child
+  channels may still be hidden by a patched parent category even when Discord
+  refuses a direct child-channel patch.
 
 ## Optional Mention-Only Representative Bot
 

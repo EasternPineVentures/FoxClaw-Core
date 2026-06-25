@@ -2,18 +2,59 @@ from foxclaw.adapters.discord import reset
 
 
 class FakeResetClient:
-    def __init__(self) -> None:
+    def __init__(self, *, include_public: bool = False) -> None:
+        self.fail_patch_ids: set[str] = set()
         self.channels: list[dict[str, object]] = [
             {
                 "id": "cat_old",
                 "name": "OLD",
                 "type": reset.CHANNEL_TYPE_CATEGORY,
                 "permission_overwrites": [],
-            }
+            },
+            {
+                "id": "chan_old",
+                "name": "old-chat",
+                "type": reset.CHANNEL_TYPE_TEXT,
+                "parent_id": "cat_old",
+                "permission_overwrites": [],
+            },
+            {
+                "id": "voice_old",
+                "name": "old-stat",
+                "type": 2,
+                "parent_id": "cat_old",
+                "permission_overwrites": [],
+            },
+            {
+                "id": "chan_orphan",
+                "name": "old-orphan",
+                "type": reset.CHANNEL_TYPE_TEXT,
+                "parent_id": None,
+                "permission_overwrites": [],
+            },
         ]
+        if include_public:
+            self.channels.extend(
+                [
+                    {
+                        "id": "cat_public",
+                        "name": "COINFOX",
+                        "type": reset.CHANNEL_TYPE_CATEGORY,
+                        "permission_overwrites": [],
+                    },
+                    {
+                        "id": "chan_public",
+                        "name": "general",
+                        "type": reset.CHANNEL_TYPE_TEXT,
+                        "parent_id": "cat_public",
+                        "permission_overwrites": [],
+                    },
+                ]
+            )
         self.invites = [{"code": "old-one"}, {"code": "old-two"}]
         self.created: list[dict[str, object]] = []
         self.patched: list[tuple[str, dict[str, object]]] = []
+        self.guild_patches: list[tuple[str, dict[str, object]]] = []
         self.deleted_invites: list[str] = []
 
     def guild_channels(self, guild_id: str) -> list[dict[str, object]]:
@@ -27,11 +68,17 @@ class FakeResetClient:
 
     def patch_channel(self, channel_id: str, payload: dict[str, object]) -> dict[str, object]:
         self.patched.append((channel_id, payload))
+        if channel_id in self.fail_patch_ids:
+            raise reset.DiscordAPIError("discord request failed: HTTP 403: Missing Permissions")
         for channel in self.channels:
             if channel.get("id") == channel_id:
                 channel.update(payload)
                 return channel
         raise AssertionError(f"unknown channel {channel_id}")
+
+    def patch_guild(self, guild_id: str, payload: dict[str, object]) -> dict[str, object]:
+        self.guild_patches.append((guild_id, payload))
+        return {"id": guild_id, **payload}
 
     def guild_invites(self, guild_id: str) -> list[dict[str, object]]:
         return list(self.invites)
@@ -106,3 +153,46 @@ def test_permission_report_flags_missing_manage_channels() -> None:
     assert report["has_manage_channels"] is False
     assert report["missing"] == ["MANAGE_CHANNELS"]
 
+
+def test_rename_guild_patches_server_name() -> None:
+    client = FakeResetClient()
+
+    result = reset.rename_guild(client, "guild_1", "CoinFox")
+
+    assert result == {"guild_id": "guild_1", "name": "CoinFox"}
+    assert client.guild_patches == [("guild_1", {"name": "CoinFox"})]
+
+
+def test_hide_legacy_surface_hides_non_public_channels_only() -> None:
+    client = FakeResetClient(include_public=True)
+
+    result = reset.hide_legacy_surface(client, "guild_1")
+
+    assert result["hidden_count"] == 4
+    assert result["hidden"] == ["OLD", "old-chat", "old-stat", "old-orphan"]
+    patched_ids = [channel_id for channel_id, _ in client.patched]
+    assert patched_ids == ["cat_old", "chan_old", "voice_old", "chan_orphan"]
+    assert "cat_public" not in patched_ids
+    assert "chan_public" not in patched_ids
+    for _, payload in client.patched:
+        everyone = payload["permission_overwrites"][0]
+        assert everyone["id"] == "guild_1"
+        assert int(everyone["deny"]) & reset.PERMISSION_VIEW_CHANNEL
+
+
+def test_hide_legacy_surface_records_channel_patch_failures_and_continues() -> None:
+    client = FakeResetClient(include_public=True)
+    client.fail_patch_ids = {"chan_old"}
+
+    result = reset.hide_legacy_surface(client, "guild_1")
+
+    assert result["hidden"] == ["OLD", "old-stat", "old-orphan"]
+    assert result["failures"] == [
+        {
+            "channel": "old-chat",
+            "channel_id": "chan_old",
+            "error": "discord request failed: HTTP 403: Missing Permissions",
+        }
+    ]
+    patched_ids = [channel_id for channel_id, _ in client.patched]
+    assert patched_ids == ["cat_old", "chan_old", "voice_old", "chan_orphan"]

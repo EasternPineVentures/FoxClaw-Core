@@ -20,7 +20,9 @@ from foxclaw.adapters.discord.archive import (  # noqa: E402
 from foxclaw.adapters.discord.reset import (  # noqa: E402
     client_from_env,
     ensure_reset_structure,
+    hide_legacy_surface,
     live_permission_report,
+    rename_guild,
     revoke_all_invites,
 )
 
@@ -35,6 +37,12 @@ def main(argv: list[str] | None = None) -> int:
         "setup-structure",
         help="create Founder Vault, Reset Staging, and public CoinFox categories",
     )
+    rename_server = subparsers.add_parser("rename-server", help="rename the Discord server")
+    rename_server.add_argument("--name", required=True, help="new Discord server name")
+    subparsers.add_parser(
+        "hide-legacy-surface",
+        help="hide non-CoinFox legacy categories/channels from @everyone",
+    )
 
     args = parser.parse_args(argv)
     try:
@@ -47,6 +55,12 @@ def main(argv: list[str] | None = None) -> int:
             return 0
         if args.command == "setup-structure":
             _print_json(ensure_reset_structure(client, args.guild_id))
+            return 0
+        if args.command == "rename-server":
+            _print_json(rename_guild(client, args.guild_id, args.name))
+            return 0
+        if args.command == "hide-legacy-surface":
+            _print_json(hide_legacy_surface(client, args.guild_id))
             return 0
     except DiscordCredentialError as exc:
         return _fail(str(exc), code=4)

@@ -61,6 +61,10 @@ PUBLIC_LAYOUT = {
     "SUPPORT": ["help", "reports"],
 }
 
+PUBLIC_CATEGORY_NAMES = set(PUBLIC_LAYOUT)
+PRIVATE_CATEGORY_NAMES = set(PRIVATE_LAYOUT)
+COINFOX_CATEGORY_NAMES = PUBLIC_CATEGORY_NAMES | PRIVATE_CATEGORY_NAMES
+
 
 @dataclass(frozen=True)
 class DiscordResetClient:
@@ -82,6 +86,9 @@ class DiscordResetClient:
 
     def guild_invites(self, guild_id: str) -> list[dict[str, Any]]:
         return _ensure_list_of_dicts(self.request_json("GET", f"/guilds/{guild_id}/invites"))
+
+    def patch_guild(self, guild_id: str, payload: dict[str, Any]) -> dict[str, Any]:
+        return _ensure_dict(self.request_json("PATCH", f"/guilds/{guild_id}", payload))
 
     def create_guild_channel(self, guild_id: str, payload: dict[str, Any]) -> dict[str, Any]:
         return _ensure_dict(self.request_json("POST", f"/guilds/{guild_id}/channels", payload))
@@ -142,6 +149,11 @@ def revoke_all_invites(client: Any, guild_id: str) -> dict[str, Any]:
     return {"revoked": revoked, "count": len(revoked)}
 
 
+def rename_guild(client: Any, guild_id: str, name: str) -> dict[str, Any]:
+    guild = client.patch_guild(guild_id, {"name": name})
+    return {"guild_id": str(guild.get("id") or guild_id), "name": str(guild.get("name") or name)}
+
+
 def ensure_reset_structure(client: Any, guild_id: str) -> dict[str, Any]:
     channels = client.guild_channels(guild_id)
     created_categories: list[str] = []
@@ -188,6 +200,43 @@ def ensure_reset_structure(client: Any, guild_id: str) -> dict[str, Any]:
         "created_categories": created_categories,
         "created_channels": created_channels,
         "updated_categories": updated_categories,
+    }
+
+
+def hide_legacy_surface(client: Any, guild_id: str) -> dict[str, Any]:
+    channels = client.guild_channels(guild_id)
+    categories_by_id = {
+        str(channel.get("id") or ""): channel
+        for channel in channels
+        if channel.get("type") == CHANNEL_TYPE_CATEGORY
+    }
+    hidden: list[str] = []
+    skipped: list[str] = []
+    failures: list[dict[str, str]] = []
+    for channel in channels:
+        channel_name = str(channel.get("name") or channel.get("id") or "")
+        if not _should_hide_for_public(channel, categories_by_id):
+            skipped.append(channel_name)
+            continue
+        patched_overwrites = _upsert_everyone_deny_view(
+            channel.get("permission_overwrites") or [], guild_id
+        )
+        if patched_overwrites == (channel.get("permission_overwrites") or []):
+            skipped.append(channel_name)
+            continue
+        channel_id = str(channel["id"])
+        try:
+            client.patch_channel(channel_id, {"permission_overwrites": patched_overwrites})
+        except DiscordAPIError as exc:
+            failures.append({"channel": channel_name, "channel_id": channel_id, "error": str(exc)})
+            continue
+        hidden.append(channel_name)
+    return {
+        "hidden": hidden,
+        "hidden_count": len(hidden),
+        "skipped": skipped,
+        "failures": failures,
+        "failure_count": len(failures),
     }
 
 
@@ -261,6 +310,57 @@ def _private_category_overwrites(guild_id: str) -> list[dict[str, str | int]]:
             "deny": str(PERMISSION_VIEW_CHANNEL),
         }
     ]
+
+
+def _should_hide_for_public(
+    channel: dict[str, Any], categories_by_id: dict[str, dict[str, Any]]
+) -> bool:
+    channel_type = channel.get("type")
+    if channel_type == CHANNEL_TYPE_CATEGORY:
+        return str(channel.get("name") or "") not in COINFOX_CATEGORY_NAMES
+    parent_id = str(channel.get("parent_id") or "")
+    parent = categories_by_id.get(parent_id)
+    parent_name = str(parent.get("name") or "") if parent else ""
+    return parent_name not in COINFOX_CATEGORY_NAMES
+
+
+def _upsert_everyone_deny_view(
+    overwrites: list[dict[str, Any]], guild_id: str
+) -> list[dict[str, str | int]]:
+    result: list[dict[str, str | int]] = []
+    replaced = False
+    for overwrite in overwrites:
+        if str(overwrite.get("id") or "") == guild_id and overwrite.get("type") == OVERWRITE_TYPE_ROLE:
+            allow = int(str(overwrite.get("allow") or "0")) & ~PERMISSION_VIEW_CHANNEL
+            deny = int(str(overwrite.get("deny") or "0")) | PERMISSION_VIEW_CHANNEL
+            result.append(
+                {
+                    "id": guild_id,
+                    "type": OVERWRITE_TYPE_ROLE,
+                    "allow": str(allow),
+                    "deny": str(deny),
+                }
+            )
+            replaced = True
+        else:
+            result.append(
+                {
+                    "id": str(overwrite.get("id") or ""),
+                    "type": int(overwrite.get("type") or 0),
+                    "allow": str(overwrite.get("allow") or "0"),
+                    "deny": str(overwrite.get("deny") or "0"),
+                }
+            )
+    if not replaced:
+        result.append(
+            {
+                "id": guild_id,
+                "type": OVERWRITE_TYPE_ROLE,
+                "allow": "0",
+                "deny": str(PERMISSION_VIEW_CHANNEL),
+            }
+        )
+    return result
 
 
 def _upsert_everyone_private_overwrite(
