@@ -24,6 +24,7 @@ from foxclaw.adapters.discord.reset import (  # noqa: E402
     live_permission_report,
     rename_guild,
     revoke_all_invites,
+    seed_first_pinned_posts,
 )
 
 
@@ -43,6 +44,10 @@ def main(argv: list[str] | None = None) -> int:
         "hide-legacy-surface",
         help="hide non-CoinFox legacy categories/channels from @everyone",
     )
+    subparsers.add_parser(
+        "seed-first-pins",
+        help="post and pin the first public CoinFox launch notes",
+    )
 
     args = parser.parse_args(argv)
     try:
@@ -61,6 +66,9 @@ def main(argv: list[str] | None = None) -> int:
             return 0
         if args.command == "hide-legacy-surface":
             _print_json(hide_legacy_surface(client, args.guild_id))
+            return 0
+        if args.command == "seed-first-pins":
+            _print_json(seed_first_pinned_posts(client, args.guild_id))
             return 0
     except DiscordCredentialError as exc:
         return _fail(str(exc), code=4)

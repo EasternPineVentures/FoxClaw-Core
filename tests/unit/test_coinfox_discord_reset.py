@@ -2,7 +2,7 @@ from foxclaw.adapters.discord import reset
 
 
 class FakeResetClient:
-    def __init__(self, *, include_public: bool = False) -> None:
+    def __init__(self, *, include_public: bool = False, include_launch_channels: bool = False) -> None:
         self.fail_patch_ids: set[str] = set()
         self.channels: list[dict[str, object]] = [
             {
@@ -51,11 +51,78 @@ class FakeResetClient:
                     },
                 ]
             )
+        if include_launch_channels:
+            self.channels.extend(
+                [
+                    {
+                        "id": "cat_start",
+                        "name": "START HERE",
+                        "type": reset.CHANNEL_TYPE_CATEGORY,
+                        "permission_overwrites": [],
+                    },
+                    {
+                        "id": "chan_welcome",
+                        "name": "welcome",
+                        "type": reset.CHANNEL_TYPE_TEXT,
+                        "parent_id": "cat_start",
+                        "permission_overwrites": [],
+                    },
+                    {
+                        "id": "chan_rules",
+                        "name": "rules",
+                        "type": reset.CHANNEL_TYPE_TEXT,
+                        "parent_id": "cat_start",
+                        "permission_overwrites": [],
+                    },
+                    {
+                        "id": "cat_coinfox",
+                        "name": "COINFOX",
+                        "type": reset.CHANNEL_TYPE_CATEGORY,
+                        "permission_overwrites": [],
+                    },
+                    {
+                        "id": "chan_trade_ideas",
+                        "name": "trade-ideas",
+                        "type": reset.CHANNEL_TYPE_TEXT,
+                        "parent_id": "cat_coinfox",
+                        "permission_overwrites": [],
+                    },
+                    {
+                        "id": "cat_ideas",
+                        "name": "FOXCLAW IDEAS",
+                        "type": reset.CHANNEL_TYPE_CATEGORY,
+                        "permission_overwrites": [],
+                    },
+                    {
+                        "id": "chan_public_intelligence",
+                        "name": "public-intelligence",
+                        "type": reset.CHANNEL_TYPE_TEXT,
+                        "parent_id": "cat_ideas",
+                        "permission_overwrites": [],
+                    },
+                    {
+                        "id": "cat_support",
+                        "name": "SUPPORT",
+                        "type": reset.CHANNEL_TYPE_CATEGORY,
+                        "permission_overwrites": [],
+                    },
+                    {
+                        "id": "chan_help",
+                        "name": "help",
+                        "type": reset.CHANNEL_TYPE_TEXT,
+                        "parent_id": "cat_support",
+                        "permission_overwrites": [],
+                    },
+                ]
+            )
         self.invites = [{"code": "old-one"}, {"code": "old-two"}]
         self.created: list[dict[str, object]] = []
         self.patched: list[tuple[str, dict[str, object]]] = []
         self.guild_patches: list[tuple[str, dict[str, object]]] = []
         self.deleted_invites: list[str] = []
+        self.messages: list[dict[str, object]] = []
+        self.pinned_message_ids: list[str] = []
+        self.existing_pins_by_channel: dict[str, list[dict[str, object]]] = {}
 
     def guild_channels(self, guild_id: str) -> list[dict[str, object]]:
         return list(self.channels)
@@ -86,6 +153,18 @@ class FakeResetClient:
     def delete_invite(self, code: str) -> dict[str, object]:
         self.deleted_invites.append(code)
         return {"code": code}
+
+    def channel_pins(self, channel_id: str) -> list[dict[str, object]]:
+        return list(self.existing_pins_by_channel.get(channel_id, []))
+
+    def create_message(self, channel_id: str, content: str) -> dict[str, object]:
+        message = {"id": f"message_{len(self.messages)}", "channel_id": channel_id, "content": content}
+        self.messages.append(message)
+        return message
+
+    def pin_message(self, channel_id: str, message_id: str) -> dict[str, object]:
+        self.pinned_message_ids.append(message_id)
+        return {"channel_id": channel_id, "message_id": message_id}
 
 
 def test_revoke_all_invites_deletes_each_invite() -> None:
@@ -151,7 +230,33 @@ def test_permission_report_flags_missing_manage_channels() -> None:
 
     assert report["has_manage_guild"] is True
     assert report["has_manage_channels"] is False
-    assert report["missing"] == ["MANAGE_CHANNELS"]
+    assert report["missing"] == [
+        "MANAGE_CHANNELS",
+        "SEND_MESSAGES",
+        "MANAGE_MESSAGES",
+        "READ_MESSAGE_HISTORY",
+    ]
+
+
+def test_permission_report_flags_missing_posting_and_pin_permissions() -> None:
+    roles = [
+        {
+            "id": "guild_1",
+            "name": "@everyone",
+            "permissions": str(reset.PERMISSION_MANAGE_CHANNELS | reset.PERMISSION_MANAGE_GUILD),
+        }
+    ]
+
+    report = reset.permission_report(roles, [], "guild_1")
+
+    assert report["has_send_messages"] is False
+    assert report["has_manage_messages"] is False
+    assert report["has_read_message_history"] is False
+    assert report["missing"] == [
+        "SEND_MESSAGES",
+        "MANAGE_MESSAGES",
+        "READ_MESSAGE_HISTORY",
+    ]
 
 
 def test_rename_guild_patches_server_name() -> None:
@@ -196,3 +301,43 @@ def test_hide_legacy_surface_records_channel_patch_failures_and_continues() -> N
     ]
     patched_ids = [channel_id for channel_id, _ in client.patched]
     assert patched_ids == ["cat_old", "chan_old", "voice_old", "chan_orphan"]
+
+
+def test_seed_first_pinned_posts_posts_and_pins_launch_copy() -> None:
+    client = FakeResetClient(include_launch_channels=True)
+
+    result = reset.seed_first_pinned_posts(client, "guild_1")
+
+    assert result["posted_count"] == 7
+    assert result["skipped_count"] == 0
+    assert result["missing_channels"] == []
+    assert client.pinned_message_ids == [message["id"] for message in client.messages]
+    messages_by_channel: dict[str, str] = {}
+    for message in client.messages:
+        channel_id = str(message["channel_id"])
+        messages_by_channel[channel_id] = messages_by_channel.get(channel_id, "") + str(
+            message["content"]
+        )
+    assert "**CoinFox Launch Note: Welcome**" in messages_by_channel["chan_welcome"]
+    assert "**CoinFox Launch Note: Rules**" in messages_by_channel["chan_rules"]
+    assert "**CoinFox Launch Note: Risk Disclaimer**" in messages_by_channel["chan_rules"]
+    assert "**CoinFox Launch Note: Signals Are Not Trades**" in messages_by_channel[
+        "chan_trade_ideas"
+    ]
+    assert "**CoinFox Launch Note: FoxClaw Public Intelligence**" in messages_by_channel[
+        "chan_public_intelligence"
+    ]
+    assert "**CoinFox Launch Note: Help**" in messages_by_channel["chan_help"]
+
+
+def test_seed_first_pinned_posts_skips_existing_markers() -> None:
+    client = FakeResetClient(include_launch_channels=True)
+    client.existing_pins_by_channel["chan_welcome"] = [
+        {"id": "old_message", "content": "**CoinFox Launch Note: Welcome**\nAlready pinned."}
+    ]
+
+    result = reset.seed_first_pinned_posts(client, "guild_1")
+
+    assert result["posted_count"] == 6
+    assert result["skipped"] == [{"channel": "welcome", "marker": "CoinFox Launch Note: Welcome"}]
+    assert all(message["channel_id"] != "chan_welcome" for message in client.messages)

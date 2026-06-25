@@ -48,6 +48,8 @@ Safety boundary:
   structure creation;
 - `setup-structure` requires the bot role to have `Manage Channels`;
 - `revoke-invites` requires the bot role to have `Manage Server`;
+- `seed-first-pins` requires `Send Messages`, `Manage Messages`, and
+  `Read Message History`;
 - no token values printed in reports.
 
 Commands:
@@ -58,6 +60,7 @@ python tools\coinfox_discord_reset.py --guild-id <guild_id> revoke-invites
 python tools\coinfox_discord_reset.py --guild-id <guild_id> setup-structure
 python tools\coinfox_discord_reset.py --guild-id <guild_id> rename-server --name CoinFox
 python tools\coinfox_discord_reset.py --guild-id <guild_id> hide-legacy-surface
+python tools\coinfox_discord_reset.py --guild-id <guild_id> seed-first-pins
 ```
 
 Expected `setup-structure` behavior:
@@ -80,6 +83,16 @@ Expected `hide-legacy-surface` behavior:
 - requires a fresh snapshot/visibility check after running, because child
   channels may still be hidden by a patched parent category even when Discord
   refuses a direct child-channel patch.
+
+Expected `seed-first-pins` behavior:
+
+- posts and pins the first public launch notes in `welcome`, `rules`,
+  `trade-ideas`, `public-intelligence`, and `help`;
+- skips a launch note if a pinned message with the same `CoinFox Launch Note`
+  marker already exists;
+- reports posted, skipped, and missing-channel counts;
+- does not create invites, edit roles, move channels, delete channels, or touch
+  legacy content.
 
 ## Optional Mention-Only Representative Bot
 
@@ -470,67 +483,104 @@ The public channel surface reads as CoinFox, with Founder Vault and Reset Stagin
 
 **Purpose:** Give the public server its identity before anyone joins.
 
+Optional helper:
+
+```powershell
+python tools\coinfox_discord_reset.py --guild-id <guild_id> doctor
+python tools\coinfox_discord_reset.py --guild-id <guild_id> seed-first-pins
+```
+
 - [ ] Pin welcome.
 - [ ] Pin rules.
 - [ ] Pin risk disclaimer.
 - [ ] Pin signals are not trades.
 - [ ] Pin how to use trade-ideas.
 - [ ] Pin what FoxClaw public intelligence means.
+- [ ] Pin help.
 
 Welcome:
 
 ```text
+CoinFox Launch Note: Welcome
+
 Welcome to CoinFox.
 
 CoinFox is a social trading and prediction discussion community built around structured ideas, receipts, risk discipline, and learning from outcomes.
 
-Nothing here is financial advice.
-No post is a command to trade.
-A good signal is not automatically a good trade.
+Nothing here is financial advice. No post is a command to trade. A good signal is not automatically a good trade.
 
 FoxClaw may generate public-safe ideas, paper-only notes, or postmortems here. These are for research and learning. Risk labels matter.
 
-The Market Remembers.
-Receipts over hype.
+The Market Remembers. Receipts over hype.
 ```
 
 Rules:
 
 ```text
-1. No financial advice.
-2. No guaranteed-profit claims.
-3. No pump spam.
-4. No private leaks, doxxing, hacked material, or stolen data.
-5. Label risky ideas clearly.
-6. Respect postmortems and losses.
-7. Do not pressure people to trade.
-8. Keep receipts when making claims.
-9. No impersonation, fake screenshots, or fake performance.
-10. Mods may remove anything that makes the community unsafe or misleading.
+CoinFox Launch Note: Rules
+
+1. Keep public discussion respectful and useful.
+2. Do not post private keys, account credentials, personal documents, or sensitive screenshots.
+3. Label speculation clearly.
+4. No spam, pump campaigns, impersonation, or paid promotion without disclosure.
+5. Respect risk. Challenge ideas with reasoning, not personal attacks.
+6. Founder Vault and archived material stay private unless founder-approved and redacted.
 ```
 
 Risk disclaimer:
 
 ```text
-CoinFox discussion is informational and educational. Markets are risky. Posts, comments, public intelligence, and paper-only notes are not individualized financial advice.
+CoinFox Launch Note: Risk Disclaimer
+
+CoinFox is for education, research, journaling, and public market discussion.
+
+Nothing in this Discord is financial, investment, tax, legal, or trading advice. Markets can move fast, losses are possible, and every person is responsible for their own decisions.
+
+Treat every idea as incomplete until you have your own plan, invalidation level, position sizing, and risk limit.
 ```
 
 Signals are not trades:
 
 ```text
-A signal is an idea, not an instruction. A good signal can still become a bad trade if entry, sizing, timing, risk, or personal context is wrong.
+CoinFox Launch Note: Signals Are Not Trades
+
+A signal is an idea, not an order.
+
+A trade requires context: account risk, entry plan, invalidation, timeframe, liquidity, and whether the idea still makes sense when price changes.
+
+Post ideas clearly. Separate observation from conviction. If the plan changes, say so.
 ```
 
 How to use trade-ideas:
 
 ```text
-Use trade-ideas to discuss structured setups, not to pressure anyone. Include the idea, timeframe, risk, invalidation point, and what would change your mind.
+CoinFox Launch Note: How To Use Trade Ideas
+
+Use trade-ideas for structured setups and paper-trade discussion.
+
+Helpful posts include: ticker or asset, timeframe, thesis, invalidation, risk notes, what would prove the idea wrong, and whether it is live, watched, or paper-only.
+
+Do not treat another person's idea as permission to skip your own plan.
 ```
 
 What FoxClaw public intelligence means:
 
 ```text
-FoxClaw public intelligence is public-safe, paper-only context. It may explain why an idea is interesting, risky, rejected, or worth reviewing, but it does not place trades or give personal advice.
+CoinFox Launch Note: FoxClaw Public Intelligence
+
+FoxClaw public intelligence means public-safe market observations, research notes, risk labels, and postmortems that can be discussed without exposing private founder material.
+
+It is not a private signal feed. It is not a trading command system. It is a receipt trail for learning what the market did, what the model saw, and what still needs review.
+```
+
+Help:
+
+```text
+CoinFox Launch Note: Help
+
+Use this channel for access questions, confusing server behavior, broken links, or safety concerns.
+
+Do not post passwords, private keys, account numbers, or sensitive screenshots. If something needs founder review, say what happened and keep private details out of public chat.
 ```
 
 Expected result:

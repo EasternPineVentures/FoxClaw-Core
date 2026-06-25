@@ -28,6 +28,9 @@ OVERWRITE_TYPE_ROLE = 0
 PERMISSION_VIEW_CHANNEL = 1 << 10
 PERMISSION_MANAGE_CHANNELS = 1 << 4
 PERMISSION_MANAGE_GUILD = 1 << 5
+PERMISSION_SEND_MESSAGES = 1 << 11
+PERMISSION_MANAGE_MESSAGES = 1 << 13
+PERMISSION_READ_MESSAGE_HISTORY = 1 << 16
 
 PRIVATE_LAYOUT = {
     "FOUNDER VAULT": [
@@ -65,6 +68,94 @@ PUBLIC_CATEGORY_NAMES = set(PUBLIC_LAYOUT)
 PRIVATE_CATEGORY_NAMES = set(PRIVATE_LAYOUT)
 COINFOX_CATEGORY_NAMES = PUBLIC_CATEGORY_NAMES | PRIVATE_CATEGORY_NAMES
 
+FIRST_PINNED_POSTS = [
+    {
+        "category": "START HERE",
+        "channel": "welcome",
+        "marker": "CoinFox Launch Note: Welcome",
+        "content": """**CoinFox Launch Note: Welcome**
+
+Welcome to CoinFox.
+
+CoinFox is a social trading and prediction discussion community built around structured ideas, receipts, risk discipline, and learning from outcomes.
+
+Nothing here is financial advice. No post is a command to trade. A good signal is not automatically a good trade.
+
+FoxClaw may generate public-safe ideas, paper-only notes, or postmortems here. These are for research and learning. Risk labels matter.
+
+The Market Remembers. Receipts over hype.""",
+    },
+    {
+        "category": "START HERE",
+        "channel": "rules",
+        "marker": "CoinFox Launch Note: Rules",
+        "content": """**CoinFox Launch Note: Rules**
+
+1. Keep public discussion respectful and useful.
+2. Do not post private keys, account credentials, personal documents, or sensitive screenshots.
+3. Label speculation clearly.
+4. No spam, pump campaigns, impersonation, or paid promotion without disclosure.
+5. Respect risk. Challenge ideas with reasoning, not personal attacks.
+6. Founder Vault and archived material stay private unless founder-approved and redacted.""",
+    },
+    {
+        "category": "START HERE",
+        "channel": "rules",
+        "marker": "CoinFox Launch Note: Risk Disclaimer",
+        "content": """**CoinFox Launch Note: Risk Disclaimer**
+
+CoinFox is for education, research, journaling, and public market discussion.
+
+Nothing in this Discord is financial, investment, tax, legal, or trading advice. Markets can move fast, losses are possible, and every person is responsible for their own decisions.
+
+Treat every idea as incomplete until you have your own plan, invalidation level, position sizing, and risk limit.""",
+    },
+    {
+        "category": "COINFOX",
+        "channel": "trade-ideas",
+        "marker": "CoinFox Launch Note: Signals Are Not Trades",
+        "content": """**CoinFox Launch Note: Signals Are Not Trades**
+
+A signal is an idea, not an order.
+
+A trade requires context: account risk, entry plan, invalidation, timeframe, liquidity, and whether the idea still makes sense when price changes.
+
+Post ideas clearly. Separate observation from conviction. If the plan changes, say so.""",
+    },
+    {
+        "category": "COINFOX",
+        "channel": "trade-ideas",
+        "marker": "CoinFox Launch Note: How To Use Trade Ideas",
+        "content": """**CoinFox Launch Note: How To Use Trade Ideas**
+
+Use trade-ideas for structured setups and paper-trade discussion.
+
+Helpful posts include: ticker or asset, timeframe, thesis, invalidation, risk notes, what would prove the idea wrong, and whether it is live, watched, or paper-only.
+
+Do not treat another person's idea as permission to skip your own plan.""",
+    },
+    {
+        "category": "FOXCLAW IDEAS",
+        "channel": "public-intelligence",
+        "marker": "CoinFox Launch Note: FoxClaw Public Intelligence",
+        "content": """**CoinFox Launch Note: FoxClaw Public Intelligence**
+
+FoxClaw public intelligence means public-safe market observations, research notes, risk labels, and postmortems that can be discussed without exposing private founder material.
+
+It is not a private signal feed. It is not a trading command system. It is a receipt trail for learning what the market did, what the model saw, and what still needs review.""",
+    },
+    {
+        "category": "SUPPORT",
+        "channel": "help",
+        "marker": "CoinFox Launch Note: Help",
+        "content": """**CoinFox Launch Note: Help**
+
+Use this channel for access questions, confusing server behavior, broken links, or safety concerns.
+
+Do not post passwords, private keys, account numbers, or sensitive screenshots. If something needs founder review, say what happened and keep private details out of public chat.""",
+    },
+]
+
 
 @dataclass(frozen=True)
 class DiscordResetClient:
@@ -87,11 +178,23 @@ class DiscordResetClient:
     def guild_invites(self, guild_id: str) -> list[dict[str, Any]]:
         return _ensure_list_of_dicts(self.request_json("GET", f"/guilds/{guild_id}/invites"))
 
+    def channel_pins(self, channel_id: str) -> list[dict[str, Any]]:
+        return _ensure_list_of_dicts(self.request_json("GET", f"/channels/{channel_id}/pins"))
+
     def patch_guild(self, guild_id: str, payload: dict[str, Any]) -> dict[str, Any]:
         return _ensure_dict(self.request_json("PATCH", f"/guilds/{guild_id}", payload))
 
     def create_guild_channel(self, guild_id: str, payload: dict[str, Any]) -> dict[str, Any]:
         return _ensure_dict(self.request_json("POST", f"/guilds/{guild_id}/channels", payload))
+
+    def create_message(self, channel_id: str, content: str) -> dict[str, Any]:
+        return _ensure_dict(
+            self.request_json("POST", f"/channels/{channel_id}/messages", {"content": content})
+        )
+
+    def pin_message(self, channel_id: str, message_id: str) -> dict[str, Any]:
+        self.request_json("PUT", f"/channels/{channel_id}/pins/{message_id}")
+        return {"channel_id": channel_id, "message_id": message_id}
 
     def patch_channel(self, channel_id: str, payload: dict[str, Any]) -> dict[str, Any]:
         return _ensure_dict(self.request_json("PATCH", f"/channels/{channel_id}", payload))
@@ -240,6 +343,41 @@ def hide_legacy_surface(client: Any, guild_id: str) -> dict[str, Any]:
     }
 
 
+def seed_first_pinned_posts(client: Any, guild_id: str) -> dict[str, Any]:
+    channels = client.guild_channels(guild_id)
+    posted: list[dict[str, str]] = []
+    skipped: list[dict[str, str]] = []
+    missing_channels: list[dict[str, str]] = []
+
+    for post in FIRST_PINNED_POSTS:
+        category_name = str(post["category"])
+        channel_name = str(post["channel"])
+        marker = str(post["marker"])
+        channel = _find_public_text_channel(channels, category_name, channel_name)
+        if channel is None:
+            missing_channels.append({"category": category_name, "channel": channel_name})
+            continue
+
+        channel_id = str(channel["id"])
+        if _channel_has_pin_marker(client.channel_pins(channel_id), marker):
+            skipped.append({"channel": channel_name, "marker": marker})
+            continue
+
+        message = client.create_message(channel_id, str(post["content"]))
+        message_id = str(message["id"])
+        client.pin_message(channel_id, message_id)
+        posted.append({"channel": channel_name, "message_id": message_id, "marker": marker})
+
+    return {
+        "posted": posted,
+        "posted_count": len(posted),
+        "skipped": skipped,
+        "skipped_count": len(skipped),
+        "missing_channels": missing_channels,
+        "missing_channel_count": len(missing_channels),
+    }
+
+
 def permission_report(
     roles: list[dict[str, Any]], member_role_ids: list[str], guild_id: str
 ) -> dict[str, Any]:
@@ -251,14 +389,26 @@ def permission_report(
         permissions |= int(str(role.get("permissions") or "0"))
     has_manage_guild = bool(permissions & PERMISSION_MANAGE_GUILD)
     has_manage_channels = bool(permissions & PERMISSION_MANAGE_CHANNELS)
+    has_send_messages = bool(permissions & PERMISSION_SEND_MESSAGES)
+    has_manage_messages = bool(permissions & PERMISSION_MANAGE_MESSAGES)
+    has_read_message_history = bool(permissions & PERMISSION_READ_MESSAGE_HISTORY)
     missing: list[str] = []
     if not has_manage_guild:
         missing.append("MANAGE_GUILD")
     if not has_manage_channels:
         missing.append("MANAGE_CHANNELS")
+    if not has_send_messages:
+        missing.append("SEND_MESSAGES")
+    if not has_manage_messages:
+        missing.append("MANAGE_MESSAGES")
+    if not has_read_message_history:
+        missing.append("READ_MESSAGE_HISTORY")
     return {
         "has_manage_guild": has_manage_guild,
         "has_manage_channels": has_manage_channels,
+        "has_send_messages": has_send_messages,
+        "has_manage_messages": has_manage_messages,
+        "has_read_message_history": has_read_message_history,
         "missing": missing,
         "permissions": str(permissions),
     }
@@ -299,6 +449,19 @@ def _find_text_channel(
         ),
         None,
     )
+
+
+def _find_public_text_channel(
+    channels: list[dict[str, Any]], category_name: str, channel_name: str
+) -> dict[str, Any] | None:
+    category = _find_category(channels, category_name)
+    if category is None:
+        return None
+    return _find_text_channel(channels, channel_name, str(category["id"]))
+
+
+def _channel_has_pin_marker(pins: list[dict[str, Any]], marker: str) -> bool:
+    return any(marker in str(pin.get("content") or "") for pin in pins)
 
 
 def _private_category_overwrites(guild_id: str) -> list[dict[str, str | int]]:
