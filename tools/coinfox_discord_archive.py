@@ -21,6 +21,7 @@ from foxclaw.adapters.discord.archive import (  # noqa: E402
     bot_token_from_env,
     doctor,
     export_channel,
+    export_channel_pins,
     snapshot_guild,
     stop_gate_report,
     verify_checksums,
@@ -63,6 +64,16 @@ def main(argv: list[str] | None = None) -> int:
         help="skip attachment and image downloads",
     )
 
+    export_pins = subparsers.add_parser(
+        "export-pins", help="export pinned messages for one channel through bot REST"
+    )
+    export_pins.add_argument("--channel-id", required=True, help="Discord channel id")
+    export_pins.add_argument(
+        "--no-attachments",
+        action="store_true",
+        help="skip pin attachment and image downloads",
+    )
+
     subparsers.add_parser("checksum", help="write checksums.sha256 for local archive")
     subparsers.add_parser("verify", help="verify checksums.sha256")
     subparsers.add_parser("stop-gate", help="report local cleanup stop-gate status")
@@ -99,6 +110,16 @@ def main(argv: list[str] | None = None) -> int:
                     channel_id=args.channel_id,
                     bucket=args.bucket,
                     max_messages=args.max_messages,
+                    include_attachments=not args.no_attachments,
+                )
+            )
+            return 0
+        if args.command == "export-pins":
+            _print_json(
+                export_channel_pins(
+                    archive_root,
+                    client,
+                    channel_id=args.channel_id,
                     include_attachments=not args.no_attachments,
                 )
             )

@@ -96,6 +96,9 @@ class DiscordRestClient:
             params["before"] = before
         return _ensure_list_of_dicts(self.get(f"/channels/{channel_id}/messages", params=params))
 
+    def channel_pins(self, channel_id: str) -> list[dict[str, Any]]:
+        return _ensure_list_of_dicts(self.get(f"/channels/{channel_id}/pins"))
+
     def get(self, path: str, *, params: dict[str, str] | None = None) -> Any:
         url = self._url(path, params=params)
         request = urllib.request.Request(
@@ -257,18 +260,30 @@ def export_channel(
     export_rel = Path("exports") / bucket / f"{safe_channel}.json"
     media_rel = Path("media") / "screenshots" / safe_channel
     attachments_saved = 0
+    embed_media_saved = 0
+    media_download_failures: list[dict[str, str]] = []
     if include_attachments:
-        attachments_saved = _download_attachments(root_path, client, safe_channel, messages)
+        attachments_saved = _download_attachments(
+            root_path, client, safe_channel, messages, media_download_failures
+        )
+        embed_media_saved = _download_embed_media(
+            root_path, client, safe_channel, messages, media_download_failures
+        )
 
     export_payload = {
         "channel": channel,
         "message_count": len(messages),
+        "media_download_failures": media_download_failures,
         "messages": messages,
     }
     write_json(root_path / export_rel, export_payload)
 
     pins_saved = "none_found"
-    attachments_status = "yes" if attachments_saved else "none_found"
+    attachments_status = _attachments_status(
+        attachments_saved=attachments_saved,
+        embed_media_saved=embed_media_saved,
+        media_download_failures=media_download_failures,
+    )
     upsert_manifest_channel(
         root_path,
         {
@@ -303,6 +318,87 @@ def export_channel(
         "export_file": _rel(export_rel),
         "message_count": len(messages),
         "attachments_saved": attachments_saved,
+        "embed_media_saved": embed_media_saved,
+        "media_download_failures": len(media_download_failures),
+    }
+
+
+def export_channel_pins(
+    root: str | Path,
+    client: Any,
+    *,
+    channel_id: str,
+    include_attachments: bool = True,
+) -> dict[str, Any]:
+    root_path = create_scaffold(root)
+    channel = client.channel(channel_id)
+    channel_name = str(channel.get("name") or channel_id)
+    safe_channel = safe_component(f"{channel_name}_{channel_id}")
+
+    pins = _sort_messages_oldest_first(client.channel_pins(channel_id))
+    export_rel = Path("exports") / "pins" / f"{safe_channel}.json"
+    media_rel = Path("media") / "screenshots" / safe_channel
+    attachments_saved = 0
+    embed_media_saved = 0
+    media_download_failures: list[dict[str, str]] = []
+    if include_attachments:
+        attachments_saved = _download_attachments(
+            root_path, client, safe_channel, pins, media_download_failures
+        )
+        embed_media_saved = _download_embed_media(
+            root_path, client, safe_channel, pins, media_download_failures
+        )
+
+    export_payload = {
+        "channel": channel,
+        "pin_count": len(pins),
+        "media_download_failures": media_download_failures,
+        "messages": pins,
+    }
+    write_json(root_path / export_rel, export_payload)
+
+    pins_saved = "yes" if pins else "none_found"
+    attachments_status = _attachments_status(
+        attachments_saved=attachments_saved,
+        embed_media_saved=embed_media_saved,
+        media_download_failures=media_download_failures,
+    )
+    upsert_manifest_channel(
+        root_path,
+        {
+            "channel": channel_name,
+            "channel_id": channel_id,
+            "category": "",
+            "pins_file": _rel(export_rel),
+            "pins_saved": pins_saved,
+            "pins_date_range": _date_range(pins),
+            "pin_media_path": _rel(media_rel),
+            "pin_media_download_failures": len(media_download_failures),
+            "decision_tracker_status": "exported",
+        },
+    )
+    upsert_tracker_row(
+        root_path,
+        _tracker_row_with_updates(
+            root_path,
+            channel_name,
+            {
+                "pins_saved": pins_saved,
+                "attachments_saved": _combined_attachments_status(
+                    root_path, channel_name, attachments_status
+                ),
+            },
+        ),
+    )
+    return {
+        "channel_id": channel_id,
+        "channel": channel_name,
+        "pins_file": _rel(export_rel),
+        "pin_count": len(pins),
+        "pins_saved": pins_saved,
+        "attachments_saved": attachments_saved,
+        "embed_media_saved": embed_media_saved,
+        "media_download_failures": len(media_download_failures),
     }
 
 
@@ -343,6 +439,48 @@ def upsert_tracker_row(root: str | Path, row: dict[str, str]) -> None:
         writer = csv.DictWriter(fh, fieldnames=TRACKER_HEADER)
         writer.writeheader()
         writer.writerows(rows)
+
+
+def _tracker_row_with_updates(
+    root: Path, channel_name: str, updates: dict[str, str]
+) -> dict[str, str]:
+    tracker_path = root / "channel_decision_tracker.csv"
+    existing = next(
+        (
+            row
+            for row in _read_tracker_rows(tracker_path)
+            if row.get("channel_name") == channel_name
+        ),
+        {},
+    )
+    row = {
+        "channel_name": channel_name,
+        "category": "",
+        "archive_status": "exported",
+        "pins_saved": "none_found",
+        "attachments_saved": "none_found",
+        "decision": "review_later",
+        "public_after_reset": "private_staging",
+        "notes": "exported by coinfox_discord_archive.py",
+    }
+    row.update({key: str(value) for key, value in existing.items()})
+    row.update({key: str(value) for key, value in updates.items()})
+    return row
+
+
+def _combined_attachments_status(root: Path, channel_name: str, new_status: str) -> str:
+    tracker_path = root / "channel_decision_tracker.csv"
+    existing = next(
+        (
+            row.get("attachments_saved", "")
+            for row in _read_tracker_rows(tracker_path)
+            if row.get("channel_name") == channel_name
+        ),
+        "",
+    )
+    if existing == "yes" or new_status == "yes":
+        return "yes"
+    return new_status if new_status != "none_found" else existing or "none_found"
 
 
 def write_checksums(root: str | Path) -> dict[str, Any]:
@@ -471,7 +609,11 @@ def _fetch_messages(client: Any, *, channel_id: str, max_messages: int) -> list[
 
 
 def _download_attachments(
-    root: Path, client: Any, safe_channel: str, messages: list[dict[str, Any]]
+    root: Path,
+    client: Any,
+    safe_channel: str,
+    messages: list[dict[str, Any]],
+    media_download_failures: list[dict[str, str]],
 ) -> int:
     count = 0
     for message in messages:
@@ -486,9 +628,86 @@ def _download_attachments(
             destination = _unique_destination(
                 root / "media" / media_bucket / safe_channel / filename
             )
-            client.download_file(url, destination)
-            count += 1
+            try:
+                client.download_file(url, destination)
+            except DiscordArchiveError as exc:
+                _record_media_download_failure(
+                    media_download_failures, kind="attachment", filename=filename, exc=exc
+                )
+            else:
+                count += 1
     return count
+
+
+def _download_embed_media(
+    root: Path,
+    client: Any,
+    safe_channel: str,
+    messages: list[dict[str, Any]],
+    media_download_failures: list[dict[str, str]],
+) -> int:
+    count = 0
+    seen_urls: set[str] = set()
+    for message in messages:
+        for embed in message.get("embeds") or []:
+            if not isinstance(embed, dict):
+                continue
+            for url in _embed_media_urls(embed):
+                if url in seen_urls:
+                    continue
+                seen_urls.add(url)
+                filename = safe_component(_filename_from_url(url) or f"embed-media-{count + 1}")
+                destination = _unique_destination(
+                    root / "media" / "screenshots" / safe_channel / filename
+                )
+                try:
+                    client.download_file(url, destination)
+                except DiscordArchiveError as exc:
+                    _record_media_download_failure(
+                        media_download_failures,
+                        kind="embed_media",
+                        filename=filename,
+                        exc=exc,
+                    )
+                else:
+                    count += 1
+    return count
+
+
+def _record_media_download_failure(
+    failures: list[dict[str, str]], *, kind: str, filename: str, exc: DiscordArchiveError
+) -> None:
+    failures.append({"kind": kind, "filename": filename, "error": str(exc)})
+
+
+def _attachments_status(
+    *,
+    attachments_saved: int,
+    embed_media_saved: int,
+    media_download_failures: list[dict[str, str]],
+) -> str:
+    if attachments_saved or embed_media_saved:
+        return "yes"
+    if media_download_failures:
+        return "no"
+    return "none_found"
+
+
+def _embed_media_urls(embed: dict[str, Any]) -> list[str]:
+    urls: list[str] = []
+    for key in ("image", "thumbnail"):
+        value = embed.get(key)
+        if isinstance(value, dict):
+            url = str(value.get("url") or "")
+            if url:
+                urls.append(url)
+    return urls
+
+
+def _filename_from_url(url: str) -> str:
+    parsed = urllib.parse.urlparse(url)
+    filename = Path(urllib.parse.unquote(parsed.path)).name
+    return filename or ""
 
 
 def _media_bucket(attachment: dict[str, Any]) -> str:

@@ -66,6 +66,12 @@ class FakeDiscordClient:
                         "content_type": "application/pdf",
                     },
                 ],
+                "embeds": [
+                    {
+                        "image": {"url": "https://cdn.discordapp.example/embed-chart.png"},
+                        "thumbnail": {"url": "https://cdn.discordapp.example/embed-thumb.jpg"},
+                    }
+                ],
             },
             {
                 "id": "100",
@@ -73,11 +79,52 @@ class FakeDiscordClient:
                 "content": "older context",
                 "author": {"id": "user_private", "username": "Founder"},
                 "attachments": [],
+                "embeds": [],
+            },
+        ]
+
+    def channel_pins(self, channel_id: str) -> list[dict[str, object]]:
+        return [
+            {
+                "id": "300",
+                "timestamp": "2026-06-24T12:10:00+00:00",
+                "content": "pin context",
+                "author": {"id": "user_private", "username": "Founder"},
+                "attachments": [
+                    {
+                        "id": "pin_att_1",
+                        "filename": "pin-chart.png",
+                        "url": "https://cdn.discordapp.example/pin-chart.png",
+                        "content_type": "image/png",
+                    }
+                ],
+                "embeds": [
+                    {
+                        "image": {"url": "https://cdn.discordapp.example/pin-embed.png"},
+                    }
+                ],
+            },
+            {
+                "id": "250",
+                "timestamp": "2026-06-24T12:08:00+00:00",
+                "content": "older pin",
+                "author": {"id": "user_private", "username": "Founder"},
+                "attachments": [],
+                "embeds": [],
             },
         ]
 
     def download_file(self, url: str, destination: Path) -> None:
         self.downloads.append((url, destination))
+        destination.parent.mkdir(parents=True, exist_ok=True)
+        destination.write_bytes(f"downloaded {url}".encode("utf-8"))
+
+
+class FailingDownloadDiscordClient(FakeDiscordClient):
+    def download_file(self, url: str, destination: Path) -> None:
+        self.downloads.append((url, destination))
+        if "embed-chart" in url:
+            raise archive.DiscordAPIError("download failed: HTTP 404")
         destination.parent.mkdir(parents=True, exist_ok=True)
         destination.write_bytes(f"downloaded {url}".encode("utf-8"))
 
@@ -141,8 +188,14 @@ def test_export_channel_writes_messages_media_manifest_and_tracker(tmp_path: Pat
 
     assert result["message_count"] == 2
     assert result["attachments_saved"] == 2
+    assert result["embed_media_saved"] == 2
     assert client.message_calls == [("chan_signal", None)]
-    assert [path.name for _, path in client.downloads] == ["chart.png", "notes.pdf"]
+    assert [path.name for _, path in client.downloads] == [
+        "chart.png",
+        "notes.pdf",
+        "embed-chart.png",
+        "embed-thumb.jpg",
+    ]
 
     export_file = tmp_path / "exports" / "signal-history" / "btc-signals_chan_signal.json"
     payload = json.loads(export_file.read_text(encoding="utf-8"))
@@ -151,6 +204,12 @@ def test_export_channel_writes_messages_media_manifest_and_tracker(tmp_path: Pat
 
     assert (tmp_path / "media" / "screenshots" / "btc-signals_chan_signal" / "chart.png").exists()
     assert (tmp_path / "media" / "docs" / "btc-signals_chan_signal" / "notes.pdf").exists()
+    assert (
+        tmp_path / "media" / "screenshots" / "btc-signals_chan_signal" / "embed-chart.png"
+    ).exists()
+    assert (
+        tmp_path / "media" / "screenshots" / "btc-signals_chan_signal" / "embed-thumb.jpg"
+    ).exists()
 
     manifest = json.loads((tmp_path / "manifest.json").read_text(encoding="utf-8"))
     assert manifest["channels"][0]["channel"] == "btc-signals"
@@ -165,6 +224,78 @@ def test_export_channel_writes_messages_media_manifest_and_tracker(tmp_path: Pat
     ).splitlines()
     assert tracker_lines[1].startswith(
         "btc-signals,,exported,none_found,yes,review_later,private_staging,"
+    )
+
+
+def test_export_channel_records_media_download_failures_without_aborting(tmp_path: Path) -> None:
+    archive.create_scaffold(tmp_path)
+
+    result = archive.export_channel(
+        tmp_path,
+        FailingDownloadDiscordClient(),
+        channel_id="chan_signal",
+        bucket="signal-history",
+        max_messages=100,
+        include_attachments=True,
+    )
+
+    assert result["message_count"] == 2
+    assert result["attachments_saved"] == 2
+    assert result["embed_media_saved"] == 1
+    assert result["media_download_failures"] == 1
+
+    export_file = tmp_path / "exports" / "signal-history" / "btc-signals_chan_signal.json"
+    payload = json.loads(export_file.read_text(encoding="utf-8"))
+    assert payload["message_count"] == 2
+    assert payload["media_download_failures"] == [
+        {
+            "kind": "embed_media",
+            "filename": "embed-chart.png",
+            "error": "download failed: HTTP 404",
+        }
+    ]
+
+
+def test_export_channel_pins_updates_manifest_and_tracker(tmp_path: Path) -> None:
+    archive.create_scaffold(tmp_path)
+    client = FakeDiscordClient()
+    archive.export_channel(
+        tmp_path,
+        client,
+        channel_id="chan_signal",
+        bucket="signal-history",
+        max_messages=100,
+        include_attachments=True,
+    )
+
+    result = archive.export_channel_pins(
+        tmp_path,
+        client,
+        channel_id="chan_signal",
+        include_attachments=True,
+    )
+
+    assert result["pin_count"] == 2
+    assert result["attachments_saved"] == 1
+    assert result["embed_media_saved"] == 1
+    assert result["pins_saved"] == "yes"
+
+    export_file = tmp_path / "exports" / "pins" / "btc-signals_chan_signal.json"
+    payload = json.loads(export_file.read_text(encoding="utf-8"))
+    assert [message["id"] for message in payload["messages"]] == ["250", "300"]
+    assert payload["media_download_failures"] == []
+
+    manifest = json.loads((tmp_path / "manifest.json").read_text(encoding="utf-8"))
+    channel = manifest["channels"][0]
+    assert channel["export_file"] == "exports/signal-history/btc-signals_chan_signal.json"
+    assert channel["pins_file"] == "exports/pins/btc-signals_chan_signal.json"
+    assert channel["pins_saved"] == "yes"
+
+    tracker_lines = (tmp_path / "channel_decision_tracker.csv").read_text(
+        encoding="utf-8"
+    ).splitlines()
+    assert tracker_lines[1].startswith(
+        "btc-signals,,exported,yes,yes,review_later,private_staging,"
     )
 
 
