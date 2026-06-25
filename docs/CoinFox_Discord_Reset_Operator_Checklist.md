@@ -34,6 +34,39 @@ python tools\coinfox_discord_archive.py --archive-root C:\Users\fox1i\CoinFox_Di
 python tools\coinfox_discord_archive.py --archive-root C:\Users\fox1i\CoinFox_Discord_Archive_2026-06-24 stop-gate
 ```
 
+## Optional Live Reset Bot Helper
+
+`tools/coinfox_discord_reset.py` can help after Phase 3 is verified. It is not a
+delete tool.
+
+Safety boundary:
+
+- bot token only through `COINFOX_DISCORD_BOT_TOKEN`;
+- no self-bot behavior;
+- no channel deletion;
+- explicit commands only for permission doctor, invite revocation, and reset
+  structure creation;
+- `setup-structure` requires the bot role to have `Manage Channels`;
+- `revoke-invites` requires the bot role to have `Manage Server`;
+- no token values printed in reports.
+
+Commands:
+
+```powershell
+python tools\coinfox_discord_reset.py --guild-id <guild_id> doctor
+python tools\coinfox_discord_reset.py --guild-id <guild_id> revoke-invites
+python tools\coinfox_discord_reset.py --guild-id <guild_id> setup-structure
+```
+
+Expected `setup-structure` behavior:
+
+- creates private `FOUNDER VAULT` and `RESET STAGING` categories if missing;
+- denies `View Channel` for `@everyone` on both private categories;
+- creates documented private holding/index channels if missing;
+- creates the public `START HERE`, `COINFOX`, `FOXCLAW IDEAS`, `LEARN`, and
+  `SUPPORT` categories/channels if missing;
+- does not move, lock, or delete legacy channels.
+
 Discord setup requirements:
 
 - the bot must be invited to the server with read access to the channels being archived;
