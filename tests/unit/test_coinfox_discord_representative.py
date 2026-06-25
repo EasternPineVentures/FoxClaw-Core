@@ -121,3 +121,24 @@ def test_run_once_send_posts_reply_and_updates_state(tmp_path: Path) -> None:
     assert client.replies[0][0] == "chan_general"
     assert client.replies[0][2] == "200"
     assert rep.load_state(state_path)["chan_general"] == "200"
+
+
+def test_default_state_path_is_outside_repo_home(monkeypatch, tmp_path: Path) -> None:
+    monkeypatch.setenv("USERPROFILE", str(tmp_path))
+
+    path = rep.default_state_path()
+
+    assert path == tmp_path / ".coinfox" / "discord_rep_state.json"
+
+
+def test_parse_public_channels_requires_name_and_id(tmp_path: Path) -> None:
+    config = tmp_path / "channels.json"
+    config.write_text(
+        '{"channels":[{"id":"chan_general","name":"general"},{"id":"chan_help","name":"help"}]}',
+        encoding="utf-8",
+    )
+
+    assert rep.load_channel_config(config) == {
+        "chan_general": "general",
+        "chan_help": "help",
+    }
