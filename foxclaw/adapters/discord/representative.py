@@ -2,7 +2,9 @@
 
 from __future__ import annotations
 
+import json
 from dataclasses import dataclass
+from pathlib import Path
 from typing import Any
 
 
@@ -83,6 +85,60 @@ def classify_message(
     if _contains_any(content, CHANNEL_ROUTE_TERMS):
         return RepresentativeDecision("reply", "route_trade_ideas", TRADE_IDEAS_ROUTE)
     return RepresentativeDecision("reply", "identity", IDENTITY_REPLY)
+
+
+def load_state(path: str | Path) -> dict[str, str]:
+    state_path = Path(path)
+    if not state_path.exists():
+        return {}
+    return {
+        str(key): str(value)
+        for key, value in json.loads(state_path.read_text(encoding="utf-8")).items()
+    }
+
+
+def save_state(path: str | Path, state: dict[str, str]) -> None:
+    state_path = Path(path)
+    state_path.parent.mkdir(parents=True, exist_ok=True)
+    state_path.write_text(json.dumps(state, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+
+
+def run_once(
+    client: Any,
+    *,
+    bot_user_id: str,
+    channels: dict[str, str],
+    state_path: str | Path,
+    send: bool = False,
+) -> dict[str, int]:
+    state = load_state(state_path)
+    summary = {"processed": 0, "would_reply": 0, "sent": 0, "ignored": 0}
+    allowed_channel_ids = set(channels)
+    for channel_id, channel_name in channels.items():
+        after = state.get(channel_id)
+        messages = client.channel_messages(channel_id, after=after, limit=50)
+        for message in sorted(messages, key=lambda item: int(str(item.get("id") or "0"))):
+            message_id = str(message.get("id") or "")
+            if not message_id:
+                continue
+            decision = classify_message(
+                message,
+                bot_user_id=bot_user_id,
+                channel_name=channel_name,
+                allowed_channel_ids=allowed_channel_ids,
+                channel_id=channel_id,
+            )
+            summary["processed"] += 1
+            if decision.action == "reply" and decision.reply:
+                summary["would_reply"] += 1
+                if send:
+                    client.create_message(channel_id, decision.reply, message_reference=message_id)
+                    summary["sent"] += 1
+            else:
+                summary["ignored"] += 1
+            state[channel_id] = message_id
+    save_state(state_path, state)
+    return summary
 
 
 def _mentions_bot(message: dict[str, Any], bot_user_id: str) -> bool:

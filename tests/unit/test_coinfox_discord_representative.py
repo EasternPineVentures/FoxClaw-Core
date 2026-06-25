@@ -1,3 +1,5 @@
+from pathlib import Path
+
 from foxclaw.adapters.discord import representative as rep
 
 
@@ -62,3 +64,60 @@ def test_representative_routes_channel_questions() -> None:
     assert decision.action == "reply"
     assert decision.reason == "route_trade_ideas"
     assert "#trade-ideas" in decision.reply
+
+
+class FakeRepresentativeClient:
+    def __init__(self) -> None:
+        self.replies: list[tuple[str, str, str]] = []
+        self.messages = {
+            "chan_general": [
+                {
+                    "id": "200",
+                    "content": "<@bot_1> what is CoinFox?",
+                    "author": {"id": "user_1", "bot": False},
+                    "mentions": [{"id": "bot_1"}],
+                }
+            ]
+        }
+
+    def channel_messages(self, channel_id: str, *, after: str | None = None, limit: int = 50):
+        return list(self.messages.get(channel_id, []))
+
+    def create_message(self, channel_id: str, content: str, *, message_reference: str):
+        self.replies.append((channel_id, content, message_reference))
+        return {"id": "reply_1", "content": content}
+
+
+def test_run_once_dry_run_does_not_send_reply(tmp_path: Path) -> None:
+    client = FakeRepresentativeClient()
+
+    result = rep.run_once(
+        client,
+        bot_user_id="bot_1",
+        channels={"chan_general": "general"},
+        state_path=tmp_path / "state.json",
+        send=False,
+    )
+
+    assert result["processed"] == 1
+    assert result["would_reply"] == 1
+    assert result["sent"] == 0
+    assert client.replies == []
+
+
+def test_run_once_send_posts_reply_and_updates_state(tmp_path: Path) -> None:
+    client = FakeRepresentativeClient()
+    state_path = tmp_path / "state.json"
+
+    result = rep.run_once(
+        client,
+        bot_user_id="bot_1",
+        channels={"chan_general": "general"},
+        state_path=state_path,
+        send=True,
+    )
+
+    assert result["sent"] == 1
+    assert client.replies[0][0] == "chan_general"
+    assert client.replies[0][2] == "200"
+    assert rep.load_state(state_path)["chan_general"] == "200"
