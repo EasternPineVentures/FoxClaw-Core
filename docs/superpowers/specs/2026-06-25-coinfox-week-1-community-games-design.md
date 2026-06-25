@@ -8,9 +8,19 @@ Repository context: `foxclaw-core` documents the public safety boundary; Discord
 ## Context
 
 The CoinFox Discord reset is an in-place conversion of the existing server, not a
-second Discord. As of this design, the archive has been verified, the public
-CoinFox structure exists, legacy visibility has been reduced, first launch pins
-exist, and no public invite is active.
+second Discord. As of this V4 design, the archive has been verified, legacy
+visibility has been reduced, first launch pins exist, no public invite is active,
+and the public channel structure is being refined around:
+
+```text
+COINFOX DEN
+MARKET GYM
+FOXCLAW INTEL
+BUILD LAB
+FIELD GUIDE
+SUPPORT
+PRIVATE OPS
+```
 
 The next community step is not more channel architecture. It is a small manual
 Week 1 test that proves whether the CoinFox culture loop works with real people:
@@ -44,8 +54,11 @@ room, or profit-only leaderboard.
   performance, or a guaranteed-profit system.
 - Do not automate scoring, roles, or leaderboards before the manual format is
   proven.
-- Do not expose Founder Vault, Reset Staging, raw archive, raw signal, parser,
+- Do not expose `PRIVATE OPS`, raw archive, raw signal, parser,
   or bot-log material.
+- Do not create `bot-feedback`, `bug-reports`, `roles`, `glossary`,
+  `forecast-reviews`, or other deferred channels during Week 1 unless a later
+  review explicitly approves them.
 
 ## Chosen Approach
 
@@ -53,11 +66,11 @@ Run Week 1 manually inside existing public channels:
 
 | Game | Channel |
 | --- | --- |
-| Prediction Duels | `market-talk` |
-| Good Signal, Bad Trade Court | `trade-ideas` and `good-signal-bad-trade` |
-| No-Edge Challenge | `no-edge-rejects` |
-| Postmortems | `foxclaw-postmortems` |
-| Weekly game schedule | `announcements` |
+| Prediction Duels | `MARKET GYM / market-talk` |
+| Good Signal, Bad Trade Court | `MARKET GYM / good-signal-bad-trade` |
+| No-Edge Challenge | `FOXCLAW INTEL / no-edge-rejects` |
+| Postmortems | `MARKET GYM / postmortems` |
+| Weekly game schedule | `COINFOX DEN / announcements` |
 
 This keeps the server readable during the first invite wave. If the games show
 activity and the existing channels become crowded, create an `ARENA` category
@@ -68,10 +81,10 @@ after the Week 1 review.
 Before inviting the first soft-launch group:
 
 - New and Member visibility has been tested.
-- `FOUNDER VAULT`, `RESET STAGING`, archive exports, hidden legacy channels,
+- `PRIVATE OPS`, archive exports, hidden legacy channels,
   parser logs, bot logs, and raw signal history are not visible to public roles.
 - Old invites remain revoked.
-- One soft-launch invite lands in `START HERE`.
+- One soft-launch invite lands in `COINFOX DEN / welcome`.
 - Rules and launch pins are visible.
 - Basic safety moderation is configured or manually covered.
 - The CoinFox representative bot remains mention-only if enabled.
@@ -94,7 +107,7 @@ Reference docs:
 Purpose: make users state probabilistic beliefs with evidence and resolution
 criteria.
 
-Placement: `market-talk`.
+Placement: `MARKET GYM / market-talk`.
 
 Prompt template:
 
@@ -135,8 +148,10 @@ that can be checked later.
 
 Purpose: teach the line between an interesting signal and an executable trade.
 
-Placement: `trade-ideas` for the original idea and `good-signal-bad-trade` for
-the review.
+Placement: `MARKET GYM / good-signal-bad-trade`.
+
+If the court is reviewing a post from `MARKET GYM / trade-ideas`, link back to
+the original idea instead of copying the whole thread.
 
 Prompt template:
 
@@ -181,7 +196,10 @@ Scoring rewards:
 
 Purpose: make "no trade" feel like a respected win.
 
-Placement: `no-edge-rejects`.
+Placement: `FOXCLAW INTEL / no-edge-rejects`.
+
+`no-edge-rejects` is curated at launch. Founder/mod posts come first; trusted
+users can be added later if the channel stays clean and useful.
 
 Prompt template:
 
@@ -213,7 +231,7 @@ Users earn reputation for spotting:
 
 Purpose: turn resolved ideas into learning.
 
-Placement: `foxclaw-postmortems`.
+Placement: `MARKET GYM / postmortems`.
 
 Prompt template:
 
@@ -237,7 +255,7 @@ review is more valuable than a lucky result with no reasoning.
 ## Reputation Model
 
 Week 1 reputation is manual and lightweight. The founder/operator can summarize
-standouts in `announcements` or `wins-and-lessons`.
+standouts in `COINFOX DEN / announcements` or `MARKET GYM / postmortems`.
 
 Reward:
 
@@ -263,7 +281,7 @@ Do not reward:
 
 ## Week 1 Schedule
 
-Use `announcements` for the weekly schedule.
+Use `COINFOX DEN / announcements` for the weekly schedule.
 
 Suggested rhythm:
 
@@ -273,7 +291,7 @@ Tuesday: Prediction Duel
 Wednesday: Good Signal, Bad Trade Court
 Thursday: No-Edge Challenge
 Friday: Postmortem Friday
-Weekend: Founder summary in wins-and-lessons
+Weekend: Founder summary in announcements or postmortems
 ```
 
 If the server is quiet, run fewer sessions. A good Week 1 is clean and learnable,
@@ -319,6 +337,15 @@ After Week 1, review:
 
 Create `ARENA` only if the games show enough activity and existing channels are
 too crowded.
+
+Criteria to create `ARENA` later:
+
+- people participate without being begged;
+- game posts clutter normal channels;
+- users ask where games live;
+- mods can explain rules easily;
+- no safety or risk-language problems appear;
+- at least one game creates reusable CoinFox content.
 
 Possible future `ARENA` layout:
 

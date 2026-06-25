@@ -129,49 +129,63 @@ The channel decision tracker should use machine-friendly column names:
 
 ## Server Shape
 
-The converted CoinFox Discord should have a small, legible public surface:
+The converted CoinFox Discord should have a lean V4 public surface that can feel
+alive with 5 to 15 people:
 
-- `START HERE`
+- `COINFOX DEN`
   - welcome
   - rules
   - announcements
-  - roles
-- `COINFOX`
   - general
+  - product-updates
+- `MARKET GYM`
   - market-talk
   - trade-ideas
-  - questions
-  - wins-and-lessons
-- `FOXCLAW IDEAS`
-  - public-intelligence
-  - paper-only-notes
-  - no-edge-rejects
-  - foxclaw-postmortems
-- `LEARN`
-  - risk-management
+  - risk-desk
   - good-signal-bad-trade
-  - plan-before-entry
+  - postmortems
+- `FOXCLAW INTEL`
+  - public-intel
+  - no-edge-rejects
+  - paper-notes
+- `BUILD LAB`
+  - testing-ground
+  - feedback-and-ideas
+  - community-events
+- `FIELD GUIDE`
   - beginner-questions
+  - risk-management
+  - before-you-click
 - `SUPPORT`
-  - help
-  - reports
-- `FOUNDER VAULT`
-  - founder-footnotes
-  - archived-decisions
-  - signal-history-index
-- `RESET STAGING`
-  - review-delete
-  - review-lock
-  - review-archive-only
-  - permissions-test
+  - help-desk
+- `PRIVATE OPS`
+  - founder-vault
+  - mod-room
+  - reset-staging
 
-The `FOUNDER VAULT` category is private to the founder/operator and any explicitly
-trusted internal collaborators. Public members cannot see it.
+`COINFOX DEN` is the brand/community compromise: clear enough to read as
+CoinFox, warm enough to feel like a clubhouse rather than a corporate wiki. Use
+`COINFOX DEN`, not `THE DEN`.
 
-The `RESET STAGING` category is temporary and private. It is used as a holding
-pen for questionable old channels while the operator decides whether each channel
-should be deleted, locked, archived only, or distilled into founder-vault notes.
-After the reset is complete, delete or hide `RESET STAGING`.
+`FIELD GUIDE` replaces the earlier `LEARN` / `THE FOXHOLE` naming. It should feel
+like practical survival material, not homework.
+
+`SUPPORT` has only `help-desk` at launch. Keep reporting and help together until
+there is enough volume to justify splitting them.
+
+The following channels/categories are deferred, not deleted forever:
+`bot-feedback`, `bug-reports`, `roles`, `glossary`, `forecast-reviews`, and
+`ARENA`. Add them later only when usage proves they are needed.
+
+`FOXCLAW INTEL` is curated and controlled at first. `public-intel`,
+`no-edge-rejects`, and `paper-notes` should be founder/mod post-first channels;
+members may react or discuss in threads later if the moderation load stays
+healthy. It is not a raw public signal feed.
+
+`PRIVATE OPS` is hidden from public roles. `founder-vault` preserves private
+creation footnotes and archived decisions. `mod-room` is for moderation and
+launch operations. `reset-staging` is a temporary holding area for old channels
+before deletion, locking, or archival review.
 
 ## Roles And Permissions
 
@@ -183,11 +197,11 @@ Start with a minimal role model:
 - Member: normal public participation.
 - New: limited posting until onboarding or anti-spam checks pass.
 
-Public invites should land new users into `START HERE`. New users should not see
-founder vault channels, archived exports, old private channels, bot logs, parser
-logs, or raw signal history.
+Public invites should land new users into `COINFOX DEN / welcome`. New users
+should not see `PRIVATE OPS`, founder-vault material, archived exports, old
+private channels, bot logs, parser logs, or raw signal history.
 
-## Reset Staging And Rollback
+## Reset-Staging And Rollback
 
 The cleanup order is:
 
@@ -196,8 +210,9 @@ Archive -> verify checksum -> move to staging -> permission check -> delete or l
 ```
 
 Cleanup must not skip directly from archive creation to broad deletion. When a
-legacy channel is questionable, move it into `RESET STAGING`, hide it from public
-roles, and decide its fate after the archive and permissions are verified.
+legacy channel is questionable, move it into `PRIVATE OPS / reset-staging`, hide
+it from public roles, and decide its fate after the archive and permissions are
+verified.
 
 If the reset gets messy:
 
@@ -224,13 +239,15 @@ No channel may be deleted until:
 - the founder/operator confirms the channel has no obvious missing attachments,
   images, screenshots, charts, or docs;
 - the channel appears in the channel decision tracker;
-- the channel has been moved to `RESET STAGING` or marked pure clutter.
+- the channel has been moved to `PRIVATE OPS / reset-staging` or marked pure
+  clutter.
 
 After verification:
 
 - delete channels that are pure clutter and already archived;
 - lock channels that need a short review window before deletion;
-- move questionable channels to `RESET STAGING` before final deletion;
+- move questionable channels to `PRIVATE OPS / reset-staging` before final
+  deletion;
 - move only essential origin notes into the founder vault;
 - remove old invites that were meant for the private server;
 - review bot permissions and remove bots not needed for the public CoinFox
@@ -249,7 +266,8 @@ Before any public invite:
 - remove any parser bot from the public server surface;
 - remove any old signal bot from the public server surface;
 - remove admin from every bot unless that permission is explicitly required;
-- confirm no bot can see `FOUNDER VAULT` unless the founder/operator approves it;
+- confirm no bot can see `PRIVATE OPS / founder-vault` unless the
+  founder/operator approves it;
 - confirm no bot can see local archive exports, staged private channels, or
   hidden legacy logs unless there is a documented internal reason.
 
@@ -259,7 +277,7 @@ Before the soft launch:
 
 1. Revoke every old invite.
 2. Create one new invite after permissions pass.
-3. Set the invite to land in `START HERE`.
+3. Set the invite to land in `COINFOX DEN / welcome`.
 4. Use that invite for the soft launch only.
 5. Create broader public invites only after the soft-launch review is complete.
 
@@ -277,6 +295,7 @@ The first pinned posts are required deliverables:
 - signals are not trades;
 - how to use trade-ideas;
 - what FoxClaw public intelligence means.
+- Week 1 games schedule when soft launch begins.
 
 Welcome copy:
 
@@ -312,6 +331,37 @@ Rules copy:
 10. Mods may remove anything that makes the community unsafe or misleading.
 ```
 
+Trade-ideas guidance:
+
+```text
+Trade ideas must include:
+
+- thesis
+- timeframe
+- invalidation
+- risk
+- what would change your mind
+
+No "what do you think?" posts without a thesis.
+No "buy now" posts.
+No guaranteed-profit claims.
+No pressure to copy trades.
+A good signal is not automatically a good trade.
+```
+
+FoxClaw public safety language:
+
+```text
+CoinFox discussion is informational and educational.
+Nothing is individualized financial advice.
+FoxClaw public intelligence is paper-only unless clearly marked otherwise.
+Risk labels matter.
+No wallet/key requests.
+No paid signal pressure.
+No guaranteed-profit claims.
+No pump spam.
+```
+
 ## Public Story Rule
 
 The archive is private source material. Public history must be curated.
@@ -340,19 +390,19 @@ Disallowed public story material:
 
 Before the first public invite:
 
-- confirm the founder vault is invisible to Member and New roles;
-- confirm Moderator cannot see Founder Vault unless the moderator is explicitly
+- confirm `PRIVATE OPS / founder-vault` is invisible to Member and New roles;
+- confirm Moderator cannot see `PRIVATE OPS / founder-vault` unless the moderator is explicitly
   trusted for internal material;
 - confirm old private channels are deleted, locked, or hidden;
 - confirm invite links route users into the public onboarding path;
 - confirm no raw signal channel remains public;
 - confirm no credentials or private exports are attached in Discord;
 - confirm no public role can see archive exports, bot logs, parser logs, or
-  `RESET STAGING`;
+  `PRIVATE OPS / reset-staging`;
 - confirm all bots have been disabled or permission-reviewed;
 - confirm no bot has admin unless explicitly needed;
 - confirm old invites have been revoked and the one soft-launch invite lands in
-  `START HERE`;
+  `COINFOX DEN / welcome`;
 - confirm public rules state that CoinFox discussion is informational and not
   individualized financial advice.
 
@@ -378,9 +428,9 @@ Fix channel names, permissions, and pinned copy before broader public invites.
 1. Freeze invites and permissions.
 2. Archive founder, signals, images, files, and history.
 3. Verify checksums.
-4. Create `FOUNDER VAULT` and `RESET STAGING`.
+4. Create `PRIVATE OPS` with `founder-vault`, `mod-room`, and `reset-staging`.
 5. Move questionable channels into staging.
-6. Build public CoinFox categories.
+6. Build the V4 public CoinFox categories.
 7. Add welcome, rules, disclaimer, and explainer pins.
 8. Review, disable, or remove bots.
 9. Test role visibility.
@@ -396,6 +446,8 @@ The reset is successful when:
 - the founder can find important creation footnotes without reopening old clutter;
 - a new user can join the server without seeing private history;
 - public channels clearly say CoinFox and support real discussion;
+- the public surface follows the V4 layout and stays lean enough to feel alive
+  with 5 to 15 people;
 - the first small trusted invite group reports no private visibility issues;
 - the old private Discord surface is mostly gone;
 - future public storytelling can be curated from the archive without leaking raw

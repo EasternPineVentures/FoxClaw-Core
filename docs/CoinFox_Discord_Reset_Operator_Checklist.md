@@ -65,17 +65,18 @@ python tools\coinfox_discord_reset.py --guild-id <guild_id> seed-first-pins
 
 Expected `setup-structure` behavior:
 
-- creates private `FOUNDER VAULT` and `RESET STAGING` categories if missing;
-- denies `View Channel` for `@everyone` on both private categories;
-- creates documented private holding/index channels if missing;
-- creates the public `START HERE`, `COINFOX`, `FOXCLAW IDEAS`, `LEARN`, and
-  `SUPPORT` categories/channels if missing;
+- creates private `PRIVATE OPS` category if missing;
+- creates `founder-vault`, `mod-room`, and `reset-staging` private channels if missing;
+- denies `View Channel` for `@everyone` on `PRIVATE OPS`;
+- creates the public V4 categories/channels if missing:
+  `COINFOX DEN`, `MARKET GYM`, `FOXCLAW INTEL`, `BUILD LAB`, `FIELD GUIDE`,
+  and `SUPPORT`;
 - does not move, lock, or delete legacy channels.
 
 Expected `hide-legacy-surface` behavior:
 
-- skips `START HERE`, `COINFOX`, `FOXCLAW IDEAS`, `LEARN`, `SUPPORT`,
-  `FOUNDER VAULT`, and `RESET STAGING`;
+- skips `COINFOX DEN`, `MARKET GYM`, `FOXCLAW INTEL`, `BUILD LAB`,
+  `FIELD GUIDE`, `SUPPORT`, and `PRIVATE OPS`;
 - denies `View Channel` for `@everyone` on legacy categories and channels where
   Discord permissions allow it;
 - reports per-channel failures instead of aborting the whole pass;
@@ -87,7 +88,7 @@ Expected `hide-legacy-surface` behavior:
 Expected `seed-first-pins` behavior:
 
 - posts and pins the first public launch notes in `welcome`, `rules`,
-  `trade-ideas`, `public-intelligence`, and `help`;
+  `trade-ideas`, `public-intel`, and `help-desk`;
 - skips a launch note if a pinned message with the same `CoinFox Launch Note`
   marker already exists;
 - reports posted, skipped, and missing-channel counts;
@@ -103,7 +104,7 @@ Safety boundary:
 
 - only channels listed in the JSON allowlist are polled;
 - no private archive files are read;
-- no Founder Vault, Reset Staging, raw feed, parser log, bot log, or old signal
+- no `PRIVATE OPS`, raw feed, parser log, bot log, or old signal
   channel should appear in the allowlist;
 - live posting requires `--send`;
 - no trade advice, trade execution, signal parsing, moderation automation, or
@@ -188,7 +189,7 @@ No channel may be deleted until all of these are true:
 - [ ] Checksum verification passes.
 - [ ] The founder/operator confirms the channel has no obvious missing attachments, images, screenshots, charts, or docs.
 - [ ] The channel appears in `channel_decision_tracker.csv`.
-- [ ] The channel has been moved to `RESET STAGING` or marked pure clutter.
+- [ ] The channel has been moved to `PRIVATE OPS / reset-staging` or marked pure clutter.
 
 ## Channel Decision Tracker
 
@@ -428,33 +429,34 @@ Do not delete, lock, move, or publicly restructure channels until all are true:
 - [ ] Founder/operator can find founder footnotes without Discord.
 - [ ] No public invites are active.
 
-## Phase 4: Create Founder Vault And Reset Staging
+## Phase 4: Create Private Ops
 
 **Purpose:** Create private Discord holding areas before public restructuring.
 
-- [ ] Create category `FOUNDER VAULT`.
-- [ ] Create channels `founder-footnotes`, `archived-decisions`, and `signal-history-index`.
-- [ ] Make `FOUNDER VAULT` visible only to Founder and explicitly trusted internal collaborators.
-- [ ] Create category `RESET STAGING`.
-- [ ] Create channels `review-delete`, `review-lock`, `review-archive-only`, and `permissions-test`.
-- [ ] Make `RESET STAGING` invisible to New, Member, and Moderator unless the moderator is explicitly trusted.
+- [ ] Create category `PRIVATE OPS`.
+- [ ] Create channel `founder-vault`.
+- [ ] Create channel `mod-room`.
+- [ ] Create channel `reset-staging`.
+- [ ] Make `PRIVATE OPS` invisible to New, Member, and Moderator unless the moderator is explicitly trusted.
+- [ ] Make `founder-vault` visible only to Founder and explicitly trusted internal collaborators.
 - [ ] Test with a non-admin account or trusted helper.
 
 Expected result:
 
 ```text
-Founder Vault and Reset Staging exist, are private, and are ready for legacy-channel review.
+PRIVATE OPS exists, is private, and is ready for founder notes, moderation, and
+legacy-channel review.
 ```
 
 ## Phase 5: Move Questionable Channels Into Staging
 
 **Purpose:** Avoid accidental deletion while old channels are reviewed.
 
-- [ ] Move questionable legacy channels into `RESET STAGING`.
+- [ ] Move questionable legacy channels into `PRIVATE OPS / reset-staging`.
 - [ ] Lock channels that need review.
 - [ ] Mark pure clutter in `channel_decision_tracker.csv`.
 - [ ] Do not delete any channel unless every delete-gate item passes.
-- [ ] Move only curated creation footnotes into `FOUNDER VAULT`.
+- [ ] Move only curated creation footnotes into `PRIVATE OPS / founder-vault`.
 
 Expected result:
 
@@ -466,17 +468,23 @@ Legacy channels are either staged, locked, vaulted, public-kept, or marked pure 
 
 **Purpose:** Make the server clearly public-facing and CoinFox-shaped.
 
-- [ ] Create `START HERE` with `welcome`, `rules`, `announcements`, and `roles`.
-- [ ] Create `COINFOX` with `general`, `market-talk`, `trade-ideas`, `questions`, and `wins-and-lessons`.
-- [ ] Create `FOXCLAW IDEAS` with `public-intelligence`, `paper-only-notes`, `no-edge-rejects`, and `foxclaw-postmortems`.
-- [ ] Create `LEARN` with `risk-management`, `good-signal-bad-trade`, `plan-before-entry`, and `beginner-questions`.
-- [ ] Create `SUPPORT` with `help` and `reports`.
+- [ ] Use `COINFOX DEN`, not `THE DEN`; it is the brand/community compromise between corporate clarity and clubhouse feel.
+- [ ] Use `FIELD GUIDE`, not `THE FOXHOLE`; it replaces the earlier `LEARN` naming with practical survival material.
+- [ ] Create `COINFOX DEN` with `welcome`, `rules`, `announcements`, `general`, and `product-updates`.
+- [ ] Create `MARKET GYM` with `market-talk`, `trade-ideas`, `risk-desk`, `good-signal-bad-trade`, and `postmortems`.
+- [ ] Create `FOXCLAW INTEL` with `public-intel`, `no-edge-rejects`, and `paper-notes`.
+- [ ] Create `BUILD LAB` with `testing-ground`, `feedback-and-ideas`, and `community-events`.
+- [ ] Create `FIELD GUIDE` with `beginner-questions`, `risk-management`, and `before-you-click`.
+- [ ] Create `SUPPORT` with `help-desk` only.
+- [ ] Do not create `ARENA` at launch.
+- [ ] Confirm `bot-feedback`, `bug-reports`, `roles`, `glossary`, and `forecast-reviews` are deferred, not deleted forever.
 - [ ] Confirm New and Member roles see only public categories.
 
 Expected result:
 
 ```text
-The public channel surface reads as CoinFox, with Founder Vault and Reset Staging hidden.
+The public channel surface reads as CoinFox V4, feels like a clubhouse, and
+keeps PRIVATE OPS hidden.
 ```
 
 ## Phase 7: Add First Pinned Posts
@@ -496,7 +504,8 @@ python tools\coinfox_discord_reset.py --guild-id <guild_id> seed-first-pins
 - [ ] Pin signals are not trades.
 - [ ] Pin how to use trade-ideas.
 - [ ] Pin what FoxClaw public intelligence means.
-- [ ] Pin help.
+- [ ] Pin Week 1 games schedule when soft launch begins.
+- [ ] Pin help-desk.
 
 Welcome:
 
@@ -524,7 +533,7 @@ CoinFox Launch Note: Rules
 3. Label speculation clearly.
 4. No spam, pump campaigns, impersonation, or paid promotion without disclosure.
 5. Respect risk. Challenge ideas with reasoning, not personal attacks.
-6. Founder Vault and archived material stay private unless founder-approved and redacted.
+6. PRIVATE OPS and archived material stay private unless founder-approved and redacted.
 ```
 
 Risk disclaimer:
@@ -556,11 +565,19 @@ How to use trade-ideas:
 ```text
 CoinFox Launch Note: How To Use Trade Ideas
 
-Use trade-ideas for structured setups and paper-trade discussion.
+Trade ideas must include:
 
-Helpful posts include: ticker or asset, timeframe, thesis, invalidation, risk notes, what would prove the idea wrong, and whether it is live, watched, or paper-only.
+- thesis
+- timeframe
+- invalidation
+- risk
+- what would change your mind
 
-Do not treat another person's idea as permission to skip your own plan.
+No "what do you think?" posts without a thesis.
+No "buy now" posts.
+No guaranteed-profit claims.
+No pressure to copy trades.
+A good signal is not automatically a good trade.
 ```
 
 What FoxClaw public intelligence means:
@@ -568,17 +585,17 @@ What FoxClaw public intelligence means:
 ```text
 CoinFox Launch Note: FoxClaw Public Intelligence
 
-FoxClaw public intelligence means public-safe market observations, research notes, risk labels, and postmortems that can be discussed without exposing private founder material.
+FoxClaw public intelligence means public-safe market observations, research notes, risk labels, and no-edge reviews that can be discussed without exposing private founder material.
 
-It is not a private signal feed. It is not a trading command system. It is a receipt trail for learning what the market did, what the model saw, and what still needs review.
+It is not a private signal feed. It is not a trading command system. It is paper-only unless clearly marked otherwise. No raw FoxClaw internals, raw private Discord history, private source content, or live trade commands belong here.
 ```
 
-Help:
+Help-desk:
 
 ```text
-CoinFox Launch Note: Help
+CoinFox Launch Note: Help Desk
 
-Use this channel for access questions, confusing server behavior, broken links, or safety concerns.
+Use help-desk for access questions, confusing server behavior, broken links, reports, or safety concerns.
 
 Do not post passwords, private keys, account numbers, or sensitive screenshots. If something needs founder review, say what happened and keep private details out of public chat.
 ```
@@ -597,7 +614,7 @@ All first pinned posts exist before any soft-launch invite is created.
 - [ ] Remove any parser bot from the public server surface.
 - [ ] Remove any old signal bot from the public server surface.
 - [ ] Remove admin from every bot unless explicitly required.
-- [ ] Confirm no bot can see `FOUNDER VAULT` unless founder-approved.
+- [ ] Confirm no bot can see `PRIVATE OPS / founder-vault` unless founder-approved.
 - [ ] Confirm no bot can see archive exports, staged private channels, or old logs unless documented.
 - [ ] Record final bot decisions in `settings\bots-after-reset.md` in the local archive.
 
@@ -616,14 +633,14 @@ No bot has surprise access to private history or public admin power.
 - [ ] Test as Moderator.
 - [ ] Test as Trusted Internal.
 - [ ] Test as Founder.
-- [ ] Confirm New cannot see `FOUNDER VAULT`.
-- [ ] Confirm Member cannot see `FOUNDER VAULT`.
-- [ ] Confirm Moderator cannot see `FOUNDER VAULT` unless explicitly trusted.
+- [ ] Confirm New cannot see `PRIVATE OPS`.
+- [ ] Confirm Member cannot see `PRIVATE OPS`.
+- [ ] Confirm Moderator cannot see `PRIVATE OPS` unless explicitly trusted.
 - [ ] Confirm no public role sees legacy private channels.
 - [ ] Confirm no public role sees archive exports.
 - [ ] Confirm no public role sees bot, parser, or log channels.
-- [ ] Confirm no public role sees `RESET STAGING`.
-- [ ] Confirm invite route lands in `START HERE`.
+- [ ] Confirm no public role sees `PRIVATE OPS / reset-staging`.
+- [ ] Confirm invite route lands in `COINFOX DEN / welcome`.
 
 Expected result:
 
@@ -638,13 +655,13 @@ New public members can see only the intended public CoinFox surface.
 - [ ] Revoke every old invite again.
 - [ ] Confirm no old invite remains active.
 - [ ] Create one new invite after permissions pass.
-- [ ] Set the invite to land in `START HERE`.
+- [ ] Set the invite to land in `COINFOX DEN / welcome`.
 - [ ] Use this invite only for the soft launch.
 
 Expected result:
 
 ```text
-There is one active soft-launch invite, and it lands users in START HERE.
+There is one active soft-launch invite, and it lands users in COINFOX DEN / welcome.
 ```
 
 ## Phase 11: Invite 3 To 10 Trusted People
@@ -659,6 +676,11 @@ There is one active soft-launch invite, and it lands users in START HERE.
 - [ ] Ask whether the server feels safe and understandable.
 - [ ] Ask whether any old private material is visible.
 - [ ] Run Week 1 community games manually inside existing public channels.
+- [ ] Place Prediction Duels in `MARKET GYM / market-talk`.
+- [ ] Place Good Signal, Bad Trade Court in `MARKET GYM / good-signal-bad-trade`.
+- [ ] Place No-Edge Challenge in `FOXCLAW INTEL / no-edge-rejects`.
+- [ ] Place Postmortems in `MARKET GYM / postmortems`.
+- [ ] Place the weekly game schedule in `COINFOX DEN / announcements`.
 - [ ] Do not create an `ARENA` category during Week 1.
 - [ ] Do not use profit-only leaderboards or real-money contest framing.
 - [ ] Review participation, moderation burden, channel clutter, safety issues, and user feedback.
@@ -699,7 +721,7 @@ If anything feels wrong:
 - [ ] Lock questionable channels.
 - [ ] Do not delete more channels.
 - [ ] Recheck permissions.
-- [ ] Use the archive package and `RESET STAGING` to recover context.
+- [ ] Use the archive package and `PRIVATE OPS / reset-staging` to recover context.
 
 ## Self-Review Coverage
 
@@ -707,8 +729,7 @@ If anything feels wrong:
 - Spec requirement: founder-plus-signals archive. Covered by Phases 2 and 3.
 - Spec requirement: images and media saved. Covered by Phases 2 and 3.
 - Spec requirement: no deletion before archive verification. Covered by Stop Line, Delete Gate, and Phase 3 hard stop.
-- Spec requirement: Founder Vault. Covered by Phase 4.
-- Spec requirement: Reset Staging. Covered by Phases 4 and 5.
+- Spec requirement: Private Ops, founder-vault, mod-room, and reset-staging. Covered by Phase 4.
 - Spec requirement: public CoinFox categories. Covered by Phase 6.
 - Spec requirement: first pinned public copy. Covered by Phase 7.
 - Spec requirement: bot freeze. Covered by Phase 8.
