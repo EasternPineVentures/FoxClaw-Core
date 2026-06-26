@@ -1,0 +1,7 @@
+services:
+  - type: web
+    name: foxclaw-public-demo
+    runtime: static
+    buildCommand: python tools/build_public_demo_site.py --output public_site
+    staticPublishPath: public_site
+    pullRequestPreviewsEnabled: false

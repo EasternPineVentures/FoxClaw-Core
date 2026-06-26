@@ -2,6 +2,7 @@
 .env
 .env.*
 !.env.example
+config/coinfox_discord_public_channels.local.json
 
 # Per-node state — each node owns its own (invariant #9); never shared via git
 *.db
@@ -12,6 +13,7 @@ data/
 runtime_logs/
 runtime/machine_id.txt
 runtime_exports/
+public_site/
 tests/fixtures/parser_private/
 tests/fixtures/internal_private/
 
