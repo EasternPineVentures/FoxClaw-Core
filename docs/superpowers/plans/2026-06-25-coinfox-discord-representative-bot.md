@@ -628,12 +628,24 @@ Create `config/coinfox_discord_public_channels.example.json`:
   "channels": [
     {"id": "REPLACE_WITH_WELCOME_CHANNEL_ID", "name": "welcome"},
     {"id": "REPLACE_WITH_RULES_CHANNEL_ID", "name": "rules"},
+    {"id": "REPLACE_WITH_ANNOUNCEMENTS_CHANNEL_ID", "name": "announcements"},
     {"id": "REPLACE_WITH_GENERAL_CHANNEL_ID", "name": "general"},
+    {"id": "REPLACE_WITH_PRODUCT_UPDATES_CHANNEL_ID", "name": "product-updates"},
+    {"id": "REPLACE_WITH_MARKET_TALK_CHANNEL_ID", "name": "market-talk"},
     {"id": "REPLACE_WITH_TRADE_IDEAS_CHANNEL_ID", "name": "trade-ideas"},
-    {"id": "REPLACE_WITH_QUESTIONS_CHANNEL_ID", "name": "questions"},
-    {"id": "REPLACE_WITH_PUBLIC_INTELLIGENCE_CHANNEL_ID", "name": "public-intelligence"},
-    {"id": "REPLACE_WITH_HELP_CHANNEL_ID", "name": "help"},
-    {"id": "REPLACE_WITH_REPORTS_CHANNEL_ID", "name": "reports"}
+    {"id": "REPLACE_WITH_RISK_DESK_CHANNEL_ID", "name": "risk-desk"},
+    {"id": "REPLACE_WITH_GOOD_SIGNAL_BAD_TRADE_CHANNEL_ID", "name": "good-signal-bad-trade"},
+    {"id": "REPLACE_WITH_POSTMORTEMS_CHANNEL_ID", "name": "postmortems"},
+    {"id": "REPLACE_WITH_PUBLIC_INTEL_CHANNEL_ID", "name": "public-intel"},
+    {"id": "REPLACE_WITH_NO_EDGE_REJECTS_CHANNEL_ID", "name": "no-edge-rejects"},
+    {"id": "REPLACE_WITH_PAPER_NOTES_CHANNEL_ID", "name": "paper-notes"},
+    {"id": "REPLACE_WITH_TESTING_GROUND_CHANNEL_ID", "name": "testing-ground"},
+    {"id": "REPLACE_WITH_FEEDBACK_AND_IDEAS_CHANNEL_ID", "name": "feedback-and-ideas"},
+    {"id": "REPLACE_WITH_COMMUNITY_EVENTS_CHANNEL_ID", "name": "community-events"},
+    {"id": "REPLACE_WITH_BEGINNER_QUESTIONS_CHANNEL_ID", "name": "beginner-questions"},
+    {"id": "REPLACE_WITH_RISK_MANAGEMENT_CHANNEL_ID", "name": "risk-management"},
+    {"id": "REPLACE_WITH_BEFORE_YOU_CLICK_CHANNEL_ID", "name": "before-you-click"},
+    {"id": "REPLACE_WITH_HELP_DESK_CHANNEL_ID", "name": "help-desk"}
   ]
 }
 ```

@@ -7,12 +7,14 @@ CoinFox reset structure. It does not delete channels.
 
 from __future__ import annotations
 
+import base64
 import json
 import time
 import urllib.error
 import urllib.parse
 import urllib.request
 from dataclasses import dataclass
+from pathlib import Path
 from typing import Any
 
 from foxclaw.adapters.discord.archive import (
@@ -33,35 +35,67 @@ PERMISSION_MANAGE_MESSAGES = 1 << 13
 PERMISSION_READ_MESSAGE_HISTORY = 1 << 16
 
 PRIVATE_LAYOUT = {
-    "FOUNDER VAULT": [
-        "founder-footnotes",
-        "archived-decisions",
-        "signal-history-index",
-    ],
-    "RESET STAGING": [
-        "review-delete",
-        "review-lock",
-        "review-archive-only",
-        "permissions-test",
+    "PRIVATE OPS": [
+        "founder-vault",
+        "mod-room",
+        "reset-staging",
     ],
 }
 
 PUBLIC_LAYOUT = {
-    "START HERE": ["welcome", "rules", "announcements", "roles"],
-    "COINFOX": ["general", "market-talk", "trade-ideas", "questions", "wins-and-lessons"],
-    "FOXCLAW IDEAS": [
-        "public-intelligence",
-        "paper-only-notes",
-        "no-edge-rejects",
-        "foxclaw-postmortems",
-    ],
-    "LEARN": [
-        "risk-management",
+    "COINFOX DEN": ["welcome", "rules", "announcements", "general", "product-updates"],
+    "MARKET GYM": [
+        "market-talk",
+        "trade-ideas",
+        "risk-desk",
         "good-signal-bad-trade",
-        "plan-before-entry",
-        "beginner-questions",
+        "postmortems",
     ],
-    "SUPPORT": ["help", "reports"],
+    "FOXCLAW INTEL": ["public-intel", "no-edge-rejects", "paper-notes"],
+    "BUILD LAB": ["testing-ground", "feedback-and-ideas", "community-events"],
+    "FIELD GUIDE": ["beginner-questions", "risk-management", "before-you-click"],
+    "SUPPORT": ["help-desk"],
+}
+
+LEGACY_PUBLIC_CATEGORY_RENAMES = {
+    "START HERE": "COINFOX DEN",
+    "COINFOX": "MARKET GYM",
+    "FOXCLAW IDEAS": "FOXCLAW INTEL",
+    "LEARN": "FIELD GUIDE",
+}
+
+V4_CHANNEL_SPECS = [
+    ("COINFOX DEN", "welcome", ("welcome",)),
+    ("COINFOX DEN", "rules", ("rules",)),
+    ("COINFOX DEN", "announcements", ("announcements",)),
+    ("COINFOX DEN", "general", ("general",)),
+    ("COINFOX DEN", "product-updates", ("product-updates",)),
+    ("MARKET GYM", "market-talk", ("market-talk",)),
+    ("MARKET GYM", "trade-ideas", ("trade-ideas",)),
+    ("MARKET GYM", "risk-desk", ("risk-desk",)),
+    ("MARKET GYM", "good-signal-bad-trade", ("good-signal-bad-trade",)),
+    ("MARKET GYM", "postmortems", ("postmortems", "foxclaw-postmortems")),
+    ("FOXCLAW INTEL", "public-intel", ("public-intel", "public-intelligence")),
+    ("FOXCLAW INTEL", "no-edge-rejects", ("no-edge-rejects",)),
+    ("FOXCLAW INTEL", "paper-notes", ("paper-notes", "paper-only-notes")),
+    ("BUILD LAB", "testing-ground", ("testing-ground",)),
+    ("BUILD LAB", "feedback-and-ideas", ("feedback-and-ideas",)),
+    ("BUILD LAB", "community-events", ("community-events",)),
+    ("FIELD GUIDE", "beginner-questions", ("beginner-questions",)),
+    ("FIELD GUIDE", "risk-management", ("risk-management",)),
+    ("FIELD GUIDE", "before-you-click", ("before-you-click", "plan-before-entry")),
+    ("SUPPORT", "help-desk", ("help-desk", "help")),
+    ("PRIVATE OPS", "founder-vault", ("founder-vault",)),
+    ("PRIVATE OPS", "mod-room", ("mod-room",)),
+    ("PRIVATE OPS", "reset-staging", ("reset-staging",)),
+]
+
+ICON_MIME_TYPES = {
+    ".gif": "image/gif",
+    ".jpg": "image/jpeg",
+    ".jpeg": "image/jpeg",
+    ".png": "image/png",
+    ".webp": "image/webp",
 }
 
 PUBLIC_CATEGORY_NAMES = set(PUBLIC_LAYOUT)
@@ -70,7 +104,7 @@ COINFOX_CATEGORY_NAMES = PUBLIC_CATEGORY_NAMES | PRIVATE_CATEGORY_NAMES
 
 FIRST_PINNED_POSTS = [
     {
-        "category": "START HERE",
+        "category": "COINFOX DEN",
         "channel": "welcome",
         "marker": "CoinFox Launch Note: Welcome",
         "content": """**CoinFox Launch Note: Welcome**
@@ -86,7 +120,7 @@ FoxClaw may generate public-safe ideas, paper-only notes, or postmortems here. T
 The Market Remembers. Receipts over hype.""",
     },
     {
-        "category": "START HERE",
+        "category": "COINFOX DEN",
         "channel": "rules",
         "marker": "CoinFox Launch Note: Rules",
         "content": """**CoinFox Launch Note: Rules**
@@ -99,7 +133,7 @@ The Market Remembers. Receipts over hype.""",
 6. Founder Vault and archived material stay private unless founder-approved and redacted.""",
     },
     {
-        "category": "START HERE",
+        "category": "COINFOX DEN",
         "channel": "rules",
         "marker": "CoinFox Launch Note: Risk Disclaimer",
         "content": """**CoinFox Launch Note: Risk Disclaimer**
@@ -111,7 +145,7 @@ Nothing in this Discord is financial, investment, tax, legal, or trading advice.
 Treat every idea as incomplete until you have your own plan, invalidation level, position sizing, and risk limit.""",
     },
     {
-        "category": "COINFOX",
+        "category": "MARKET GYM",
         "channel": "trade-ideas",
         "marker": "CoinFox Launch Note: Signals Are Not Trades",
         "content": """**CoinFox Launch Note: Signals Are Not Trades**
@@ -123,34 +157,42 @@ A trade requires context: account risk, entry plan, invalidation, timeframe, liq
 Post ideas clearly. Separate observation from conviction. If the plan changes, say so.""",
     },
     {
-        "category": "COINFOX",
+        "category": "MARKET GYM",
         "channel": "trade-ideas",
         "marker": "CoinFox Launch Note: How To Use Trade Ideas",
         "content": """**CoinFox Launch Note: How To Use Trade Ideas**
 
-Use trade-ideas for structured setups and paper-trade discussion.
+Trade ideas must include:
 
-Helpful posts include: ticker or asset, timeframe, thesis, invalidation, risk notes, what would prove the idea wrong, and whether it is live, watched, or paper-only.
+- thesis
+- timeframe
+- invalidation
+- risk
+- what would change your mind
 
-Do not treat another person's idea as permission to skip your own plan.""",
+No "what do you think?" posts without a thesis.
+No "buy now" posts.
+No guaranteed-profit claims.
+No pressure to copy trades.
+A good signal is not automatically a good trade.""",
     },
     {
-        "category": "FOXCLAW IDEAS",
-        "channel": "public-intelligence",
+        "category": "FOXCLAW INTEL",
+        "channel": "public-intel",
         "marker": "CoinFox Launch Note: FoxClaw Public Intelligence",
         "content": """**CoinFox Launch Note: FoxClaw Public Intelligence**
 
-FoxClaw public intelligence means public-safe market observations, research notes, risk labels, and postmortems that can be discussed without exposing private founder material.
+FoxClaw public intelligence means public-safe market observations, research notes, risk labels, and no-edge reviews that can be discussed without exposing private founder material.
 
-It is not a private signal feed. It is not a trading command system. It is a receipt trail for learning what the market did, what the model saw, and what still needs review.""",
+It is not a private signal feed. It is not a trading command system. It is paper-only unless clearly marked otherwise. No raw FoxClaw internals, raw private Discord history, private source content, or live trade commands belong here.""",
     },
     {
         "category": "SUPPORT",
-        "channel": "help",
-        "marker": "CoinFox Launch Note: Help",
-        "content": """**CoinFox Launch Note: Help**
+        "channel": "help-desk",
+        "marker": "CoinFox Launch Note: Help Desk",
+        "content": """**CoinFox Launch Note: Help Desk**
 
-Use this channel for access questions, confusing server behavior, broken links, or safety concerns.
+Use help-desk for access questions, confusing server behavior, broken links, reports, or safety concerns.
 
 Do not post passwords, private keys, account numbers, or sensitive screenshots. If something needs founder review, say what happened and keep private details out of public chat.""",
     },
@@ -255,6 +297,182 @@ def revoke_all_invites(client: Any, guild_id: str) -> dict[str, Any]:
 def rename_guild(client: Any, guild_id: str, name: str) -> dict[str, Any]:
     guild = client.patch_guild(guild_id, {"name": name})
     return {"guild_id": str(guild.get("id") or guild_id), "name": str(guild.get("name") or name)}
+
+
+def set_guild_icon(
+    client: Any, guild_id: str, icon_path: str | Path, *, dry_run: bool = True
+) -> dict[str, Any]:
+    path = Path(icon_path)
+    if not path.exists() or not path.is_file():
+        raise FileNotFoundError(f"icon file not found: {path}")
+    mime_type = ICON_MIME_TYPES.get(path.suffix.lower())
+    if mime_type is None:
+        raise ValueError(f"unsupported icon file type: {path.suffix}")
+    result: dict[str, Any] = {
+        "dry_run": dry_run,
+        "guild_id": guild_id,
+        "source_path": str(path),
+        "bytes": path.stat().st_size,
+        "mime_type": mime_type,
+    }
+    if dry_run:
+        result["icon_updated"] = False
+        return result
+
+    encoded = base64.b64encode(path.read_bytes()).decode("ascii")
+    guild = client.patch_guild(guild_id, {"icon": f"data:{mime_type};base64,{encoded}"})
+    result["icon_updated"] = True
+    result["name"] = str(guild.get("name") or "")
+    return result
+
+
+def apply_v4_layout(client: Any, guild_id: str, *, dry_run: bool = True) -> dict[str, Any]:
+    channels = client.guild_channels(guild_id)
+    actions: list[dict[str, Any]] = []
+    warnings: list[str] = []
+
+    for old_name, new_name in LEGACY_PUBLIC_CATEGORY_RENAMES.items():
+        old_category = _find_category(channels, old_name)
+        new_category = _find_category(channels, new_name)
+        if old_category is None:
+            continue
+        if new_category is not None:
+            warnings.append(
+                f"category {old_name!r} still exists while {new_name!r} also exists; "
+                "leaving both in place"
+            )
+            continue
+        _patch_channel(
+            client,
+            old_category,
+            {"name": new_name},
+            dry_run=dry_run,
+            actions=actions,
+            action="rename_category",
+        )
+
+    for category_name in [*PUBLIC_LAYOUT, *PRIVATE_LAYOUT]:
+        category = _find_category(channels, category_name)
+        private = category_name in PRIVATE_LAYOUT
+        if category is None:
+            payload: dict[str, Any] = {"name": category_name, "type": CHANNEL_TYPE_CATEGORY}
+            if private:
+                payload["permission_overwrites"] = _private_category_overwrites(guild_id)
+            category = _create_channel(
+                client,
+                guild_id,
+                payload,
+                dry_run=dry_run,
+                actions=actions,
+                action="create_category",
+            )
+            channels.append(category)
+            continue
+        if private:
+            patched_overwrites = _upsert_everyone_private_overwrite(
+                category.get("permission_overwrites") or [], guild_id
+            )
+            if patched_overwrites != (category.get("permission_overwrites") or []):
+                _patch_channel(
+                    client,
+                    category,
+                    {"permission_overwrites": patched_overwrites},
+                    dry_run=dry_run,
+                    actions=actions,
+                    action="privatize_category",
+                )
+
+    categories_by_name = {
+        str(channel.get("name") or ""): channel
+        for channel in channels
+        if channel.get("type") == CHANNEL_TYPE_CATEGORY
+    }
+    v4_parent_ids = {
+        str(category.get("id") or "")
+        for name, category in categories_by_name.items()
+        if name in COINFOX_CATEGORY_NAMES
+    }
+
+    for category_name, channel_name, aliases in V4_CHANNEL_SPECS:
+        category = categories_by_name.get(category_name)
+        if category is None:
+            warnings.append(f"missing expected category after ensure pass: {category_name}")
+            continue
+        parent_id = str(category.get("id") or "")
+        channel = _find_text_channel(channels, channel_name, parent_id)
+        if channel is None:
+            channel = _find_text_channel_by_names(
+                channels, aliases, allowed_parent_ids=v4_parent_ids
+            )
+        if channel is None:
+            created = _create_channel(
+                client,
+                guild_id,
+                {"name": channel_name, "type": CHANNEL_TYPE_TEXT, "parent_id": parent_id},
+                dry_run=dry_run,
+                actions=actions,
+                action="create_text_channel",
+            )
+            channels.append(created)
+            continue
+
+        payload = {}
+        if str(channel.get("name") or "") != channel_name:
+            payload["name"] = channel_name
+        if str(channel.get("parent_id") or "") != parent_id:
+            payload["parent_id"] = parent_id
+        if payload:
+            _patch_channel(
+                client,
+                channel,
+                payload,
+                dry_run=dry_run,
+                actions=actions,
+                action="move_or_rename_text_channel",
+            )
+
+    desired_by_parent = {
+        str(categories_by_name[category_name].get("id") or ""): set(channel_names)
+        for category_name, channel_names in PUBLIC_LAYOUT.items()
+        if category_name in categories_by_name
+    }
+    for channel in channels:
+        if channel.get("type") != CHANNEL_TYPE_TEXT:
+            continue
+        parent_id = str(channel.get("parent_id") or "")
+        desired_names = desired_by_parent.get(parent_id)
+        if desired_names is None:
+            continue
+        if str(channel.get("name") or "") in desired_names:
+            continue
+        patched_overwrites = _upsert_everyone_deny_view(
+            channel.get("permission_overwrites") or [], guild_id
+        )
+        if patched_overwrites == (channel.get("permission_overwrites") or []):
+            actions.append(
+                {
+                    "action": "skip_deferred_channel_already_hidden",
+                    "channel": str(channel.get("name") or ""),
+                    "channel_id": str(channel.get("id") or ""),
+                }
+            )
+            continue
+        _patch_channel(
+            client,
+            channel,
+            {"permission_overwrites": patched_overwrites},
+            dry_run=dry_run,
+            actions=actions,
+            action="hide_deferred_channel",
+        )
+
+    return {
+        "dry_run": dry_run,
+        "action_count": len(actions),
+        "actions": actions,
+        "warnings": warnings,
+        "warning_count": len(warnings),
+    }
 
 
 def ensure_reset_structure(client: Any, guild_id: str) -> dict[str, Any]:
@@ -425,6 +643,64 @@ def live_permission_report(client: DiscordResetClient, guild_id: str) -> dict[st
     return report
 
 
+def _patch_channel(
+    client: Any,
+    channel: dict[str, Any],
+    payload: dict[str, Any],
+    *,
+    dry_run: bool,
+    actions: list[dict[str, Any]],
+    action: str,
+) -> dict[str, Any]:
+    before = {
+        "name": str(channel.get("name") or ""),
+        "parent_id": str(channel.get("parent_id") or ""),
+    }
+    if dry_run:
+        patched = {**channel, **payload}
+    else:
+        patched = client.patch_channel(str(channel["id"]), payload)
+    channel.update(patched)
+    actions.append(
+        {
+            "action": action,
+            "channel": before["name"],
+            "channel_id": str(channel.get("id") or ""),
+            "before": before,
+            "payload": payload,
+        }
+    )
+    return channel
+
+
+def _create_channel(
+    client: Any,
+    guild_id: str,
+    payload: dict[str, Any],
+    *,
+    dry_run: bool,
+    actions: list[dict[str, Any]],
+    action: str,
+) -> dict[str, Any]:
+    if dry_run:
+        created = {
+            **payload,
+            "id": f"dry_run_{len(actions)}",
+            "permission_overwrites": payload.get("permission_overwrites", []),
+        }
+    else:
+        created = client.create_guild_channel(guild_id, payload)
+    actions.append(
+        {
+            "action": action,
+            "channel": str(payload.get("name") or ""),
+            "channel_id": str(created.get("id") or ""),
+            "payload": payload,
+        }
+    )
+    return created
+
+
 def _find_category(channels: list[dict[str, Any]], name: str) -> dict[str, Any] | None:
     return next(
         (
@@ -434,6 +710,28 @@ def _find_category(channels: list[dict[str, Any]], name: str) -> dict[str, Any] 
         ),
         None,
     )
+
+
+def _find_text_channel_by_names(
+    channels: list[dict[str, Any]],
+    names: tuple[str, ...],
+    *,
+    allowed_parent_ids: set[str],
+) -> dict[str, Any] | None:
+    for name in names:
+        channel = next(
+            (
+                channel
+                for channel in channels
+                if channel.get("type") == CHANNEL_TYPE_TEXT
+                and channel.get("name") == name
+                and str(channel.get("parent_id") or "") in allowed_parent_ids
+            ),
+            None,
+        )
+        if channel is not None:
+            return channel
+    return None
 
 
 def _find_text_channel(

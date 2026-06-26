@@ -38,7 +38,7 @@ class FakeResetClient:
                 [
                     {
                         "id": "cat_public",
-                        "name": "COINFOX",
+                        "name": "COINFOX DEN",
                         "type": reset.CHANNEL_TYPE_CATEGORY,
                         "permission_overwrites": [],
                     },
@@ -56,7 +56,7 @@ class FakeResetClient:
                 [
                     {
                         "id": "cat_start",
-                        "name": "START HERE",
+                        "name": "COINFOX DEN",
                         "type": reset.CHANNEL_TYPE_CATEGORY,
                         "permission_overwrites": [],
                     },
@@ -76,7 +76,7 @@ class FakeResetClient:
                     },
                     {
                         "id": "cat_coinfox",
-                        "name": "COINFOX",
+                        "name": "MARKET GYM",
                         "type": reset.CHANNEL_TYPE_CATEGORY,
                         "permission_overwrites": [],
                     },
@@ -89,13 +89,13 @@ class FakeResetClient:
                     },
                     {
                         "id": "cat_ideas",
-                        "name": "FOXCLAW IDEAS",
+                        "name": "FOXCLAW INTEL",
                         "type": reset.CHANNEL_TYPE_CATEGORY,
                         "permission_overwrites": [],
                     },
                     {
                         "id": "chan_public_intelligence",
-                        "name": "public-intelligence",
+                        "name": "public-intel",
                         "type": reset.CHANNEL_TYPE_TEXT,
                         "parent_id": "cat_ideas",
                         "permission_overwrites": [],
@@ -108,7 +108,7 @@ class FakeResetClient:
                     },
                     {
                         "id": "chan_help",
-                        "name": "help",
+                        "name": "help-desk",
                         "type": reset.CHANNEL_TYPE_TEXT,
                         "parent_id": "cat_support",
                         "permission_overwrites": [],
@@ -125,7 +125,10 @@ class FakeResetClient:
         self.existing_pins_by_channel: dict[str, list[dict[str, object]]] = {}
 
     def guild_channels(self, guild_id: str) -> list[dict[str, object]]:
-        return list(self.channels)
+        return [
+            {**channel, "permission_overwrites": list(channel.get("permission_overwrites", []))}
+            for channel in self.channels
+        ]
 
     def create_guild_channel(self, guild_id: str, payload: dict[str, object]) -> dict[str, object]:
         created = {**payload, "id": f"new_{len(self.channels)}"}
@@ -167,6 +170,73 @@ class FakeResetClient:
         return {"channel_id": channel_id, "message_id": message_id}
 
 
+def _old_public_layout_client() -> FakeResetClient:
+    client = FakeResetClient()
+    client.channels.extend(
+        [
+            _category("cat_start", "START HERE"),
+            _text("chan_welcome", "welcome", "cat_start"),
+            _text("chan_rules", "rules", "cat_start"),
+            _text("chan_announcements", "announcements", "cat_start"),
+            _text("chan_roles", "roles", "cat_start"),
+            _category("cat_coinfox", "COINFOX"),
+            _text("chan_general", "general", "cat_coinfox"),
+            _text("chan_market_talk", "market-talk", "cat_coinfox"),
+            _text("chan_trade_ideas", "trade-ideas", "cat_coinfox"),
+            _text("chan_questions", "questions", "cat_coinfox"),
+            _text("chan_wins", "wins-and-lessons", "cat_coinfox"),
+            _category("cat_ideas", "FOXCLAW IDEAS"),
+            _text("chan_public_intel", "public-intelligence", "cat_ideas"),
+            _text("chan_paper", "paper-only-notes", "cat_ideas"),
+            _text("chan_no_edge", "no-edge-rejects", "cat_ideas"),
+            _text("chan_postmortems", "foxclaw-postmortems", "cat_ideas"),
+            _category("cat_learn", "LEARN"),
+            _text("chan_risk", "risk-management", "cat_learn"),
+            _text("chan_good_bad", "good-signal-bad-trade", "cat_learn"),
+            _text("chan_plan", "plan-before-entry", "cat_learn"),
+            _text("chan_beginner", "beginner-questions", "cat_learn"),
+            _category("cat_support", "SUPPORT"),
+            _text("chan_help", "help", "cat_support"),
+            _text("chan_reports", "reports", "cat_support"),
+        ]
+    )
+    return client
+
+
+def _category(channel_id: str, name: str) -> dict[str, object]:
+    return {
+        "id": channel_id,
+        "name": name,
+        "type": reset.CHANNEL_TYPE_CATEGORY,
+        "permission_overwrites": [],
+    }
+
+
+def _text(channel_id: str, name: str, parent_id: str) -> dict[str, object]:
+    return {
+        "id": channel_id,
+        "name": name,
+        "type": reset.CHANNEL_TYPE_TEXT,
+        "parent_id": parent_id,
+        "permission_overwrites": [],
+    }
+
+
+def _parent_name(client: FakeResetClient, channel_name: str) -> str:
+    channel = next(channel for channel in client.channels if channel.get("name") == channel_name)
+    parent_id = channel.get("parent_id")
+    parent = next(channel for channel in client.channels if channel.get("id") == parent_id)
+    return str(parent["name"])
+
+
+def _everyone_denies_view(client: FakeResetClient, channel_name: str) -> bool:
+    channel = next(channel for channel in client.channels if channel.get("name") == channel_name)
+    for overwrite in channel.get("permission_overwrites") or []:
+        if overwrite["id"] == "guild_1" and int(str(overwrite["deny"])) & reset.PERMISSION_VIEW_CHANNEL:
+            return True
+    return False
+
+
 def test_revoke_all_invites_deletes_each_invite() -> None:
     client = FakeResetClient()
 
@@ -182,23 +252,24 @@ def test_ensure_reset_structure_creates_private_and_public_layout() -> None:
     result = reset.ensure_reset_structure(client, "guild_1")
 
     created_names = [channel["name"] for channel in client.created]
-    assert "FOUNDER VAULT" in created_names
-    assert "RESET STAGING" in created_names
-    assert "START HERE" in created_names
+    assert "PRIVATE OPS" in created_names
+    assert "COINFOX DEN" in created_names
     assert "welcome" in created_names
-    assert "foxclaw-postmortems" in created_names
+    assert "postmortems" in created_names
+    assert "public-intel" in created_names
+    assert "help-desk" in created_names
     assert result["created_categories"] == [
-        "FOUNDER VAULT",
-        "RESET STAGING",
-        "START HERE",
-        "COINFOX",
-        "FOXCLAW IDEAS",
-        "LEARN",
+        "PRIVATE OPS",
+        "COINFOX DEN",
+        "MARKET GYM",
+        "FOXCLAW INTEL",
+        "BUILD LAB",
+        "FIELD GUIDE",
         "SUPPORT",
     ]
 
-    founder_vault = next(channel for channel in client.created if channel["name"] == "FOUNDER VAULT")
-    assert founder_vault["permission_overwrites"] == [
+    private_ops = next(channel for channel in client.created if channel["name"] == "PRIVATE OPS")
+    assert private_ops["permission_overwrites"] == [
         {
             "id": "guild_1",
             "type": reset.OVERWRITE_TYPE_ROLE,
@@ -268,6 +339,75 @@ def test_rename_guild_patches_server_name() -> None:
     assert client.guild_patches == [("guild_1", {"name": "CoinFox"})]
 
 
+def test_set_guild_icon_dry_run_reads_local_image_without_patching(tmp_path) -> None:
+    client = FakeResetClient()
+    icon_path = tmp_path / "icon.png"
+    icon_path.write_bytes(b"fake png bytes")
+
+    result = reset.set_guild_icon(client, "guild_1", icon_path, dry_run=True)
+
+    assert result["dry_run"] is True
+    assert result["icon_updated"] is False
+    assert result["mime_type"] == "image/png"
+    assert result["bytes"] == len(b"fake png bytes")
+    assert client.guild_patches == []
+
+
+def test_apply_v4_layout_dry_run_reports_without_mutating() -> None:
+    client = _old_public_layout_client()
+
+    result = reset.apply_v4_layout(client, "guild_1", dry_run=True)
+
+    assert result["dry_run"] is True
+    assert result["action_count"] > 0
+    assert client.created == []
+    assert client.patched == []
+    assert any(channel["name"] == "START HERE" for channel in client.channels)
+
+
+def test_apply_v4_layout_renames_reuses_creates_and_hides_without_deleting() -> None:
+    client = _old_public_layout_client()
+    starting_channel_count = len(client.channels)
+
+    result = reset.apply_v4_layout(client, "guild_1", dry_run=False)
+
+    category_names = {
+        str(channel["name"])
+        for channel in client.channels
+        if channel.get("type") == reset.CHANNEL_TYPE_CATEGORY
+    }
+    assert {
+        "COINFOX DEN",
+        "MARKET GYM",
+        "FOXCLAW INTEL",
+        "BUILD LAB",
+        "FIELD GUIDE",
+        "SUPPORT",
+        "PRIVATE OPS",
+    } <= category_names
+    assert {"START HERE", "COINFOX", "FOXCLAW IDEAS", "LEARN"}.isdisjoint(category_names)
+
+    assert _parent_name(client, "general") == "COINFOX DEN"
+    assert _parent_name(client, "good-signal-bad-trade") == "MARKET GYM"
+    assert _parent_name(client, "postmortems") == "MARKET GYM"
+    assert _parent_name(client, "public-intel") == "FOXCLAW INTEL"
+    assert _parent_name(client, "paper-notes") == "FOXCLAW INTEL"
+    assert _parent_name(client, "before-you-click") == "FIELD GUIDE"
+    assert _parent_name(client, "help-desk") == "SUPPORT"
+
+    assert _everyone_denies_view(client, "roles")
+    assert _everyone_denies_view(client, "questions")
+    assert _everyone_denies_view(client, "wins-and-lessons")
+    assert _everyone_denies_view(client, "reports")
+
+    private_ops = next(channel for channel in client.channels if channel["name"] == "PRIVATE OPS")
+    private_overwrite = private_ops["permission_overwrites"][0]
+    assert private_overwrite["id"] == "guild_1"
+    assert int(private_overwrite["deny"]) & reset.PERMISSION_VIEW_CHANNEL
+    assert len(client.channels) > starting_channel_count
+    assert result["warning_count"] == 0
+
+
 def test_hide_legacy_surface_hides_non_public_channels_only() -> None:
     client = FakeResetClient(include_public=True)
 
@@ -324,10 +464,11 @@ def test_seed_first_pinned_posts_posts_and_pins_launch_copy() -> None:
     assert "**CoinFox Launch Note: Signals Are Not Trades**" in messages_by_channel[
         "chan_trade_ideas"
     ]
+    assert "Trade ideas must include:" in messages_by_channel["chan_trade_ideas"]
     assert "**CoinFox Launch Note: FoxClaw Public Intelligence**" in messages_by_channel[
         "chan_public_intelligence"
     ]
-    assert "**CoinFox Launch Note: Help**" in messages_by_channel["chan_help"]
+    assert "**CoinFox Launch Note: Help Desk**" in messages_by_channel["chan_help"]
 
 
 def test_seed_first_pinned_posts_skips_existing_markers() -> None:

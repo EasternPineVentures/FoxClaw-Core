@@ -44,8 +44,9 @@ Safety boundary:
 - bot token only through `COINFOX_DISCORD_BOT_TOKEN`;
 - no self-bot behavior;
 - no channel deletion;
-- explicit commands only for permission doctor, invite revocation, and reset
-  structure creation;
+- explicit commands only for permission doctor, invite revocation, reset
+  structure creation, V4 layout application, server icon update, legacy hiding,
+  and first-pin seeding;
 - `setup-structure` requires the bot role to have `Manage Channels`;
 - `revoke-invites` requires the bot role to have `Manage Server`;
 - `seed-first-pins` requires `Send Messages`, `Manage Messages`, and
@@ -60,6 +61,10 @@ python tools\coinfox_discord_reset.py --guild-id <guild_id> revoke-invites
 python tools\coinfox_discord_reset.py --guild-id <guild_id> setup-structure
 python tools\coinfox_discord_reset.py --guild-id <guild_id> rename-server --name CoinFox
 python tools\coinfox_discord_reset.py --guild-id <guild_id> hide-legacy-surface
+python tools\coinfox_discord_reset.py --guild-id <guild_id> apply-v4-layout
+python tools\coinfox_discord_reset.py --guild-id <guild_id> apply-v4-layout --apply
+python tools\coinfox_discord_reset.py --guild-id <guild_id> set-server-icon --path <local_icon_path>
+python tools\coinfox_discord_reset.py --guild-id <guild_id> set-server-icon --path <local_icon_path> --apply
 python tools\coinfox_discord_reset.py --guild-id <guild_id> seed-first-pins
 ```
 
@@ -84,6 +89,25 @@ Expected `hide-legacy-surface` behavior:
 - requires a fresh snapshot/visibility check after running, because child
   channels may still be hidden by a patched parent category even when Discord
   refuses a direct child-channel patch.
+
+Expected `apply-v4-layout` behavior:
+
+- defaults to dry-run; `--apply` is required for live Discord mutation;
+- renames interim public categories into the V4 names when the target name does
+  not already exist;
+- creates missing V4 categories/channels;
+- reuses, renames, and moves known interim channels into the V4 layout;
+- hides deferred old public channels such as `roles`, `questions`,
+  `wins-and-lessons`, and `reports`;
+- does not delete channels or create invites;
+- reports every intended or completed action and any warnings.
+
+Expected `set-server-icon` behavior:
+
+- defaults to dry-run; `--apply` is required for live Discord mutation;
+- accepts a local PNG, JPG, GIF, or WEBP file;
+- patches only the guild icon;
+- does not print token values or image base64 content.
 
 Expected `seed-first-pins` behavior:
 

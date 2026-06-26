@@ -18,6 +18,7 @@ from foxclaw.adapters.discord.archive import (  # noqa: E402
     DiscordCredentialError,
 )
 from foxclaw.adapters.discord.reset import (  # noqa: E402
+    apply_v4_layout,
     client_from_env,
     ensure_reset_structure,
     hide_legacy_surface,
@@ -25,6 +26,7 @@ from foxclaw.adapters.discord.reset import (  # noqa: E402
     rename_guild,
     revoke_all_invites,
     seed_first_pinned_posts,
+    set_guild_icon,
 )
 
 
@@ -48,6 +50,25 @@ def main(argv: list[str] | None = None) -> int:
         "seed-first-pins",
         help="post and pin the first public CoinFox launch notes",
     )
+    v4_layout = subparsers.add_parser(
+        "apply-v4-layout",
+        help="dry-run or apply the documented CoinFox V4 category/channel layout",
+    )
+    v4_layout.add_argument(
+        "--apply",
+        action="store_true",
+        help="mutate Discord; omitted means dry-run only",
+    )
+    server_icon = subparsers.add_parser(
+        "set-server-icon",
+        help="dry-run or apply a local image file as the Discord server icon",
+    )
+    server_icon.add_argument("--path", required=True, help="local PNG/JPG/GIF/WEBP icon path")
+    server_icon.add_argument(
+        "--apply",
+        action="store_true",
+        help="mutate Discord; omitted means dry-run only",
+    )
 
     args = parser.parse_args(argv)
     try:
@@ -69,6 +90,12 @@ def main(argv: list[str] | None = None) -> int:
             return 0
         if args.command == "seed-first-pins":
             _print_json(seed_first_pinned_posts(client, args.guild_id))
+            return 0
+        if args.command == "apply-v4-layout":
+            _print_json(apply_v4_layout(client, args.guild_id, dry_run=not args.apply))
+            return 0
+        if args.command == "set-server-icon":
+            _print_json(set_guild_icon(client, args.guild_id, args.path, dry_run=not args.apply))
             return 0
     except DiscordCredentialError as exc:
         return _fail(str(exc), code=4)
