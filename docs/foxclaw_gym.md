@@ -1,7 +1,7 @@
 # FoxClaw Gym
 
 Status: EXISTS as first-encounter readiness layer.
-Last updated: 2026-06-19.
+Last updated: 2026-06-27.
 
 The gym is where the foxes get clear before people encounter the project. It is
 not a live trading surface, not a pitch deck, and not a replacement for tests. It
@@ -26,9 +26,9 @@ clearly and safely without needing trading background:
 - It separates a signal from a trade.
 - It stays paper-only.
 - It learns from outcomes.
-- CoinFox has social trading bones already, but needs major work to feel like a
-  familiar open feed: posts, comments, votes, discussion, and public intelligence
-  context.
+- CoinFox is now a rough live beta at `https://coinfox.foxclaw.cloud/`, with social
+  trading, market, prediction, thesis, discussion, FESC, account-gate, and public
+  disclaimer surfaces visible enough for controlled real-user testing.
 - Planifier is already built, but needs work before it becomes the polished
   practice layer for this flow.
 
@@ -68,7 +68,7 @@ Each day, update `config/foxclaw_gym_drills.json` only when the proof has change
 | Public Hunt Export | practice | Shows public-safe paper intelligence artifacts. |
 | Redshift Paper Boundary | ready | Shows information traveling without authority. |
 | Forecast Learning Spine | ready | Shows paper outcomes becoming learning. |
-| CoinFox Public Card Rehearsal | practice | Shows the public social product direction plus intelligence context. |
+| CoinFox Live Beta And Card | practice | Shows the live beta plus where public-safe intelligence context belongs. |
 | Planifier Practice Rehearsal | practice | Shows "the user is the variable" using the existing Planifier product direction. |
 | Visitor First Encounter | ready | Makes the whole thing understandable without a pitch. |
 | Demo Single-Command Doctor | ready | Keeps us honest about readiness. |
@@ -78,7 +78,7 @@ Each day, update `config/foxclaw_gym_drills.json` only when the proof has change
 The gym starts with these attention priorities:
 
 1. Review the public-demo threat model.
-2. Keep the CoinFox public card readable without raw JSON.
+2. Keep the CoinFox live beta and public card readable without raw JSON.
 3. Create a Planifier plan draft fixture linked to the public intelligence snapshot.
 4. Practice the public hunt export and decide what files are shown.
 

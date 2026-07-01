@@ -1,7 +1,7 @@
 # Eastern Pine Ventures / CoinFox One-Page Overview
 
 Status: partner-facing short overview.
-Last updated: 2026-06-22.
+Last updated: 2026-06-27.
 
 Eastern Pine Ventures is building CoinFox, a receipt-first trading social platform designed
 to make market discussion more structured, trackable, and useful over time.
@@ -63,11 +63,10 @@ it asks for it. Manufacturing teaches that inputs matter, setup matters, quality
 matters, and every bad run can teach something if the process captures it. That same mindset
 is being applied to market discussion.
 
-Current progress includes early working foundations for public market reads, social posts,
-comments, votes, paper-practice concepts, public/private data boundaries, and receipt-first
-learning logic. CoinFox is currently in the early MVP and validation stage. The next step is
-turning that foundation into a polished public prototype, early beta flow, and partner-safe
-demo.
+Current progress includes live beta foundations for public market reads, social posts,
+comments, votes, prediction context, public/private data boundaries, and receipt-first
+learning logic. CoinFox is now in rough live beta at `https://coinfox.foxclaw.cloud/`.
+The next step is controlled real-user testing, beta hardening, and partner-safe validation.
 
 Eastern Pine Ventures is currently looking for mentorship and early partner conversations
 around product validation, compliance-safe positioning, market-data access, community

@@ -16,9 +16,9 @@ def test_visitor_guide_is_not_pitchy_and_names_system_order():
     guide = build_visitor_guide(generated_at=datetime(2026, 6, 19, 18, 0, tzinfo=UTC))
     assert guide["not_a_pitch"] is True
     assert guide["order"] == ["FoxClaw", "CoinFox", "Planifier"]
-    assert guide["sections"][1]["status"] == "bones exist, full social product needs major work"
-    assert "already has the bones" in guide["sections"][1]["plain_language"]
-    assert "Long-running calls" in guide["sections"][1]["what_to_notice"][2]
+    assert guide["sections"][1]["status"] == "rough live beta at https://coinfox.foxclaw.cloud/"
+    assert "live in rough beta" in guide["sections"][1]["plain_language"]
+    assert "Long-running calls" in guide["sections"][1]["what_to_notice"][3]
     assert guide["sections"][2]["status"] == "already built, needs work"
     assert "copy-trade button" in guide["sections"][2]["what_to_notice"][2]
 
@@ -29,7 +29,7 @@ def test_visitor_guide_markdown_is_plain_language():
     assert "This is not a pitch" in rendered
     assert "FoxClaw -> CoinFox -> Planifier" in rendered
     assert "posting trade ideas" in rendered
-    assert "branching conversations" in rendered
+    assert "real-people test" in rendered
     assert "paper-only" in rendered
     assert "no funds movement" in rendered
 
@@ -57,4 +57,4 @@ def test_visitor_guide_cli_fixture_markdown():
         check=True,
     )
     assert "# FoxClaw First Encounter" in completed.stdout
-    assert "CoinFox is becoming the social place" in completed.stdout
+    assert "CoinFox is the live beta social place" in completed.stdout

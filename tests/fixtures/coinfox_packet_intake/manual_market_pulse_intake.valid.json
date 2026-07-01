@@ -1,0 +1,215 @@
+{
+  "schema_version": "coinfox_curated_packet_intake.v0",
+  "intake_id": "cfpacket_intake_market_pulse_20260627_fixture",
+  "created_at": "2026-06-27T14:20:00Z",
+  "operator_mode": "manual_review",
+  "target_packet_type": "market_pulse_now",
+  "purpose": "Manual public-source observations for the CoinFox curated packet fixture.",
+  "expected_public_packet": {
+    "packet_fixture": "tests/fixtures/public_contract/coinfox_curated_packet.valid.json",
+    "packet_id": "cfpacket_market_pulse_20260627_fixture"
+  },
+  "source_window": {
+    "started_at": "2026-06-26T14:30:00Z",
+    "ended_at": "2026-06-27T14:30:00Z"
+  },
+  "intake_rules": {
+    "manual_first": true,
+    "operator_review_required": true,
+    "do_not_auto_publish": true,
+    "public_links_required": true,
+    "raw_content_allowed": false
+  },
+  "source_observations": [
+    {
+      "observation_id": "obs_wen_social_spark_fixture",
+      "target_card_id": "cfcard_wen_social_spark_fixture",
+      "source": {
+        "source_name": "CoinFox Manual Market Pulse Board",
+        "source_url": "https://coinfox.foxclaw.cloud/",
+        "source_type": "community",
+        "trust_tier": "tier_3_social_crowd_signal",
+        "terms_status": "aggregate_only",
+        "published_at": "2026-06-27T14:30:00Z",
+        "display_mode": "link_and_summary"
+      },
+      "asset_or_topic": "WEN",
+      "what_happened": "Retail attention around WEN is being tracked as a possible social spark.",
+      "why_interesting": "Retail attention can appear before a mainstream narrative, but it needs hard evidence before it becomes a thesis.",
+      "public_safe_summary": "WEN is a candidate for a CoinFox discussion prompt because social attention is rising around a possible turnaround or meme-stock story.",
+      "corroborations": [
+        {
+          "source_id": "public_price_volume_screen_fixture",
+          "source_type": "market_data",
+          "summary": "Public market screen shows the symbol is active enough for review."
+        },
+        {
+          "source_id": "public_discussion_index_fixture",
+          "source_type": "community",
+          "summary": "Public discussion queue shows the topic is being raised outside one source."
+        }
+      ],
+      "source_state": {
+        "source_id": "coinfox_manual_market_pulse_board_fixture",
+        "source_type": "community",
+        "trust_state": "quarantined",
+        "can_influence_public_packet": false,
+        "can_train_model": false,
+        "can_update_verified_memory": false,
+        "observation_count": 1
+      },
+      "counterpoint": "Social heat can fade quickly and does not prove price follow-through, valuation support, or business improvement.",
+      "confidence": "low",
+      "suggested_thesis_angle": "Is WEN only a social spark, or is there enough price, volume, filing, or leadership evidence to form a real thesis?",
+      "suggested_coinfox_prompt": "What would make the WEN setup real enough to watch, and what would prove it was only heat?",
+      "risk_flags": ["social_heat_not_evidence", "volatile_attention", "needs_primary_source"],
+      "outcome_review": {
+        "review_after": "2026-07-04T14:30:00Z",
+        "review_question": "Did social heat lead price and volume, or did the narrative fade?"
+      },
+      "curation_decision": {
+        "include_in_packet": true,
+        "packet_card_type": "idea_prompt",
+        "card_status": "watching",
+        "reason_codes": ["public_link_available", "social_heat_only", "counterpoint_present"]
+      },
+      "safety": {
+        "public_link_only": true,
+        "raw_content_included": false,
+        "contains_private_source_content": false,
+        "contains_credentials": false,
+        "live_execution_allowed": false
+      }
+    },
+    {
+      "observation_id": "obs_prediction_market_gap_fixture",
+      "target_card_id": "cfcard_prediction_market_gap_fixture",
+      "source": {
+        "source_name": "Kalshi",
+        "source_url": "https://kalshi.com/",
+        "source_type": "prediction_market",
+        "trust_tier": "tier_2_professional_news_data",
+        "terms_status": "summary_allowed",
+        "published_at": "2026-06-27T14:30:00Z",
+        "display_mode": "link_and_summary"
+      },
+      "asset_or_topic": "Prediction markets",
+      "what_happened": "A public prediction-market move is being reviewed as a context gap.",
+      "why_interesting": "Odds moves can reveal changing crowd expectations before the surrounding news is easy to summarize.",
+      "public_safe_summary": "A prediction-market move is worth a CoinFox prompt when probability changes faster than the public narrative explains.",
+      "corroborations": [
+        {
+          "source_id": "kalshi_public_market_fixture",
+          "source_type": "prediction_market",
+          "summary": "Public market page is available for link-and-summary review."
+        },
+        {
+          "source_id": "public_news_context_fixture",
+          "source_type": "news",
+          "summary": "Public context source is needed before treating the odds move as evidence."
+        }
+      ],
+      "source_state": {
+        "source_id": "kalshi_public_prediction_market_fixture",
+        "source_type": "prediction_market",
+        "trust_state": "quarantined",
+        "can_influence_public_packet": false,
+        "can_train_model": false,
+        "can_update_verified_memory": false,
+        "observation_count": 1
+      },
+      "counterpoint": "Thin liquidity, sports/news timing, or market structure can make an odds move look more meaningful than it is.",
+      "confidence": "medium",
+      "suggested_thesis_angle": "What public information explains the probability move, and is the market reacting to real evidence or temporary flow?",
+      "suggested_coinfox_prompt": "What changed in the odds, what public source explains it, and what would reverse the move?",
+      "risk_flags": ["liquidity_check_needed", "source_context_needed"],
+      "outcome_review": {
+        "review_after": "2026-06-30T14:30:00Z",
+        "review_question": "Did the odds move anticipate public evidence or revert after thin flow?"
+      },
+      "curation_decision": {
+        "include_in_packet": true,
+        "packet_card_type": "market_pulse",
+        "card_status": "heating_up",
+        "reason_codes": ["public_link_available", "prediction_market_move", "counterpoint_present"]
+      },
+      "safety": {
+        "public_link_only": true,
+        "raw_content_included": false,
+        "contains_private_source_content": false,
+        "contains_credentials": false,
+        "live_execution_allowed": false
+      }
+    },
+    {
+      "observation_id": "obs_btc_macro_delta_fixture",
+      "target_card_id": "cfcard_btc_macro_delta_fixture",
+      "source": {
+        "source_name": "CoinFox Markets",
+        "source_url": "https://coinfox.foxclaw.cloud/markets",
+        "source_type": "market_data",
+        "trust_tier": "tier_2_professional_news_data",
+        "terms_status": "link_only",
+        "published_at": "2026-06-27T14:30:00Z",
+        "display_mode": "link_and_summary"
+      },
+      "asset_or_topic": "BTC/USD",
+      "what_happened": "The useful BTC discussion shifted from price chase to invalidation and risk.",
+      "why_interesting": "A useful daily delta is not another headline; it shows how the market question changed.",
+      "public_safe_summary": "The useful BTC prompt is moving from direction to conditions: what level, catalyst, or macro change would invalidate the current thesis?",
+      "corroborations": [
+        {
+          "source_id": "coinfox_markets_fixture",
+          "source_type": "market_data",
+          "summary": "Public markets page provides the visible context surface."
+        },
+        {
+          "source_id": "public_macro_calendar_fixture",
+          "source_type": "macro_event",
+          "summary": "Public macro calendar context can explain why risk framing matters."
+        }
+      ],
+      "source_state": {
+        "source_id": "coinfox_markets_public_fixture",
+        "source_type": "market_data",
+        "trust_state": "quarantined",
+        "can_influence_public_packet": false,
+        "can_train_model": false,
+        "can_update_verified_memory": false,
+        "observation_count": 1
+      },
+      "counterpoint": "A cleaner question does not mean the setup is tradeable or low risk.",
+      "confidence": "medium",
+      "suggested_thesis_angle": "Shift BTC discussion toward invalidation, evidence, and risk instead of chasing the latest candle.",
+      "suggested_coinfox_prompt": "What changed since yesterday, and what would make your BTC view wrong?",
+      "risk_flags": ["high_volatility", "plan_required", "not_a_trade_signal"],
+      "outcome_review": {
+        "review_after": "2026-06-28T14:30:00Z",
+        "review_question": "Did users name invalidation levels before the next major move?"
+      },
+      "curation_decision": {
+        "include_in_packet": true,
+        "packet_card_type": "delta",
+        "card_status": "confirmed",
+        "reason_codes": ["public_link_available", "daily_delta", "counterpoint_present"]
+      },
+      "safety": {
+        "public_link_only": true,
+        "raw_content_included": false,
+        "contains_private_source_content": false,
+        "contains_credentials": false,
+        "live_execution_allowed": false
+      }
+    }
+  ],
+  "authority": {
+    "authority": "review_priority_only",
+    "can_submit_order": false,
+    "can_move_funds": false,
+    "live_execution_allowed": false,
+    "can_change_truth": false,
+    "can_promote_evidence": false,
+    "can_change_source_reliability": false,
+    "can_authorize_execution": false
+  }
+}

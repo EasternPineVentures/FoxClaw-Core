@@ -1,0 +1,28 @@
+{
+  "schema_version": "anti_poisoning_fixture.v0",
+  "fixture_type": "corroborated_source",
+  "observation": {
+    "observation_id": "security_corroborated_fixture",
+    "source": {
+      "source_id": "new_public_data_fixture",
+      "source_name": "New Public Data Example",
+      "source_url": "https://example.com/public-data",
+      "source_type": "market_data"
+    },
+    "text": "A public data point changed the context for a market discussion.",
+    "summary": "Clean public observation with two independent public corroborations.",
+    "corroborations": [
+      {"source_id": "public_filing_fixture", "summary": "Public filing matches the timing."},
+      {"source_id": "public_market_fixture", "summary": "Public market data matches the move."}
+    ]
+  },
+  "source_state": {
+    "source_id": "new_public_data_fixture",
+    "source_type": "market_data",
+    "trust_state": "quarantined",
+    "can_influence_public_packet": false,
+    "can_train_model": false,
+    "can_update_verified_memory": false,
+    "observation_count": 1
+  }
+}

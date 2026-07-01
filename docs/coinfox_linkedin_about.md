@@ -1,7 +1,7 @@
 # CoinFox LinkedIn About Draft
 
 Status: editable public profile copy.
-Last updated: 2026-06-22.
+Last updated: 2026-06-27.
 
 ## Founder Profile Version
 
@@ -29,9 +29,9 @@ Eastern Pine Ventures is my first company, and becoming a small business owner h
 long-term personal goal. I want the company to reflect that: careful, useful, accountable,
 and built to earn trust before it asks for it.
 
-CoinFox is currently in the early MVP and validation stage. I am looking for conversations
-with people who understand product validation, fintech compliance, market data, community
-design, moderation, social products, trading education, or AI evaluation.
+CoinFox is currently in rough live beta at `https://coinfox.foxclaw.cloud/`. I am looking
+for conversations with people who understand product validation, fintech compliance, market
+data, community design, moderation, social products, trading education, or AI evaluation.
 
 CoinFox is not a brokerage, not a copy-trading system, and not financial advice. It is a
 paper-first market discussion network built around accountability, learning, and better
@@ -55,6 +55,6 @@ Eastern Pine Ventures is a first company built from a long-term small-business g
 company is being approached with a process-first mindset: careful, useful, accountable, and
 durable enough to earn trust before it asks for it.
 
-CoinFox is currently in the early MVP and validation stage. Eastern Pine Ventures is seeking
-partner conversations around product validation, compliance-safe positioning, market data,
-community design, moderation, and AI-assisted evaluation.
+CoinFox is currently in rough live beta at `https://coinfox.foxclaw.cloud/`. Eastern Pine
+Ventures is seeking partner conversations around product validation, compliance-safe
+positioning, market data, community design, moderation, and AI-assisted evaluation.

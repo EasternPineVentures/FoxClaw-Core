@@ -1,0 +1,15 @@
+{
+  "schema_version": "source_registry_observation_v0",
+  "observation": {
+    "observation_id": "source_registry_unknown_fixture",
+    "source": {
+      "source_id": "unknown_public_blog_fixture",
+      "source_name": "Unknown Public Blog Fixture",
+      "source_url": "https://example.com/unknown-public-blog",
+      "source_type": "blog"
+    },
+    "text": "An unknown public blog claims a market narrative is changing.",
+    "summary": "Unknown source should start quarantined until corroborated.",
+    "corroborations": []
+  }
+}

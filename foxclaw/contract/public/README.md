@@ -17,6 +17,7 @@ FoxClaw databases, mutate Grove receipts, or receive Apollo private data.
 | `public_intelligence_card.schema.json` | FROZEN | Public card describing a claim, evidence, attention, tradeability, risk, and plan readiness. |
 | `public_scorecard.schema.json` | FROZEN | Public-safe separated measurements for one intelligence snapshot. |
 | `attention_receipt.schema.json` | FROZEN | Sanitized CoinFox attention aggregate. |
+| `coinfox_curated_packet.schema.json` | FROZEN | Public-safe FoxClaw-to-CoinFox packet for Market Pulse, Idea Board, and daily-delta cards. |
 | `risk_classification.schema.json` | FROZEN | Risk taxonomy and presentation requirements. |
 | `verified_outcome.schema.json` | FROZEN | Public postmortem/outcome shape. |
 

@@ -1,0 +1,37 @@
+{
+  "schema_version": "curated_packet_soak_fixture_v0",
+  "fixture_id": "reddit_duplicate_hype",
+  "expected_result": "quarantined",
+  "security_reason": "duplicate social hype has fewer than two useful corroborations",
+  "future_packet_trust_label_candidate": "unverified_social_heat",
+  "observation": {
+    "observation_id": "soak_reddit_duplicate_hype_fixture",
+    "source": {
+      "source_id": "reddit_public",
+      "source_name": "Reddit Public",
+      "source_url": "https://www.reddit.com/",
+      "source_type": "social_community"
+    },
+    "content": "Synthetic repeated social hype around SAMPLE-TOPIC does not add independent evidence.",
+    "summary": "Duplicate public social hype remains quarantined in V0.",
+    "public_safe_summary": "Repeated public social hype is not enough for packet influence.",
+    "duplicate_hype_mentions": [
+      "synthetic_repeat_1",
+      "synthetic_repeat_2"
+    ],
+    "corroborations": [
+      {
+        "source_id": "synthetic_public_market_screen",
+        "source_type": "market_data",
+        "summary": "Only one useful synthetic public corroboration is present."
+      }
+    ],
+    "safety": {
+      "public_link_only": true,
+      "raw_content_included": false,
+      "contains_private_source_content": false,
+      "contains_credentials": false,
+      "live_execution_allowed": false
+    }
+  }
+}

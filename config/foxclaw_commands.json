@@ -1,0 +1,717 @@
+{
+  "schema_version": "foxclaw_commands.v0",
+  "updated_at": "2026-07-01",
+  "generated_for": "operator_command_center",
+  "authority": {
+    "can_submit_order": false,
+    "can_move_funds": false,
+    "live_execution_allowed": false,
+    "can_publish_to_coinfox": false,
+    "can_change_truth": false,
+    "can_change_source_reliability": false,
+    "can_update_verified_memory": false,
+    "can_train_model": false,
+    "can_run_live_network": false
+  },
+  "groups": [
+    {
+      "id": "start_here",
+      "title": "Start Here",
+      "purpose": "The shortest safe command path for a normal FoxClaw session.",
+      "commands": [
+        {
+          "id": "status",
+          "title": "Git Status",
+          "command": "git status --short --branch",
+          "purpose": "Show branch and dirty files before changing anything.",
+          "when": "Run first when you need repo truth.",
+          "safety": "read_only_repo_status",
+          "runnable": true,
+          "docs": [
+            "HANDOFF.md"
+          ],
+          "tags": [
+            "status",
+            "repo"
+          ]
+        },
+        {
+          "id": "gym",
+          "title": "FoxClaw Gym",
+          "command": "python tools\\foxclaw_gym.py --fixture",
+          "purpose": "Show demo readiness and next attention.",
+          "when": "Run at the start of a FoxClaw work session.",
+          "safety": "fixture_read_only",
+          "runnable": true,
+          "docs": [
+            "docs/foxclaw_gym.md"
+          ],
+          "tags": [
+            "demo",
+            "readiness"
+          ]
+        },
+        {
+          "id": "visitor-guide",
+          "title": "Visitor Guide",
+          "command": "python tools\\foxclaw_visitor_guide.py --fixture",
+          "purpose": "Print the plain-language first-encounter guide.",
+          "when": "Use before showing FoxClaw to someone new.",
+          "safety": "fixture_read_only",
+          "runnable": true,
+          "docs": [
+            "docs/first_encounter_guide.md"
+          ],
+          "tags": [
+            "demo",
+            "visitor"
+          ]
+        },
+        {
+          "id": "a1-intake",
+          "title": "Apollo 1 Intake",
+          "command": "python tools\\apollo1_intake.py --fixture",
+          "purpose": "Check Apollo 1 standalone packet-intake continuity.",
+          "when": "Run before FoxClaw-to-CoinFox packet/source work.",
+          "safety": "fixture_read_only",
+          "runnable": true,
+          "docs": [
+            "docs/apollo1_standalone_intake.md"
+          ],
+          "tags": [
+            "apollo1",
+            "intake",
+            "coinfox"
+          ]
+        },
+        {
+          "id": "source-discovery",
+          "title": "Source Discovery",
+          "command": "python tools\\source_discovery_inventory.py --limit 20",
+          "purpose": "Find the fastest public source lanes for packet intake.",
+          "when": "Run before a manual Market Pulse or Idea Board pass.",
+          "safety": "config_read_only",
+          "runnable": true,
+          "docs": [
+            "docs/source_discovery_inventory_v0.md"
+          ],
+          "tags": [
+            "sources",
+            "reddit",
+            "market-pulse"
+          ]
+        },
+        {
+          "id": "interaction-potential",
+          "title": "Interaction Potential",
+          "command": "python tools\\interaction_potential.py --fixture",
+          "purpose": "Rank public-safe observations by likely useful user reaction.",
+          "when": "Run before choosing CoinFox discussion cards.",
+          "safety": "fixture_read_only_ranking_only",
+          "runnable": true,
+          "docs": [
+            "docs/interaction_potential_v0.md"
+          ],
+          "tags": [
+            "reaction",
+            "engagement",
+            "ranking"
+          ]
+        },
+        {
+          "id": "packet-demo-trust",
+          "title": "Packet Demo With Trust Metadata",
+          "command": "python tools\\coinfox_packet_demo.py --fixture --intake tests\\fixtures\\coinfox_packet_intake\\manual_market_pulse_intake.valid.json --trust-metadata",
+          "purpose": "Render a sanitized FoxClaw-to-CoinFox curated packet with review labels.",
+          "when": "Run before showing the packet bridge in a demo.",
+          "safety": "fixture_read_only_public_safe",
+          "runnable": true,
+          "docs": [
+            "docs/coinfox_curated_packet_intake.md",
+            "docs/packet_trust_metadata_v0.md"
+          ],
+          "tags": [
+            "coinfox",
+            "packet",
+            "trust"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "coinfox_packets",
+      "title": "CoinFox Packet Intake",
+      "purpose": "Manual-first packet review, anti-poisoning, source registry, and trust metadata commands.",
+      "commands": [
+        {
+          "id": "packet-demo",
+          "title": "Packet Demo",
+          "command": "python tools\\coinfox_packet_demo.py --fixture",
+          "purpose": "Render the baseline public-safe curated packet fixture.",
+          "when": "Use for the cleanest FoxClaw-to-CoinFox packet demo.",
+          "safety": "fixture_read_only_public_safe",
+          "runnable": true,
+          "docs": [
+            "docs/foxclaw_coinfox_packet_contract.md"
+          ],
+          "tags": [
+            "coinfox",
+            "packet"
+          ]
+        },
+        {
+          "id": "packet-json",
+          "title": "Packet Demo JSON",
+          "command": "python tools\\coinfox_packet_demo.py --fixture --json",
+          "purpose": "Emit the packet fixture as JSON for contract inspection.",
+          "when": "Use when checking exact packet fields.",
+          "safety": "fixture_read_only_public_safe",
+          "runnable": true,
+          "docs": [
+            "docs/foxclaw_coinfox_packet_contract.md"
+          ],
+          "tags": [
+            "coinfox",
+            "packet",
+            "json"
+          ]
+        },
+        {
+          "id": "unknown-corroborated-packet",
+          "title": "Unknown Source Corroborated Packet",
+          "command": "python tools\\coinfox_packet_demo.py --fixture --intake tests\\fixtures\\coinfox_packet_soak\\unknown_clean_two_corroborations.allowed.json --trust-metadata",
+          "purpose": "Show that a clean unknown source can pass after two independent corroborations.",
+          "when": "Use for the anti-poisoning demo case.",
+          "safety": "fixture_read_only_public_safe",
+          "runnable": true,
+          "docs": [
+            "docs/curated_packet_soak_fixtures_v0.md"
+          ],
+          "tags": [
+            "anti-poisoning",
+            "source-registry",
+            "coinfox"
+          ]
+        },
+        {
+          "id": "prompt-injection-block",
+          "title": "Prompt Injection Block",
+          "command": "python tools\\coinfox_packet_demo.py --fixture --intake tests\\fixtures\\coinfox_packet_soak\\official_sec_prompt_injection.blocked.json --trust-metadata",
+          "purpose": "Show sanitized quarantine behavior for prompt-injection content.",
+          "when": "Use when proving public packet intake fails closed.",
+          "safety": "fixture_read_only_quarantine_demo",
+          "runnable": true,
+          "docs": [
+            "docs/anti_poisoning_v0.md"
+          ],
+          "tags": [
+            "security",
+            "prompt-injection",
+            "quarantine"
+          ]
+        },
+        {
+          "id": "odds-watch-packet",
+          "title": "Prediction-Market Odds Watch Packet",
+          "command": "python tools\\coinfox_packet_demo.py --fixture --intake tests\\fixtures\\coinfox_packet_soak\\polymarket_odds_move_with_corroboration.allowed.json --json --trust-metadata",
+          "purpose": "Render a prediction-market/watch-source packet with trust metadata.",
+          "when": "Use when inspecting odds-move packet JSON.",
+          "safety": "fixture_read_only_public_safe",
+          "runnable": true,
+          "docs": [
+            "docs/packet_trust_metadata_v0.md"
+          ],
+          "tags": [
+            "prediction-market",
+            "odds",
+            "packet"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "source_and_reaction",
+      "title": "Source And Reaction",
+      "purpose": "Commands for finding information fast and ranking what users may react to.",
+      "commands": [
+        {
+          "id": "source-discovery-json",
+          "title": "Source Discovery JSON",
+          "command": "python tools\\source_discovery_inventory.py --fixture --json --limit 20",
+          "purpose": "Emit the source inventory report as JSON.",
+          "when": "Use for exact counts or machine-readable source review.",
+          "safety": "fixture_read_only",
+          "runnable": true,
+          "docs": [
+            "docs/source_discovery_inventory_v0.md"
+          ],
+          "tags": [
+            "sources",
+            "json"
+          ]
+        },
+        {
+          "id": "interaction-potential-json",
+          "title": "Interaction Potential JSON",
+          "command": "python tools\\interaction_potential.py --fixture --json",
+          "purpose": "Emit interaction-potential rankings as JSON.",
+          "when": "Use for exact scores and labels.",
+          "safety": "fixture_read_only_ranking_only",
+          "runnable": true,
+          "docs": [
+            "docs/interaction_potential_v0.md"
+          ],
+          "tags": [
+            "reaction",
+            "json"
+          ]
+        },
+        {
+          "id": "interaction-potential-intake",
+          "title": "Interaction Potential For Intake File",
+          "command": "python tools\\interaction_potential.py --intake <path-to-packet-intake.json>",
+          "purpose": "Score a reviewed packet-intake worksheet by likely user reaction.",
+          "when": "Replace the placeholder path after creating a reviewed intake JSON file.",
+          "safety": "manual_placeholder_ranking_only",
+          "runnable": false,
+          "docs": [
+            "docs/interaction_potential_v0.md"
+          ],
+          "tags": [
+            "reaction",
+            "manual"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "forecast_desk",
+      "title": "Forecast Desk",
+      "purpose": "Paper-only forecast desk, Kalshi fixture, learning, and schema checks.",
+      "commands": [
+        {
+          "id": "kalshi-fixture-doctor",
+          "title": "Kalshi Fixture Doctor",
+          "command": "python tools\\kalshi_api_desk.py --fixture-dir tests\\fixtures\\kalshi doctor --json",
+          "purpose": "Check the read-only Kalshi adapter against fixtures.",
+          "when": "Use before touching event-contract adapter work.",
+          "safety": "fixture_read_only",
+          "runnable": true,
+          "docs": [
+            "docs/kalshi_api_field_guide.md"
+          ],
+          "tags": [
+            "forecast",
+            "kalshi"
+          ]
+        },
+        {
+          "id": "kalshi-fixture-markets",
+          "title": "Kalshi Fixture Markets",
+          "command": "python tools\\kalshi_api_desk.py --fixture-dir tests\\fixtures\\kalshi markets --status open --limit 5 --json",
+          "purpose": "List fixture event-contract markets through the adapter.",
+          "when": "Use when inspecting adapter normalization.",
+          "safety": "fixture_read_only",
+          "runnable": true,
+          "docs": [
+            "docs/kalshi_api_field_guide.md"
+          ],
+          "tags": [
+            "forecast",
+            "kalshi",
+            "markets"
+          ]
+        },
+        {
+          "id": "forecast-doctor-fixture",
+          "title": "Forecast Desk Doctor",
+          "command": "python tools\\forecast_desk_doctor.py --fixture --json",
+          "purpose": "Emit paper-only Forecast Desk health and silence diagnostics.",
+          "when": "Use before demoing the forecast desk.",
+          "safety": "fixture_read_only_paper_only",
+          "runnable": true,
+          "docs": [
+            "docs/demo_script_2026_06_28.md"
+          ],
+          "tags": [
+            "forecast",
+            "doctor"
+          ]
+        },
+        {
+          "id": "forecast-learning-fixture",
+          "title": "Forecast Learning Spine",
+          "command": "python tools\\forecast_learning_spine.py --fixture --json",
+          "purpose": "Build a deterministic learning receipt from resolved paper outcomes.",
+          "when": "Use to show how FoxClaw learns after outcomes.",
+          "safety": "fixture_read_only_paper_only",
+          "runnable": true,
+          "docs": [
+            "docs/forecast_learning_spine.md"
+          ],
+          "tags": [
+            "forecast",
+            "learning"
+          ]
+        },
+        {
+          "id": "forecast-replay-fixture",
+          "title": "Forecast Replay",
+          "command": "python tools\\forecast_desk_replay.py --fixture --json",
+          "purpose": "Replay paper positions without future leakage.",
+          "when": "Use to verify paper simulation behavior.",
+          "safety": "fixture_read_only_paper_only",
+          "runnable": true,
+          "docs": [
+            "docs/paper_simulation_methodology.md"
+          ],
+          "tags": [
+            "forecast",
+            "replay"
+          ]
+        },
+        {
+          "id": "forecast-scoreboard-fixture",
+          "title": "Forecast Scoreboard",
+          "command": "python tools\\forecast_desk_scoreboard.py --fixture --json",
+          "purpose": "Build a deterministic paper scoreboard.",
+          "when": "Use to inspect paper-only performance receipts.",
+          "safety": "fixture_read_only_paper_only",
+          "runnable": true,
+          "docs": [
+            "docs/forecast_calibration.md"
+          ],
+          "tags": [
+            "forecast",
+            "scoreboard"
+          ]
+        },
+        {
+          "id": "forecast-self-funding-fixture",
+          "title": "Forecast Self-Funding Gate",
+          "command": "python tools\\forecast_desk_self_funding.py --fixture --json",
+          "purpose": "Evaluate the self-funding claim gate in fixture mode.",
+          "when": "Use to prove no paper result grants funding authority.",
+          "safety": "fixture_read_only_paper_only",
+          "runnable": true,
+          "docs": [
+            "HANDOFF.md"
+          ],
+          "tags": [
+            "forecast",
+            "funding",
+            "gate"
+          ]
+        },
+        {
+          "id": "forecast-schema-check",
+          "title": "Forecast Schema Check",
+          "command": "python tools\\freeze_forecast_db_schema.py --check",
+          "purpose": "Verify the frozen Forecast Desk SQLite schema artifact.",
+          "when": "Run with validation after forecast storage changes.",
+          "safety": "read_only_schema_check",
+          "runnable": true,
+          "docs": [
+            "docs/forecast_db_schema.md"
+          ],
+          "tags": [
+            "forecast",
+            "schema",
+            "validation"
+          ]
+        },
+        {
+          "id": "forecast-export-demo",
+          "title": "Forecast Public Export Demo",
+          "command": "python tools\\forecast_desk_export_public.py --fixture --write data\\demo_export --json",
+          "purpose": "Write safe static FoxClaw Hunt files from fixture data.",
+          "when": "Review the output path before running.",
+          "safety": "manual_review_writes_local_export",
+          "runnable": false,
+          "docs": [
+            "docs/demo_script_2026_06_28.md"
+          ],
+          "tags": [
+            "forecast",
+            "export",
+            "manual"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "apollo_ops",
+      "title": "Apollo Ops",
+      "purpose": "A1/A2 coordination, courier, and local mesh visibility.",
+      "commands": [
+        {
+          "id": "apollo-courier-lanes",
+          "title": "Apollo Courier Lanes",
+          "command": "python tools\\apollo_courier.py lanes --json",
+          "purpose": "Show configured Apollo courier lanes.",
+          "when": "Use before branch or lane sync work.",
+          "safety": "config_read_only",
+          "runnable": true,
+          "docs": [
+            "docs/apollo_courier_v0.md"
+          ],
+          "tags": [
+            "apollo",
+            "courier"
+          ]
+        },
+        {
+          "id": "apollo1-intake-json",
+          "title": "Apollo 1 Intake JSON",
+          "command": "python tools\\apollo1_intake.py --fixture --json",
+          "purpose": "Emit Apollo 1 intake continuity as JSON.",
+          "when": "Use for exact readiness counts.",
+          "safety": "fixture_read_only",
+          "runnable": true,
+          "docs": [
+            "docs/apollo1_standalone_intake.md"
+          ],
+          "tags": [
+            "apollo1",
+            "json"
+          ]
+        },
+        {
+          "id": "apollo-node-brief-fixture",
+          "title": "Apollo Node Brief Fixture",
+          "command": "python tools\\apollo_node_brief.py --fixture --node-id A1 --peer-node A2 --current-slice \"FoxClaw command center\" --next-request \"pull, read docs\\foxclaw_commands.md, run python tools\\foxclaw_commands.py\" --note \"command list is operator-facing\"",
+          "purpose": "Generate a pasteable A1-to-A2 coordination brief.",
+          "when": "Use before handing this command-center lane to A2.",
+          "safety": "fixture_read_only",
+          "runnable": true,
+          "docs": [
+            "docs/apollo_node_coordination.md"
+          ],
+          "tags": [
+            "apollo",
+            "handoff"
+          ]
+        },
+        {
+          "id": "apollo-mesh-doctor",
+          "title": "Apollo Mesh Doctor",
+          "command": "python tools\\apollo_mesh.py --node-id A1 --json doctor",
+          "purpose": "Inspect local mesh identity and inbox/outbox counts.",
+          "when": "Use when checking local founder mesh health.",
+          "safety": "local_read_only_status",
+          "runnable": true,
+          "docs": [
+            "docs/apollo_mesh_v0.md"
+          ],
+          "tags": [
+            "apollo",
+            "mesh",
+            "doctor"
+          ]
+        },
+        {
+          "id": "apollo-mesh-pulse",
+          "title": "Apollo Mesh Pulse",
+          "command": "python tools\\apollo_mesh.py --node-id A1 --json pulse --message \"A1 pulse\"",
+          "purpose": "Emit a local founder mesh pulse and sync.",
+          "when": "Run only when intentionally writing an Apollo pulse receipt.",
+          "safety": "manual_review_writes_local_mesh_event",
+          "runnable": false,
+          "docs": [
+            "docs/apollo_mesh_v0.md"
+          ],
+          "tags": [
+            "apollo",
+            "mesh",
+            "manual"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "public_demo",
+      "title": "Public Demo",
+      "purpose": "Small safe demo commands for explaining FoxClaw.",
+      "commands": [
+        {
+          "id": "public-card-demo",
+          "title": "Public Intelligence Card Demo",
+          "command": "python tools\\public_intelligence_card_demo.py --fixture",
+          "purpose": "Render a public intelligence card fixture as Markdown.",
+          "when": "Use for a lightweight public-card demo.",
+          "safety": "fixture_read_only_public_safe",
+          "runnable": true,
+          "docs": [
+            "docs/demo_script_2026_06_28.md"
+          ],
+          "tags": [
+            "public",
+            "demo"
+          ]
+        },
+        {
+          "id": "redshift-boundary-fixture",
+          "title": "Redshift Paper Boundary",
+          "command": "python tools\\redshift_paper_boundary.py --fixture --json",
+          "purpose": "Emit the deterministic FoxClaw-to-Redshift paper receipt boundary.",
+          "when": "Use to show FoxClaw context without live authority.",
+          "safety": "fixture_read_only_paper_only",
+          "runnable": true,
+          "docs": [
+            "docs/foxclaw_redshift_paper_boundary.md"
+          ],
+          "tags": [
+            "redshift",
+            "paper",
+            "boundary"
+          ]
+        },
+        {
+          "id": "public-intelligence-export",
+          "title": "Public Intelligence Export",
+          "command": "python tools\\export_public_intelligence.py --fixture --output runtime_exports\\coinfox",
+          "purpose": "Export deterministic public intelligence files for CoinFox staging.",
+          "when": "Review the output folder before running.",
+          "safety": "manual_review_writes_local_export",
+          "runnable": false,
+          "docs": [
+            "docs/integrations/coinfox.md"
+          ],
+          "tags": [
+            "public",
+            "export",
+            "manual"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "microscope",
+      "title": "Microscope",
+      "purpose": "Private paper-only accepted-candidate assessment commands.",
+      "commands": [
+        {
+          "id": "microscope-help",
+          "title": "Microscope Help",
+          "command": "python tools\\microscope.py --help",
+          "purpose": "Show the private Microscope CLI commands.",
+          "when": "Use before listing or previewing accepted candidates.",
+          "safety": "help_only",
+          "runnable": true,
+          "docs": [
+            "docs/integrations/coinfox.md"
+          ],
+          "tags": [
+            "microscope",
+            "help"
+          ]
+        },
+        {
+          "id": "microscope-batch-help",
+          "title": "Microscope Batch Help",
+          "command": "python tools\\microscope_batch.py --help",
+          "purpose": "Show dry-run/write-staging options for Microscope batch work.",
+          "when": "Use before any local staging pass.",
+          "safety": "help_only",
+          "runnable": true,
+          "docs": [
+            "docs/integrations/coinfox.md"
+          ],
+          "tags": [
+            "microscope",
+            "batch",
+            "help"
+          ]
+        },
+        {
+          "id": "microscope-list-recent",
+          "title": "Microscope List Recent",
+          "command": "python tools\\microscope.py --list-recent --limit 10 --db <reviewed-local-db-path>",
+          "purpose": "List sanitized accepted-candidate metadata from a reviewed local database.",
+          "when": "Replace the placeholder DB path only after confirming the database is safe.",
+          "safety": "manual_placeholder_private_read_only",
+          "runnable": false,
+          "docs": [
+            "docs/integrations/coinfox.md"
+          ],
+          "tags": [
+            "microscope",
+            "manual"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "validation",
+      "title": "Validation",
+      "purpose": "Checks to run after FoxClaw code or contract changes.",
+      "commands": [
+        {
+          "id": "focused-packet-tests",
+          "title": "Focused Packet/Source Tests",
+          "command": "python -m pytest tests\\unit\\test_interaction_potential.py tests\\unit\\test_apollo1_intake.py tests\\unit\\test_source_discovery_inventory.py tests\\security\\test_packet_trust_metadata_v0.py tests\\security\\test_source_registry_v0.py -q -p no:cacheprovider",
+          "purpose": "Run the focused FoxClaw-to-CoinFox packet/source/interaction checks.",
+          "when": "Use after packet, source, trust metadata, or interaction-potential edits.",
+          "safety": "test_only",
+          "runnable": true,
+          "docs": [
+            "HANDOFF.md"
+          ],
+          "tags": [
+            "tests",
+            "packet",
+            "source"
+          ]
+        },
+        {
+          "id": "full-tests",
+          "title": "Full Test Suite",
+          "command": "python -m pytest -q -p no:cacheprovider",
+          "purpose": "Run the full FoxClaw test suite.",
+          "when": "Use before handoff or commit.",
+          "safety": "test_only",
+          "runnable": true,
+          "docs": [
+            "HANDOFF.md"
+          ],
+          "tags": [
+            "tests",
+            "validation"
+          ]
+        },
+        {
+          "id": "invariants",
+          "title": "Structural Invariants",
+          "command": "python tools\\check_invariants.py",
+          "purpose": "Check FoxClaw structural invariants.",
+          "when": "Run after code moves or boundary-sensitive work.",
+          "safety": "read_only_validation",
+          "runnable": true,
+          "docs": [
+            "docs/invariants.md"
+          ],
+          "tags": [
+            "validation",
+            "invariants"
+          ]
+        },
+        {
+          "id": "diff-check",
+          "title": "Diff Whitespace Check",
+          "command": "git diff --check",
+          "purpose": "Check staged and unstaged diffs for whitespace errors.",
+          "when": "Run before handoff or commit.",
+          "safety": "read_only_repo_validation",
+          "runnable": true,
+          "docs": [
+            "HANDOFF.md"
+          ],
+          "tags": [
+            "validation",
+            "git"
+          ]
+        }
+      ]
+    }
+  ]
+}

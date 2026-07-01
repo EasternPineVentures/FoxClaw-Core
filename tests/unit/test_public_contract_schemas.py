@@ -23,6 +23,7 @@ SCHEMA_FIXTURES = {
     "public_intelligence_card.schema.json": "public_intelligence_card.valid.json",
     "public_scorecard.schema.json": "public_scorecard.valid.json",
     "attention_receipt.schema.json": "attention_receipt.valid.json",
+    "coinfox_curated_packet.schema.json": "coinfox_curated_packet.valid.json",
     "risk_classification.schema.json": "risk_classification.valid.json",
     "verified_outcome.schema.json": "verified_outcome.valid.json",
 }
@@ -150,6 +151,7 @@ def test_public_contract_manifest_freezes_v1():
         "public_intelligence_card",
         "public_scorecard",
         "attention_receipt",
+        "coinfox_curated_packet",
         "risk_classification",
         "verified_outcome",
     }

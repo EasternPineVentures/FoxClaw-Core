@@ -30,17 +30,18 @@ def build_visitor_guide(*, generated_at: datetime | None = None) -> dict:
             },
             {
                 "name": "CoinFox",
-                "status": "bones exist, full social product needs major work",
+                "status": "rough live beta at https://coinfox.foxclaw.cloud/",
                 "plain_language": (
-                    "CoinFox already has the bones of a social trading product. The bigger "
-                    "goal is to make it feel like a familiar social place for traders: "
-                    "people posting trade ideas, asking questions, discussing markets, "
-                    "following ideas over time, upvoting posts and comments, and branching "
-                    "conversations in a fluid feed. FoxClaw intelligence can appear there "
-                    "as readable context."
+                    "CoinFox is live in rough beta as the social trading surface. It shows "
+                    "markets, predictions, theses, discussions, FESC standards, account "
+                    "gates, public disclaimers, and seeded trading conversation. The next "
+                    "work is turning that beta into a smoother real-people test: onboarding, "
+                    "posting trade ideas, commenting, voting, moderation, health checks, and "
+                    "the public-safe FoxClaw context path."
                 ),
                 "what_to_notice": [
-                    "It should feel like a real social product people already understand.",
+                    "It is now a real deployed beta, not just a planned surface.",
+                    "It should keep feeling like a social product people already understand.",
                     "Discussion is open-ended, not locked to rigid trade cards.",
                     "Long-running calls can be followed as they play out.",
                     "Strong calls and useful discussion can be spotlighted.",
@@ -107,7 +108,7 @@ def render_visitor_guide_markdown(guide: dict) -> str:
             "",
             "## The Short Version",
             "",
-            "FoxClaw judges information. CoinFox is becoming the social place where "
+            "FoxClaw judges information. CoinFox is the live beta social place where "
             "traders discuss it. Planifier helps the person make a plan.",
         ]
     )

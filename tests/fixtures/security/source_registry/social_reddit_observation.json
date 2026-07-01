@@ -1,0 +1,21 @@
+{
+  "schema_version": "source_registry_observation_v0",
+  "observation": {
+    "observation_id": "source_registry_reddit_fixture",
+    "source": {
+      "source_id": "reddit_public",
+      "source_name": "Reddit Public",
+      "source_url": "https://www.reddit.com/",
+      "source_type": "social_community"
+    },
+    "text": "Public social discussion says a ticker is getting more attention.",
+    "summary": "Social attention is review context, not truth.",
+    "corroborations": [
+      {
+        "source_id": "public_market_screen_fixture",
+        "source_type": "market_data",
+        "summary": "Public market screen shows ordinary review context."
+      }
+    ]
+  }
+}

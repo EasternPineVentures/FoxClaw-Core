@@ -1,5 +1,16 @@
 # FoxClaw Public Intelligence Contract Changelog
 
+## [1.0.0-additive] - 2026-06-27
+
+Added the CoinFox curated packet schema as an additive public-contract shape.
+
+- `coinfox_curated_packet.v1` supports `market_pulse_now`, `idea_board_now`, and
+  `what_changed_since_yesterday` packet types.
+- The packet carries public source links, source quality labels, public-safe summaries,
+  counterpoints, suggested thesis angles, risk flags, and outcome-review prompts.
+- The packet is review-priority-only and cannot expose private FoxClaw lineage, raw
+  private content, live execution, or funds authority.
+
 ## [1.0.0] - 2026-06-19
 
 Initial frozen public contract for CoinFox consumption.

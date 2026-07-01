@@ -50,10 +50,11 @@ def test_gym_knows_coinfox_is_social_not_just_cards():
         generated_at=datetime(2026, 6, 19, 17, 30, tzinfo=UTC),
     )
     coinfox = next(item for item in report["drills"] if item["id"] == "coinfox_public_card_rehearsal")
-    assert coinfox["name"] == "CoinFox Social Feed And Card"
-    assert "existing but clunky" in coinfox["purpose"]
-    assert "post ideas" in coinfox["demo_line"]
-    assert "major work" in coinfox["demo_line"]
+    assert coinfox["name"] == "CoinFox Live Beta And Card"
+    assert "rough live beta" in coinfox["purpose"]
+    assert "https://coinfox.foxclaw.cloud/" in coinfox["purpose"]
+    assert "still beta" in coinfox["demo_line"]
+    assert "not a production launch" in coinfox["demo_line"]
 
 
 def test_gym_first_encounter_guide_is_ready():

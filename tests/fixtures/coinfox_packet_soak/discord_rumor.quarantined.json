@@ -1,0 +1,27 @@
+{
+  "schema_version": "curated_packet_soak_fixture_v0",
+  "fixture_id": "discord_rumor",
+  "expected_result": "quarantined",
+  "security_reason": "public community rumor lacks corroboration",
+  "future_packet_trust_label_candidate": "unverified_social_heat",
+  "observation": {
+    "observation_id": "soak_discord_rumor_fixture",
+    "source": {
+      "source_id": "discord_public",
+      "source_name": "Discord Public",
+      "source_url": "https://discord.com/",
+      "source_type": "social_community"
+    },
+    "content": "Synthetic public community rumor claims SAMPLE-TOPIC may matter soon.",
+    "summary": "Public community rumor remains quarantined without corroboration.",
+    "public_safe_summary": "Synthetic community rumor is not enough for packet influence.",
+    "corroborations": [],
+    "safety": {
+      "public_link_only": true,
+      "raw_content_included": false,
+      "contains_private_source_content": false,
+      "contains_credentials": false,
+      "live_execution_allowed": false
+    }
+  }
+}

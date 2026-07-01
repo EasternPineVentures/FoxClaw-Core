@@ -1,0 +1,27 @@
+{
+  "schema_version": "curated_packet_soak_fixture_v0",
+  "fixture_id": "reddit_single_source_hype",
+  "expected_result": "quarantined",
+  "security_reason": "single-source social heat is not evidence",
+  "future_packet_trust_label_candidate": "unverified_social_heat",
+  "observation": {
+    "observation_id": "soak_reddit_single_source_hype_fixture",
+    "source": {
+      "source_id": "reddit_public",
+      "source_name": "Reddit Public",
+      "source_url": "https://www.reddit.com/",
+      "source_type": "social_community"
+    },
+    "content": "Synthetic public social discussion repeats interest in SAMPLE-TOPIC without independent evidence.",
+    "summary": "Single-source public social heat should remain quarantined.",
+    "public_safe_summary": "Synthetic social attention is review context only.",
+    "corroborations": [],
+    "safety": {
+      "public_link_only": true,
+      "raw_content_included": false,
+      "contains_private_source_content": false,
+      "contains_credentials": false,
+      "live_execution_allowed": false
+    }
+  }
+}

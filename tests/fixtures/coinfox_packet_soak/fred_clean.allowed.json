@@ -1,0 +1,27 @@
+{
+  "schema_version": "curated_packet_soak_fixture_v0",
+  "fixture_id": "fred_clean",
+  "expected_result": "allowed_packet",
+  "security_reason": "trusted official macro provenance with clean scan",
+  "future_packet_trust_label_candidate": "trusted_provenance",
+  "observation": {
+    "observation_id": "soak_fred_clean_fixture",
+    "source": {
+      "source_id": "fred",
+      "source_name": "FRED",
+      "source_url": "https://fred.stlouisfed.org/",
+      "source_type": "official_macro"
+    },
+    "content": "A synthetic public macro series moved enough to change the review question.",
+    "summary": "Official macro provenance can pass new-source quarantine after a clean scan.",
+    "public_safe_summary": "A synthetic macro update is suitable for packet review.",
+    "corroborations": [],
+    "safety": {
+      "public_link_only": true,
+      "raw_content_included": false,
+      "contains_private_source_content": false,
+      "contains_credentials": false,
+      "live_execution_allowed": false
+    }
+  }
+}

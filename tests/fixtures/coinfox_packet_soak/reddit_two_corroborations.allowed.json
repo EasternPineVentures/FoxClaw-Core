@@ -1,0 +1,38 @@
+{
+  "schema_version": "curated_packet_soak_fixture_v0",
+  "fixture_id": "reddit_two_corroborations",
+  "expected_result": "allowed_packet",
+  "security_reason": "social source has clean scan and two synthetic public corroborations",
+  "future_packet_trust_label_candidate": "unverified_social_heat",
+  "observation": {
+    "observation_id": "soak_reddit_two_corroborations_fixture",
+    "source": {
+      "source_id": "reddit_public",
+      "source_name": "Reddit Public",
+      "source_url": "https://www.reddit.com/",
+      "source_type": "social_community"
+    },
+    "content": "Synthetic public social discussion raises SAMPLE-TOPIC for review with external context.",
+    "summary": "Public social source can pass the V0 guard only after independent corroboration.",
+    "public_safe_summary": "Synthetic social attention can become review context after corroboration.",
+    "corroborations": [
+      {
+        "source_id": "synthetic_public_market_screen",
+        "source_type": "market_data",
+        "summary": "Synthetic public market screen shows the topic is visible for review."
+      },
+      {
+        "source_id": "synthetic_public_news_context",
+        "source_type": "public_news",
+        "summary": "Synthetic public context source confirms the discussion topic exists."
+      }
+    ],
+    "safety": {
+      "public_link_only": true,
+      "raw_content_included": false,
+      "contains_private_source_content": false,
+      "contains_credentials": false,
+      "live_execution_allowed": false
+    }
+  }
+}

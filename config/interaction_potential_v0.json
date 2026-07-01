@@ -1,0 +1,130 @@
+{
+  "schema_version": "interaction_potential.v0",
+  "updated_at": "2026-07-01",
+  "generated_for": "coinfox_packet_observation_ranking",
+  "authority": {
+    "can_submit_order": false,
+    "can_move_funds": false,
+    "live_execution_allowed": false,
+    "can_publish_to_coinfox": false,
+    "can_change_truth": false,
+    "can_promote_evidence": false,
+    "can_change_source_reliability": false,
+    "can_update_verified_memory": false,
+    "can_train_model": false
+  },
+  "bands": [
+    {
+      "label": "low_interaction_potential",
+      "min_score": 0,
+      "max_score": 39,
+      "meaning": "Likely too quiet or unclear for a CoinFox prompt without more framing."
+    },
+    {
+      "label": "watch_interaction_potential",
+      "min_score": 40,
+      "max_score": 59,
+      "meaning": "Worth watching, but needs a stronger prompt, counterpoint, or context."
+    },
+    {
+      "label": "discussion_candidate",
+      "min_score": 60,
+      "max_score": 79,
+      "meaning": "Good candidate for a CoinFox discussion prompt after safety review."
+    },
+    {
+      "label": "high_reaction_potential",
+      "min_score": 80,
+      "max_score": 100,
+      "meaning": "Likely to produce comments, challenges, saves, or thesis debate."
+    }
+  ],
+  "drivers": [
+    {
+      "id": "clear_public_prompt",
+      "weight": 18,
+      "meaning": "There is a clear question users can answer or challenge."
+    },
+    {
+      "id": "counterpoint_or_disagreement",
+      "weight": 15,
+      "meaning": "The item includes a natural disagreement surface."
+    },
+    {
+      "id": "social_attention_or_native_conversation",
+      "weight": 14,
+      "meaning": "The item comes from, or can feed, public conversation."
+    },
+    {
+      "id": "timely_change_or_delta",
+      "weight": 13,
+      "meaning": "Something changed recently enough to create urgency."
+    },
+    {
+      "id": "money_or_position_relevance",
+      "weight": 12,
+      "meaning": "The item touches a market, asset, event, risk, or position question."
+    },
+    {
+      "id": "uncertainty_or_open_question",
+      "weight": 10,
+      "meaning": "The item has unresolved uncertainty users can reason through."
+    },
+    {
+      "id": "source_diversity_context",
+      "weight": 9,
+      "meaning": "There is enough public corroboration context to discuss responsibly."
+    },
+    {
+      "id": "outcome_reviewable",
+      "weight": 9,
+      "meaning": "The item can be checked later against an outcome question."
+    }
+  ],
+  "keyword_hints": {
+    "timely_change_or_delta": [
+      "changed",
+      "shifted",
+      "moved",
+      "spike",
+      "surge",
+      "drop",
+      "breakout",
+      "earnings",
+      "filing",
+      "guidance",
+      "odds",
+      "launch",
+      "halt",
+      "downgrade",
+      "upgrade"
+    ],
+    "uncertainty_or_open_question": [
+      "what",
+      "why",
+      "whether",
+      "could",
+      "would",
+      "if",
+      "prove",
+      "disprove",
+      "invalidation",
+      "risk",
+      "counterpoint"
+    ],
+    "money_or_position_relevance": [
+      "stock",
+      "ticker",
+      "btc",
+      "crypto",
+      "market",
+      "odds",
+      "prediction",
+      "price",
+      "volume",
+      "risk",
+      "trade",
+      "earnings"
+    ]
+  }
+}

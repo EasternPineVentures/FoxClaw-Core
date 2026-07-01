@@ -11,6 +11,7 @@ SCHEMA_FILES = (
     "public_intelligence_card.schema.json",
     "public_scorecard.schema.json",
     "attention_receipt.schema.json",
+    "coinfox_curated_packet.schema.json",
     "risk_classification.schema.json",
     "verified_outcome.schema.json",
 )

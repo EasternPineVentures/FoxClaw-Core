@@ -1,0 +1,15 @@
+{
+  "schema_version": "source_registry_observation_v0",
+  "observation": {
+    "observation_id": "source_registry_sec_fixture",
+    "source": {
+      "source_id": "sec_edgar",
+      "source_name": "SEC EDGAR",
+      "source_url": "https://www.sec.gov/edgar",
+      "source_type": "official_regulatory"
+    },
+    "text": "A public filing changed the company update timeline.",
+    "summary": "Official public filing provenance can pass new-source quarantine after scanning.",
+    "corroborations": []
+  }
+}

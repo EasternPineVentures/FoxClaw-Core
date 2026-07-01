@@ -1,0 +1,214 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://easternpineventures.example/foxclaw/coinfox_curated_packet.schema.json",
+  "title": "FoxClaw To CoinFox Curated Packet",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contract_version",
+    "schema_version",
+    "packet_id",
+    "packet_type",
+    "generated_at",
+    "generated_for",
+    "author_display",
+    "mode",
+    "disclosure",
+    "source_window",
+    "supported_commands",
+    "cards",
+    "status"
+  ],
+  "properties": {
+    "contract_version": {"type": "string", "const": "1.0.0"},
+    "schema_version": {"type": "string", "const": "coinfox_curated_packet.v1"},
+    "packet_id": {"type": "string"},
+    "packet_type": {
+      "type": "string",
+      "enum": ["market_pulse_now", "idea_board_now", "what_changed_since_yesterday"]
+    },
+    "generated_at": {"type": "string", "format": "date-time"},
+    "generated_for": {"type": "string", "enum": ["coinfox"]},
+    "author_display": {"type": "string", "const": "FoxClaw"},
+    "mode": {"type": "string", "enum": ["informational_paper"]},
+    "disclosure": {"type": "string"},
+    "source_window": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["started_at", "ended_at", "summary", "private_lineage_excluded"],
+      "properties": {
+        "started_at": {"type": "string", "format": "date-time"},
+        "ended_at": {"type": "string", "format": "date-time"},
+        "summary": {"type": "string"},
+        "private_lineage_excluded": {"type": "boolean", "const": true}
+      }
+    },
+    "supported_commands": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "items": {
+        "type": "string",
+        "enum": ["market_pulse_now", "idea_board_now", "what_changed_since_yesterday"]
+      }
+    },
+    "cards": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 10,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "card_id",
+          "card_type",
+          "title",
+          "asset_or_topic",
+          "tags",
+          "source_quality",
+          "source_links",
+          "why_interesting",
+          "public_safe_summary",
+          "counterpoint",
+          "confidence",
+          "suggested_thesis_angle",
+          "suggested_coinfox_prompt",
+          "risk_flags",
+          "card_status",
+          "outcome_memory",
+          "safety"
+        ],
+        "properties": {
+          "card_id": {"type": "string"},
+          "card_type": {"type": "string", "enum": ["market_pulse", "idea_prompt", "delta"]},
+          "title": {"type": "string"},
+          "asset_or_topic": {"type": "string"},
+          "tags": {"type": "array", "items": {"type": "string"}, "minItems": 1, "maxItems": 12},
+          "source_quality": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["trust_tier", "display_label", "confidence_score", "terms_status"],
+            "properties": {
+              "trust_tier": {
+                "type": "string",
+                "enum": [
+                  "tier_1_primary_source",
+                  "tier_2_professional_news_data",
+                  "tier_3_social_crowd_signal",
+                  "tier_4_community_curated_source"
+                ]
+              },
+              "display_label": {"type": "string"},
+              "confidence_score": {"type": "integer", "minimum": 0, "maximum": 100},
+              "terms_status": {
+                "type": "string",
+                "enum": ["link_only", "summary_allowed", "aggregate_only", "blocked_until_review"]
+              }
+            }
+          },
+          "source_links": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 5,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["source_name", "source_url", "source_type", "published_at", "link_required"],
+              "properties": {
+                "source_name": {"type": "string"},
+                "source_url": {"type": "string"},
+                "source_type": {
+                  "type": "string",
+                  "enum": [
+                    "filing",
+                    "official_data",
+                    "professional_news",
+                    "social_heat",
+                    "prediction_market",
+                    "market_data",
+                    "research",
+                    "community"
+                  ]
+                },
+                "published_at": {"type": "string", "format": "date-time"},
+                "link_required": {"type": "boolean", "const": true}
+              }
+            }
+          },
+          "why_interesting": {"type": "string"},
+          "public_safe_summary": {"type": "string"},
+          "counterpoint": {"type": "string"},
+          "confidence": {"type": "string", "enum": ["low", "medium", "high"]},
+          "suggested_thesis_angle": {"type": "string"},
+          "suggested_coinfox_prompt": {"type": "string"},
+          "risk_flags": {"type": "array", "items": {"type": "string"}, "maxItems": 8},
+          "card_status": {
+            "type": "string",
+            "enum": ["watching", "heating_up", "confirmed", "disputed", "fading", "post_mortem_ready"]
+          },
+          "outcome_memory": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["outcome_status", "review_after", "review_question"],
+            "properties": {
+              "outcome_status": {
+                "type": "string",
+                "enum": [
+                  "unresolved",
+                  "confirmed",
+                  "partially_confirmed",
+                  "failed",
+                  "invalidated_by_better_evidence"
+                ]
+              },
+              "review_after": {"type": "string", "format": "date-time"},
+              "review_question": {"type": "string"}
+            }
+          },
+          "safety": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "authority",
+              "raw_content_included",
+              "contains_private_source_content",
+              "not_individualized_advice",
+              "live_execution_allowed"
+            ],
+            "properties": {
+              "authority": {"type": "string", "enum": ["review_priority_only"]},
+              "raw_content_included": {"type": "boolean", "const": false},
+              "contains_private_source_content": {"type": "boolean", "const": false},
+              "not_individualized_advice": {"type": "boolean", "const": true},
+              "live_execution_allowed": {"type": "boolean", "const": false}
+            }
+          }
+        }
+      }
+    },
+    "status": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "authority",
+        "can_submit_order",
+        "can_move_funds",
+        "live_execution_allowed",
+        "can_change_truth",
+        "can_promote_evidence",
+        "can_change_source_reliability",
+        "can_authorize_execution"
+      ],
+      "properties": {
+        "authority": {"type": "string", "enum": ["review_priority_only"]},
+        "can_submit_order": {"type": "boolean", "const": false},
+        "can_move_funds": {"type": "boolean", "const": false},
+        "live_execution_allowed": {"type": "boolean", "const": false},
+        "can_change_truth": {"type": "boolean", "const": false},
+        "can_promote_evidence": {"type": "boolean", "const": false},
+        "can_change_source_reliability": {"type": "boolean", "const": false},
+        "can_authorize_execution": {"type": "boolean", "const": false}
+      }
+    }
+  }
+}

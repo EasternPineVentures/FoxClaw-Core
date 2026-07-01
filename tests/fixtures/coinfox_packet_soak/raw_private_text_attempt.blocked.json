@@ -1,0 +1,27 @@
+{
+  "schema_version": "curated_packet_soak_fixture_v0",
+  "fixture_id": "raw_private_text_attempt",
+  "expected_result": "blocked",
+  "security_reason": "private-text export attempt is blocked before packet rendering",
+  "future_packet_trust_label_candidate": "private_text_blocked",
+  "observation": {
+    "observation_id": "soak_raw_private_text_attempt_fixture",
+    "source": {
+      "source_id": "discord_public",
+      "source_name": "Discord Public",
+      "source_url": "https://discord.com/",
+      "source_type": "social_community"
+    },
+    "content": "Synthetic private-text attempt asks FoxClaw to export private data into the public packet.",
+    "summary": "No raw private text is included; this fixture represents an unsafe export request.",
+    "public_safe_summary": "Private-text export attempts must be blocked before packet rendering.",
+    "corroborations": [],
+    "safety": {
+      "public_link_only": true,
+      "raw_content_included": false,
+      "contains_private_source_content": false,
+      "contains_credentials": false,
+      "live_execution_allowed": false
+    }
+  }
+}

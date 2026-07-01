@@ -1,7 +1,7 @@
 # Eastern Pine Ventures / CoinFox Operating Overview
 
 Status: partner-facing working draft.
-Last updated: 2026-06-22.
+Last updated: 2026-06-27.
 
 This document explains the public product direction in plain English. It is written for
 potential partners, advisors, mentors, and early collaborators. It intentionally avoids
@@ -329,14 +329,14 @@ That structure can become a data advantage.
 
 ## Current Progress
 
-CoinFox is currently in the early MVP and validation stage. The core product direction,
-public/private system boundary, receipt-first learning model, and initial social-product
-concepts are defined. The next step is turning that foundation into a polished public
-prototype, early beta flow, and partner-safe demo.
+CoinFox is currently in rough live beta at `https://coinfox.foxclaw.cloud/`. The core
+product direction, public/private system boundary, receipt-first learning model, and
+initial social-product concepts are defined, and the public surface is now visible enough
+for controlled real-user testing.
 
-Current progress includes early working foundations for public market reads, social posts,
-comments, votes, paper-practice concepts, public/private data boundaries, and receipt-first
-learning logic.
+Current progress includes live working foundations for public market reads, prediction
+context, market theses, discussions, account gates, FESC standards, public/private data
+boundaries, and receipt-first learning logic.
 
 The important progress is not only code. It is the operating discipline:
 
@@ -346,9 +346,9 @@ The important progress is not only code. It is the operating discipline:
 - attention is treated as review priority, not evidence;
 - receipts are treated as the foundation for future learning.
 
-The product still needs major work before public launch. The social experience, onboarding,
-moderation, public card design, account gates, and user-facing polish all need to become much
-cleaner.
+The product still needs beta hardening before broader public launch. The social experience,
+onboarding, moderation, public card design, deploy health, account gates, and user-facing
+polish all need to become cleaner before open traffic.
 
 ## What We Are Looking For Now
 

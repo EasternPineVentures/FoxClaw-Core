@@ -1,0 +1,25 @@
+{
+  "schema_version": "anti_poisoning_fixture.v0",
+  "fixture_type": "trusted_source",
+  "observation": {
+    "observation_id": "security_trusted_fixture",
+    "source": {
+      "source_id": "trusted_public_data_fixture",
+      "source_name": "Trusted Public Data Example",
+      "source_url": "https://example.com/trusted-public-data",
+      "source_type": "market_data"
+    },
+    "text": "Trusted public data says the daily discussion context changed.",
+    "summary": "Clean trusted source observation with no special authority request.",
+    "corroborations": []
+  },
+  "source_state": {
+    "source_id": "trusted_public_data_fixture",
+    "source_type": "market_data",
+    "trust_state": "trusted",
+    "can_influence_public_packet": true,
+    "can_train_model": false,
+    "can_update_verified_memory": false,
+    "observation_count": 12
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "schema_version": "curated_packet_soak_fixture_v0",
+  "fixture_id": "polymarket_odds_move_with_corroboration",
+  "expected_result": "allowed_packet",
+  "security_reason": "odds/watch source has clean scan and two synthetic public corroborations",
+  "future_packet_trust_label_candidate": "odds_move_watch",
+  "observation": {
+    "observation_id": "soak_polymarket_odds_move_with_corroboration_fixture",
+    "source": {
+      "source_id": "polymarket_public",
+      "source_name": "Polymarket Public",
+      "source_url": "https://polymarket.com/",
+      "source_type": "prediction_market"
+    },
+    "content": "Synthetic public odds movement around SAMPLE-EVENT is visible enough for review.",
+    "summary": "Prediction-market context can pass the V0 guard after independent corroboration.",
+    "public_safe_summary": "Synthetic odds context can become packet review material after corroboration.",
+    "corroborations": [
+      {
+        "source_id": "synthetic_public_news_context",
+        "source_type": "public_news",
+        "summary": "Synthetic public news context supports the event premise."
+      },
+      {
+        "source_id": "synthetic_public_market_screen",
+        "source_type": "market_data",
+        "summary": "Synthetic public market screen supports that the topic is visible."
+      }
+    ],
+    "safety": {
+      "public_link_only": true,
+      "raw_content_included": false,
+      "contains_private_source_content": false,
+      "contains_credentials": false,
+      "live_execution_allowed": false
+    }
+  }
+}

@@ -114,11 +114,12 @@ python tools\public_intelligence_card_demo.py --fixture
 Say:
 
 ```text
-CoinFox already has the bones of the social trading place, but it still needs a
-lot of work. The goal is a familiar feed where people post trade ideas, ask
-questions, comment, upvote, follow long-running calls, and talk in real time.
-FoxClaw intelligence can appear inside that social flow as context: the claim,
-the evidence, the attention, the risk, and what a professional would wait for.
+CoinFox is now live in rough beta at `https://coinfox.foxclaw.cloud/`. It shows the
+public social shape: markets, predictions, theses, discussions, account gates,
+standards, and receipt-style context. It is close to a controlled real-user test, but it is
+still beta, not production launch. FoxClaw intelligence can appear inside that social flow
+as context: the claim, the evidence, the attention, the risk, and what a professional would
+wait for.
 ```
 
 Point out:
@@ -159,5 +160,5 @@ is better decisions.
 - secrets, keys, local DBs, or private Apollo material;
 - live execution language;
 - raw internal engine details unless someone asks;
-- unfinished CoinFox internals;
+- private or unstable CoinFox internals;
 - too many JSON receipts in a row.

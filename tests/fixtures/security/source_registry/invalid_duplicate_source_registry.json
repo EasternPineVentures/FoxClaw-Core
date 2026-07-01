@@ -1,0 +1,39 @@
+{
+  "registry_version": "source_registry_v0",
+  "updated_at": "2026-06-27",
+  "default_policy": {
+    "unknown_source_trust_state": "quarantined",
+    "trusted_sources_require_prompt_injection_scan": true,
+    "social_sources_require_corroboration_count": 2,
+    "can_train_model_default": false,
+    "can_update_verified_memory_default": false
+  },
+  "sources": [
+    {
+      "source_id": "sec_edgar",
+      "display_name": "SEC EDGAR",
+      "source_type": "official_regulatory",
+      "trust_state": "trusted",
+      "public_safe": true,
+      "can_influence_public_packet": true,
+      "can_train_model": false,
+      "can_update_verified_memory": false,
+      "requires_prompt_injection_scan": true,
+      "requires_corroboration_count": 0,
+      "notes": "Official public filing source."
+    },
+    {
+      "source_id": "sec_edgar",
+      "display_name": "Duplicate SEC EDGAR",
+      "source_type": "official_regulatory",
+      "trust_state": "trusted",
+      "public_safe": true,
+      "can_influence_public_packet": true,
+      "can_train_model": false,
+      "can_update_verified_memory": false,
+      "requires_prompt_injection_scan": true,
+      "requires_corroboration_count": 0,
+      "notes": "Duplicate source ID fixture."
+    }
+  ]
+}

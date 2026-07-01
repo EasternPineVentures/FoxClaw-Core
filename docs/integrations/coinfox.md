@@ -1,6 +1,6 @@
 # CoinFox Integration
 
-Status: EXISTING PRODUCT BONES; FOXCLAW CONTRACT + MICROSCOPE STAGING SCAFFOLD.
+Status: ROUGH LIVE BETA; FOXCLAW CONTRACT + MICROSCOPE STAGING SCAFFOLD.
 Owner repo: EasternPineVentures/CoinFox.
 Upstream owner: EasternPineVentures/foxclaw-core.
 Resume location: this file.
@@ -8,10 +8,33 @@ Tracking issue: EasternPineVentures/CoinFox#TBD.
 
 ## Current State
 
-CoinFox remains an early-stage public product with real bones in place, but it
-requires substantial internal framework and UX work. FoxClaw Core must not assume
-CoinFox services, tables, APIs, engagement pipelines, or presentation components
-are complete or polished.
+CoinFox is now in rough live beta at:
+
+```text
+https://coinfox.foxclaw.cloud/
+```
+
+It is close to invite-only real-user testing, but it is not production launch.
+FoxClaw Core must still not assume CoinFox services, tables, APIs, engagement pipelines,
+or presentation components are complete, stable, or polished.
+
+Live readback on 2026-06-27:
+
+```text
+/              -> 200
+/markets       -> 200
+/predictions   -> 200
+/thesis        -> 200
+/discussions   -> 200
+/fesc          -> 200
+/health        -> 404
+/api/health    -> 404
+/openapi.json  -> 404
+```
+
+The visible public surface includes Home, Markets, Predictions, Market Theses,
+Discussions, FESC Standards, account gates, public disclaimers, seeded social content,
+prediction-market context, and FoxClaw receipt language.
 
 Local read-only check on 2026-06-19 found the reference checkout at
 `C:\Users\brend\EPV_Dev\coinfox`. It already has a social store, post/comment/vote
@@ -25,9 +48,10 @@ ask questions, talk about markets, follow long-running theses, comment on
 anything, upvote posts and comments, and branch discussions in a fluid social
 style.
 
-The bones exist, but the product still needs a ton of work. The current feel is
-still too on-rails and clunky for the final goal. We will make it feel like a
-real social product people already understand.
+The product is now alive enough to test with real people in a controlled beta. It still
+needs live-user polish around onboarding, posting/commenting/voting, moderation, empty
+states, health checks, account gates, and the public-safe FoxClaw context path before it
+should be described as generally launched.
 
 The product should feel closer to a native social network people already
 understand than to a rigid guided workflow. The reference pattern is a familiar
@@ -38,6 +62,7 @@ conversation, and topic discovery. CoinFox owns that feel.
 
 - public intelligence schemas;
 - Public Contract v1 manifest and compatibility rule;
+- `coinfox_curated_packet.v1` for Market Pulse, Idea Board, and daily-delta cards;
 - versioned example payloads;
 - validation rules;
 - public-safe identifiers;
@@ -47,9 +72,9 @@ conversation, and topic discovery. CoinFox owns that feel.
 - dry-run-first local staging scaffolds for future public cards;
 - explicit boundaries for attention, evidence, readiness, and publication.
 
-## CoinFox Must Eventually Build
+## CoinFox Owns In Beta
 
-- post persistence;
+- production readiness of post persistence;
 - free-form trade-idea and trading-discussion posting;
 - general market discussion threads;
 - post upvotes and comment upvotes;
@@ -60,13 +85,14 @@ conversation, and topic discovery. CoinFox owns that feel.
 - idea lifecycle views for trades that take weeks or months to play out;
 - spotlighting for useful discussion and strong calls;
 - engagement-event collection;
-- attention aggregation;
+- sanitized attention aggregation;
 - feed ranking;
 - authentication and permissions;
 - public intelligence API client;
 - intelligence cards and risk displays;
 - moderation and reporting;
-- outcome and postmortem views.
+- outcome and postmortem views;
+- deployment health/status endpoints for beta operations.
 
 ## Social Product Doctrine
 
@@ -143,8 +169,55 @@ live_execution_allowed = false
 not_individualized_advice = true
 ```
 
-CoinFox should use these files as its first integration target before wiring a
-live FoxClaw client.
+CoinFox should use these files as the safe integration target before wiring any live
+FoxClaw client. The live beta can be tested without giving CoinFox private FoxClaw DB,
+engine, or Apollo access.
+
+## Curated Packet Contract
+
+The next shared boundary is the curated packet:
+
+```text
+foxclaw/contract/public/coinfox_curated_packet.schema.json
+```
+
+It is the safe shape for three CoinFox-facing questions:
+
+```text
+Market Pulse Now
+Idea Board Now
+What Changed Since Yesterday
+```
+
+The fixture-backed review command is:
+
+```powershell
+python tools\coinfox_packet_demo.py --fixture
+python tools\coinfox_packet_demo.py --fixture --json
+python tools\coinfox_packet_demo.py --fixture --intake tests\fixtures\coinfox_packet_intake\manual_market_pulse_intake.valid.json --trust-metadata
+```
+
+This packet can carry public source links, source quality, public-safe summaries,
+counterpoints, suggested thesis angles, risk flags, and outcome-review prompts. It cannot
+carry raw FoxClaw internals, private receipt IDs, private source text, or live authority.
+
+Packet Trust Metadata V0 can add a sanitized sidecar for provenance/guard labels such as
+`trusted_provenance`, `new_source_corroborated`, `unverified_social_heat`, and
+`odds_move_watch`. CoinFox UI presentation is still owned by the CoinFox repo, and these
+labels are not source scores or confidence labels.
+
+When A2 or the legacy Discord parser is unavailable, use the Apollo 1 standalone continuity
+surface:
+
+```powershell
+python tools\apollo1_intake.py
+```
+
+This routes FoxClaw through manual public-source packet intake, Source Registry V0,
+Anti-Poisoning V0, and Packet Trust Metadata V0. It does not connect Discord, scrape
+sources, publish to CoinFox, or consume CoinFox internals.
+
+Resume architecture from `docs/foxclaw_coinfox_packet_contract.md`.
 
 ## Microscope V0 Bridge
 
@@ -221,8 +294,7 @@ FoxClaw should receive aggregates, not CoinFox's full private user-event stream.
 
 ## Resume Trigger
 
-Resume inside the CoinFox repository after A2's parser inventory is reviewed and
-the remaining Discord parser compatibility work is either ported or explicitly
-deferred. The first CoinFox pass should preserve the existing social bones, add a
-FoxClaw public-contract client, ingest fixture cards, collect sanitized attention
-aggregates, and reshape the feed into the open trading-social surface.
+Resume inside the CoinFox repository for beta-readiness work. Preserve the live beta,
+verify deploy health, test unauthenticated and authenticated flows, keep public disclaimers
+visible, and add FoxClaw public-contract consumption only through `foxclaw/contract/public`
+or deterministic exported artifacts. Do not copy FoxClaw internals into CoinFox.

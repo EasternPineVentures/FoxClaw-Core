@@ -1,0 +1,38 @@
+{
+  "schema_version": "curated_packet_soak_fixture_v0",
+  "fixture_id": "coindesk_watch_with_corroboration",
+  "expected_result": "allowed_packet",
+  "security_reason": "watch source has clean scan and two synthetic public corroborations",
+  "future_packet_trust_label_candidate": "watch_source_corroborated",
+  "observation": {
+    "observation_id": "soak_coindesk_watch_with_corroboration_fixture",
+    "source": {
+      "source_id": "coindesk_public",
+      "source_name": "CoinDesk Public",
+      "source_url": "https://www.coindesk.com/",
+      "source_type": "public_market_info"
+    },
+    "content": "Synthetic public crypto-market context says SAMPLE-TOPIC changed the review question.",
+    "summary": "Watch source can pass the V0 guard after independent corroboration.",
+    "public_safe_summary": "Synthetic watch-source context can become packet review material after corroboration.",
+    "corroborations": [
+      {
+        "source_id": "synthetic_public_market_screen",
+        "source_type": "market_data",
+        "summary": "Synthetic public market screen supports the context."
+      },
+      {
+        "source_id": "synthetic_public_research_note",
+        "source_type": "public_research",
+        "summary": "Synthetic public research note supports the same review topic."
+      }
+    ],
+    "safety": {
+      "public_link_only": true,
+      "raw_content_included": false,
+      "contains_private_source_content": false,
+      "contains_credentials": false,
+      "live_execution_allowed": false
+    }
+  }
+}

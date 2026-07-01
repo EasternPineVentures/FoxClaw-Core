@@ -1,0 +1,39 @@
+{
+  "schema_version": "curated_packet_soak_fixture_v0",
+  "fixture_id": "unknown_clean_two_corroborations",
+  "expected_result": "allowed_packet",
+  "security_reason": "unknown source has clean scan and two synthetic public corroborations",
+  "future_packet_trust_label_candidate": "new_source_corroborated",
+  "purpose": "Unknown clean public source is allowed by Anti-Poisoning V0 after two independent corroborations.",
+  "observation": {
+    "observation_id": "soak_unknown_clean_two_corroborations_fixture",
+    "source": {
+      "source_id": "small_research_blog_unknown",
+      "source_name": "Small Research Blog Fixture",
+      "source_url": "https://example.com/small-research-blog",
+      "source_type": "public_research_blog"
+    },
+    "content": "A small public research blog notes that a company update changed the market question for review.",
+    "summary": "Clean public-source observation from an unknown source with independent public corroboration.",
+    "public_safe_summary": "An unknown public research source can become review context when clean and independently corroborated.",
+    "corroborations": [
+      {
+        "source_id": "synthetic_public_filing_context",
+        "source_type": "official_regulatory",
+        "summary": "Synthetic public filing context supports that the company update exists."
+      },
+      {
+        "source_id": "synthetic_public_market_context",
+        "source_type": "market_data",
+        "summary": "Synthetic public market context supports that the topic is visible for review."
+      }
+    ],
+    "safety": {
+      "public_link_only": true,
+      "raw_content_included": false,
+      "contains_private_source_content": false,
+      "contains_credentials": false,
+      "live_execution_allowed": false
+    }
+  }
+}

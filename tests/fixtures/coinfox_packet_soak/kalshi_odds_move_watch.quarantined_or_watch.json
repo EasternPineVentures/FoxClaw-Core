@@ -1,0 +1,27 @@
+{
+  "schema_version": "curated_packet_soak_fixture_v0",
+  "fixture_id": "kalshi_odds_move_watch",
+  "expected_result": "quarantined_or_watch",
+  "security_reason": "odds move is context, not truth, without corroboration",
+  "future_packet_trust_label_candidate": "odds_move_watch",
+  "observation": {
+    "observation_id": "soak_kalshi_odds_move_watch_fixture",
+    "source": {
+      "source_id": "kalshi_public",
+      "source_name": "Kalshi Public",
+      "source_url": "https://kalshi.com/",
+      "source_type": "prediction_market"
+    },
+    "content": "Synthetic public odds movement suggests SAMPLE-EVENT expectations changed.",
+    "summary": "Prediction-market move remains watch-only without corroboration.",
+    "public_safe_summary": "Synthetic odds movement is context, not truth.",
+    "corroborations": [],
+    "safety": {
+      "public_link_only": true,
+      "raw_content_included": false,
+      "contains_private_source_content": false,
+      "contains_credentials": false,
+      "live_execution_allowed": false
+    }
+  }
+}

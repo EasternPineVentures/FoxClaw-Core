@@ -1,7 +1,7 @@
 # FoxClaw First Encounter
 
 Status: READY ENOUGH FOR FAMILY/WEDDING SHOWING.
-Last updated: 2026-06-19.
+Last updated: 2026-06-27.
 
 This is not a pitch. It is the plain-language first look someone should get if
 they are curious but not already deep in trading.
@@ -31,19 +31,21 @@ What to notice:
 
 ## CoinFox
 
-Status: bones exist, full social product needs major work.
+Status: rough live beta at `https://coinfox.foxclaw.cloud/`.
 
-CoinFox already has the bones of a social trading product. The bigger goal is to
-make it feel like a familiar social place for traders: people posting trade
-ideas, asking questions, discussing markets, following ideas over time, upvoting
-posts and comments, and branching conversations in a fluid feed.
+CoinFox is live in rough beta as the social trading surface. It already shows the shape:
+markets, predictions, theses, discussions, FESC standards, account gates, public disclaimers,
+and seeded trading conversation. The next work is turning that live beta into a smoother
+real-people test: onboarding, posting, commenting, voting, moderation, health checks, and
+the public-safe FoxClaw context path.
 
 FoxClaw intelligence can appear there as readable context: a claim, the evidence,
 the attention around it, the risk, and what a careful person would wait for.
 
 What to notice:
 
-- it should feel like a real social product people already understand;
+- it is now a real deployed beta, not just a planned surface;
+- it should keep feeling like a social product people already understand;
 - discussion is open-ended, not locked to rigid trade cards;
 - long-running calls can be followed as they play out;
 - strong calls and useful discussion can be spotlighted;
@@ -74,5 +76,5 @@ What to notice:
 
 ## The Short Version
 
-FoxClaw judges information. CoinFox is becoming the social place where traders
+FoxClaw judges information. CoinFox is the live beta social place where traders
 discuss it. Planifier helps the person make a plan.

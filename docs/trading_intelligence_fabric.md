@@ -1,7 +1,7 @@
 # Trading Intelligence Fabric
 
 Status: IN PROGRESS doctrine and contract foundation.
-Last updated: 2026-06-19.
+Last updated: 2026-06-27.
 
 FoxClaw does not distribute trades. It transforms information into
 professionally structured decisions.
@@ -60,18 +60,23 @@ RawSourceEvent
   -> VerifiedOutcome
 ```
 
-Parser behavior remains A2-dependent. The contracts are ready now so the legacy
-Discord parser can later be ported behind replay-compatible boundaries instead
-of copied into a new monolith.
+Legacy Discord parser behavior remains A2-dependent and deferred. A1 can still run the
+manual/public intake continuity path through Source Registry V0, Anti-Poisoning V0, Packet
+Trust Metadata V0, and curated CoinFox packet review. The legacy parser can later be
+inventoried and ported only behind replay-compatible boundaries instead of copied into a new
+monolith.
 
 ## CoinFox Social Layer
 
 CoinFox is the intended public social layer, not just a place where FoxClaw
-publishes cards. The CoinFox repo already has bones for this, but the full social
-product feel needs major work. Traders should be able to post trade ideas, ask
-general trading questions, comment on anything, upvote posts and comments,
-branch discussions, and follow ideas as they unfold over minutes, days, weeks,
-or months.
+publishes cards. CoinFox is now in rough live beta at `https://coinfox.foxclaw.cloud/`,
+with public surfaces for markets, predictions, theses, discussions, standards, account
+gates, and receipt language. The beta still needs real-user hardening, but it has moved
+beyond the old "planned bones" state.
+
+Traders should be able to post trade ideas, ask general trading questions, comment on
+anything, upvote posts and comments, branch discussions, and follow ideas as they unfold
+over minutes, days, weeks, or months.
 
 The social feel matters. CoinFox should use familiar social-feed patterns people
 already understand: fast posting, live discussion, fluid branching replies,
@@ -223,6 +228,20 @@ Discord / CoinFox / News / Kalshi / Mobile Node
   -> Source / Setup Learning
 ```
 
+When A2 is unavailable, the temporary A1 flow is narrower:
+
+```text
+Public CoinFox/news/market observation
+  -> manual packet intake worksheet
+  -> Source Registry V0
+  -> Anti-Poisoning V0
+  -> Packet Trust Metadata V0
+  -> curated public-safe CoinFox packet review
+```
+
+This keeps information moving without connecting Discord, scraping sources, or granting
+publication/execution authority.
+
 ## Anti-Poisoning Invariants
 
 1. Raw content never enters the decision engine.
@@ -243,13 +262,15 @@ Discord / CoinFox / News / Kalshi / Mobile Node
 | Phase | Status | Work |
 | --- | --- | --- |
 | 0 | IN PROGRESS | Doctrine, boundaries, internal/public schemas, sanitized fixtures, validation tests. |
-| 1 | PLANNED | CoinFox attention receipts as sanitized aggregates. |
-| 2 | PLANNED | Unified claim packets for Discord signals and CoinFox posts. |
-| 3 | PLANNED | Quarantine, duplicate filtering, source checks, promotion receipts. |
-| 4 | PLANNED | Trade-readiness layer. |
-| 5 | PLANNED | CoinFox professional cards. |
-| 6 | PLANNED | Planifier connection. |
-| 7 | PLANNED | Outcome feedback. |
-| 8 | DEFERRED | Node validation after contracts and quarantine are stable. |
+| 1 | EXISTS/SCAFFOLD | FoxClaw-to-CoinFox curated packet for Market Pulse, Idea Board, and daily deltas. |
+| 1A | EXISTS | Apollo 1 standalone manual/public intake continuity while A2 is unavailable. |
+| 2 | PLANNED | CoinFox attention receipts as sanitized aggregates. |
+| 3 | PLANNED | Unified claim packets for Discord signals and CoinFox posts. |
+| 4 | PLANNED | Quarantine, duplicate filtering, source checks, promotion receipts. |
+| 5 | PLANNED | Trade-readiness layer. |
+| 6 | PLANNED | CoinFox professional cards. |
+| 7 | PLANNED | Planifier connection. |
+| 8 | PLANNED | Outcome feedback. |
+| 9 | DEFERRED | Node validation after contracts and quarantine are stable. |
 
 Phase 0 is the only active scope in this pass.

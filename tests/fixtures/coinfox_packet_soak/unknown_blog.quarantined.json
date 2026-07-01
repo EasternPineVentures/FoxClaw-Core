@@ -1,0 +1,27 @@
+{
+  "schema_version": "curated_packet_soak_fixture_v0",
+  "fixture_id": "unknown_blog",
+  "expected_result": "quarantined",
+  "security_reason": "unknown source starts quarantined without corroboration",
+  "future_packet_trust_label_candidate": "new_source_needs_corroboration",
+  "observation": {
+    "observation_id": "soak_unknown_blog_fixture",
+    "source": {
+      "source_id": "tiny_blog_unknown",
+      "source_name": "Tiny Blog Fixture",
+      "source_url": "https://example.com/tiny-blog",
+      "source_type": "public_research_blog"
+    },
+    "content": "Synthetic unknown public blog says SAMPLE-TOPIC deserves review.",
+    "summary": "Unknown public source remains quarantined without corroboration.",
+    "public_safe_summary": "Unknown public blog item is not enough for packet influence.",
+    "corroborations": [],
+    "safety": {
+      "public_link_only": true,
+      "raw_content_included": false,
+      "contains_private_source_content": false,
+      "contains_credentials": false,
+      "live_execution_allowed": false
+    }
+  }
+}

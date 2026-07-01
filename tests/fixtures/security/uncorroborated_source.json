@@ -1,0 +1,25 @@
+{
+  "schema_version": "anti_poisoning_fixture.v0",
+  "fixture_type": "uncorroborated_source",
+  "observation": {
+    "observation_id": "security_uncorroborated_fixture",
+    "source": {
+      "source_id": "new_public_blog_fixture",
+      "source_name": "New Public Blog Example",
+      "source_url": "https://example.com/public-blog",
+      "source_type": "blog"
+    },
+    "text": "A new public blog says a market narrative is changing.",
+    "summary": "Clean but uncorroborated public-source observation.",
+    "corroborations": []
+  },
+  "source_state": {
+    "source_id": "new_public_blog_fixture",
+    "source_type": "blog",
+    "trust_state": "quarantined",
+    "can_influence_public_packet": false,
+    "can_train_model": false,
+    "can_update_verified_memory": false,
+    "observation_count": 1
+  }
+}

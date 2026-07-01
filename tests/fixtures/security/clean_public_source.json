@@ -1,0 +1,28 @@
+{
+  "schema_version": "anti_poisoning_fixture.v0",
+  "fixture_type": "clean_public_source",
+  "observation": {
+    "observation_id": "security_clean_public_fixture",
+    "source": {
+      "source_id": "public_filings_fixture",
+      "source_name": "Public Filing Example",
+      "source_url": "https://example.com/public-filing",
+      "source_type": "filing"
+    },
+    "text": "A public filing changed the market question and needs ordinary review.",
+    "summary": "Clean public-source language with no instruction-smuggling phrase.",
+    "corroborations": [
+      {"source_id": "public_news_fixture", "summary": "Public link confirms the filing date."},
+      {"source_id": "public_market_fixture", "summary": "Public market data confirms timing."}
+    ]
+  },
+  "source_state": {
+    "source_id": "public_filings_fixture",
+    "source_type": "filing",
+    "trust_state": "quarantined",
+    "can_influence_public_packet": false,
+    "can_train_model": false,
+    "can_update_verified_memory": false,
+    "observation_count": 1
+  }
+}

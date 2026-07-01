@@ -1,0 +1,27 @@
+{
+  "schema_version": "curated_packet_soak_fixture_v0",
+  "fixture_id": "official_sec_clean",
+  "expected_result": "allowed_packet",
+  "security_reason": "trusted official provenance with clean scan",
+  "future_packet_trust_label_candidate": "trusted_provenance",
+  "observation": {
+    "observation_id": "soak_official_sec_clean_fixture",
+    "source": {
+      "source_id": "sec_edgar",
+      "source_name": "SEC EDGAR",
+      "source_url": "https://www.sec.gov/edgar",
+      "source_type": "official_regulatory"
+    },
+    "content": "A synthetic public filing update changed the review question for a sample issuer.",
+    "summary": "Official public filing provenance can pass new-source quarantine after a clean scan.",
+    "public_safe_summary": "A synthetic public filing update is suitable for packet review.",
+    "corroborations": [],
+    "safety": {
+      "public_link_only": true,
+      "raw_content_included": false,
+      "contains_private_source_content": false,
+      "contains_credentials": false,
+      "live_execution_allowed": false
+    }
+  }
+}

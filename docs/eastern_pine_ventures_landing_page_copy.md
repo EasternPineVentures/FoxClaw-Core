@@ -1,7 +1,7 @@
 # EasternPineVentures.com Landing Page Copy
 
 Status: website copy draft.
-Last updated: 2026-06-22.
+Last updated: 2026-06-27.
 
 ## Hero
 
@@ -101,12 +101,11 @@ true. Evidence and outcomes still matter.
 
 ## Current Stage
 
-CoinFox is currently in the early MVP and validation stage. The product direction,
-public/private boundary, receipt-first learning model, and initial social-product concepts
-are defined.
+CoinFox is currently in rough live beta at `https://coinfox.foxclaw.cloud/`. The product
+direction, public/private boundary, receipt-first learning model, and initial
+social-product concepts are defined and visible in a working public surface.
 
-The next step is turning that foundation into a polished public prototype, early beta flow,
-and partner-safe demo.
+The next step is controlled real-user testing, beta hardening, and partner-safe validation.
 
 ## Founder Note
 

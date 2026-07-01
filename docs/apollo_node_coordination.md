@@ -11,6 +11,8 @@ For structured node-to-node events, use Apollo Mesh V0 in `docs/apollo_mesh_v0.m
 For branch positioning and the operator-friendly wrapper, use Apollo Courier V0 in
 `docs/apollo_courier_v0.md`.
 For founder-node IP/security posture, read `docs/founder_node_security.md`.
+For A1-only intake continuity while A2 is unavailable, use
+`docs/apollo1_standalone_intake.md`.
 
 ## Nodes
 
@@ -120,6 +122,21 @@ When receiving work on A2:
 5. Avoid editing files that the other node reports as dirty.
 
 If either node is dirty, the other node should not overlap those files.
+
+## A2 Unavailable Mode
+
+If A2 is unavailable, A1 should not wait on legacy parser/scalping work to keep FoxClaw
+useful.
+
+Run:
+
+```powershell
+python tools\apollo1_intake.py
+```
+
+A1 may continue manual public-source packet intake, Source Registry V0 checks,
+Anti-Poisoning V0, Packet Trust Metadata V0, and curated CoinFox packet review. A1 should
+not connect Discord, copy the old parser, or add live source automation as a shortcut.
 
 ## Authority
 

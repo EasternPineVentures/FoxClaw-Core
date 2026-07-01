@@ -249,11 +249,12 @@ the cleanest memory of how ideas become decisions and how decisions become lesso
 
 1. Keep Microscope private previews and staged public exports strict.
 2. Finish parser compatibility so claims can enter through a replayable path.
-3. Add CoinFox attention receipts as sanitized aggregates.
-4. Build public cards that show proof markers without private lineage.
-5. Connect resolved outcomes to learning receipts.
-6. Use Planifier to turn public intelligence into user-owned plans and journals.
-7. Score the system weekly with receipt metrics, not vibes.
+3. Use `coinfox_curated_packet.v1` as the manual-first Market Pulse / Idea Board packet.
+4. Add CoinFox attention receipts as sanitized aggregates.
+5. Build public cards that show proof markers without private lineage.
+6. Connect resolved outcomes to learning receipts.
+7. Use Planifier to turn public intelligence into user-owned plans and journals.
+8. Score the system weekly with receipt metrics, not vibes.
 
 The first public promise should be modest:
 

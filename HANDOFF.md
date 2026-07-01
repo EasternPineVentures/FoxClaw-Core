@@ -3,7 +3,7 @@
 This file is the operational passoff for the clean FoxClaw company repo.
 Read it before changing code, then verify with `git log --oneline -10` and the tests.
 
-Last updated: 2026-06-19
+Last updated: 2026-07-01
 Branch: `master`
 Version: `0.4.16`
 Working repo: `C:\Users\brend\dev\foxclaw-core`
@@ -11,6 +11,8 @@ Working repo: `C:\Users\brend\dev\foxclaw-core`
 ## Current Lane
 
 FoxClaw Gym / June 28 demo readiness is the active lane.
+CoinFox is now in rough live beta at `https://coinfox.foxclaw.cloud/`.
+Apollo 1 standalone intake continuity is active while Apollo 2 is unavailable.
 Trading Intelligence Fabric Phase 0 / public contract foundations remains the current
 architecture lane.
 Microscope V0 is now integrated as the private accepted-candidate assessment and safe
@@ -207,10 +209,63 @@ Done in this pass:
 - The family-demo order is FoxClaw -> CoinFox -> Planifier. Planifier already exists as a
   built product, but needs focused integration/polish work before it becomes the practice
   layer for this flow.
-- CoinFox is documented as having social trading bones already, but needing major work to
-  become the familiar open feed we want: posts, comments, branching replies, upvotes,
-  live discussion, long-running trade ideas, and spotlight surfaces. FoxClaw may provide
-  context there, but CoinFox owns the social feel and implementation.
+- CoinFox has moved beyond old "bones exist" wording into a rough public beta at
+  `https://coinfox.foxclaw.cloud/`. The live surface has Home, Markets, Predictions,
+  Market Theses, Discussions, FESC Standards, account gates, public disclaimers, seeded
+  social content, and prediction-market context. Treat it as close to invite-only real-user
+  testing, not production launch.
+- FoxClaw may provide public-safe context there, but CoinFox owns the live product,
+  onboarding, posting/commenting/voting flows, moderation, account gates, feed feel, and
+  deployment health.
+- FoxClaw-to-CoinFox packet contract V1 added as the shared boundary for "Market Pulse
+  Now", "Idea Board Now", and "What Changed Since Yesterday". The schema is
+  `foxclaw/contract/public/coinfox_curated_packet.schema.json`, the fixture is
+  `tests/fixtures/public_contract/coinfox_curated_packet.valid.json`, and the review
+  command is `python tools\coinfox_packet_demo.py --fixture`.
+- CoinFox curated packet intake doc and fixture added so manual public-source observations
+  can be reviewed before becoming public packet cards:
+  `docs/coinfox_curated_packet_intake.md` and
+  `tests/fixtures/coinfox_packet_intake/manual_market_pulse_intake.valid.json`.
+- Minimum Viable Anti-Poisoning Layer V0 added as the quarantine-first airlock between
+  raw intake and CoinFox packet rendering. New sources default to quarantined, obvious
+  prompt-injection phrases block even trusted sources, and
+  `python tools\coinfox_packet_demo.py --fixture --intake <path>` returns a sanitized
+  quarantine error instead of exposing raw source text.
+- Source Registry V0 added at `config/public_source_registry.json`. Known official public
+  sources such as `sec_edgar` and `fred` provide trusted provenance defaults, public
+  news/odds sources remain watch-only, and social/community sources remain quarantined.
+  The CoinFox packet demo intake guard prefers registry policy when `source_id` is present.
+- Curated Packet Soak Fixtures V0 matrix added under `tests/fixtures/coinfox_packet_soak/`.
+  It covers trusted official sources, prompt injection, watch/news sources, social hype,
+  duplicate hype, public Discord rumors, unknown sources, odds/watch sources, and a
+  private-text export attempt. It proves allowed cases can pass without leaking raw intake
+  text into packet-demo output, while blocked/quarantined cases return sanitized errors.
+- Packet Trust Metadata V0 added for curated packet intake. `--trust-metadata` now emits
+  sanitized review labels such as `trusted_provenance`, `new_source_corroborated`,
+  `unverified_social_heat`, `odds_move_watch`, and blocked/private-text labels without raw
+  source text, source IDs, confidence scores, source-reliability mutation, memory mutation,
+  or execution authority.
+- Apollo 1 standalone intake continuity added so A1 can keep public-source CoinFox packet
+  review moving while A2 and the legacy Discord parser are unavailable. The report command
+  is `python tools\apollo1_intake.py`; it marks manual packet intake, source registry, and
+  packet soak/trust metadata as A1-ready, with legacy Discord parser and live source
+  automation deferred to A2.
+- Source Discovery Inventory V0 added at `config/source_discovery_inventory.json`, with
+  `python tools\source_discovery_inventory.py` as the fast "where should we look first?"
+  report. It maps CoinFox-native, Reddit, social, official, news, prediction-market,
+  crypto/on-chain, and alternative-data sources while keeping Reddit/social sources
+  quarantined until corroborated.
+- Interaction Potential V0 added at `config/interaction_potential_v0.json`, with
+  `python tools\interaction_potential.py --fixture` as the fast "what will users react
+  to?" report. It ranks packet observations by likely useful CoinFox comments,
+  challenges, saves, follow-up theses, and outcome-review returns, while explicitly
+  carrying no truth, evidence, source-reliability, publishing, trading, or memory-write
+  authority.
+- FoxClaw Command Center added at `config/foxclaw_commands.json`, with
+  `python tools\foxclaw_commands.py` as the front door for safe operator commands and
+  `.\tools\open_foxclaw_command_window.ps1` as the PowerShell window launcher. It can
+  search, show, list, and run curated safe commands by ID, and it discovers every
+  `tools/*.py` script with a help command.
 - `docs/security_public_demo_threat_model.md` records public-demo attack surfaces and
   pre-demo security checks.
 - `tools/public_intelligence_card_demo.py` renders the public intelligence fixture as
@@ -612,28 +667,173 @@ python -m pytest -q -> 237 passed
 python tools\check_invariants.py -> green
 ```
 
+CoinFox packet / Anti-Poisoning V0 result:
+
+```text
+python -m pytest tests\security\test_anti_poisoning_v0.py tests\unit\test_coinfox_packet_demo.py tests\unit\test_coinfox_packet_intake_fixture.py tests\unit\test_public_contract_schemas.py -q -p no:cacheprovider
+-> 36 passed
+python tools\coinfox_packet_demo.py --fixture --intake tests\fixtures\coinfox_packet_intake\manual_market_pulse_intake.valid.json
+-> curated packet rendered after intake guard passed
+python tools\coinfox_packet_demo.py --fixture --intake tests\fixtures\security\uncorroborated_source.json
+-> sanitized {"error": "quarantined", "reason": "NEW_OR_UNCORROBORATED_SOURCE", ...}
+python -m pytest -q -p no:cacheprovider -> 353 passed
+python tools\check_invariants.py -> green
+git diff --check -> green
+```
+
+Source Registry V0 result:
+
+```text
+python -m pytest tests\security\test_source_registry_v0.py tests\security\test_anti_poisoning_v0.py -q -p no:cacheprovider
+-> 33 passed
+python -m pytest tests\unit\test_coinfox_packet_demo.py tests\unit\test_coinfox_packet_intake_fixture.py -q -p no:cacheprovider
+-> 7 passed
+python tools\coinfox_packet_demo.py --fixture --intake tests\fixtures\security\source_registry\trusted_sec_observation.json
+-> curated packet rendered after registry trusted-source policy and prompt scan
+python tools\coinfox_packet_demo.py --fixture --intake tests\fixtures\security\source_registry\social_reddit_observation.json
+-> sanitized {"error": "quarantined", "reason": "NEW_OR_UNCORROBORATED_SOURCE", ...}
+python -m pytest -q -p no:cacheprovider -> 371 passed
+python tools\check_invariants.py -> green
+git diff --check -> green
+```
+
+Curated Packet Soak Fixtures V0 result:
+
+```text
+python -m pytest tests\security\test_curated_packet_soak_fixtures_v0.py tests\security\test_source_registry_v0.py tests\security\test_anti_poisoning_v0.py -q -p no:cacheprovider
+-> 54 passed
+python tools\coinfox_packet_demo.py --fixture --intake tests\fixtures\coinfox_packet_soak\unknown_clean_two_corroborations.allowed.json
+-> curated packet rendered after unknown clean source passed with two corroborations
+python tools\coinfox_packet_demo.py --fixture --intake tests\fixtures\coinfox_packet_soak\official_sec_prompt_injection.blocked.json
+-> sanitized {"error": "quarantined", "reason": "PROMPT_INJECTION_FLAGGED", ...}
+python tools\coinfox_packet_demo.py --fixture --intake tests\fixtures\coinfox_packet_soak\polymarket_odds_move_with_corroboration.allowed.json
+-> curated packet rendered after odds/watch source passed with two corroborations
+python -m pytest -q -p no:cacheprovider -> 392 passed
+python tools\check_invariants.py -> green
+git diff --check -> green
+```
+
+Packet Trust Metadata V0 focused result:
+
+```text
+python -m pytest tests\security\test_packet_trust_metadata_v0.py tests\security\test_curated_packet_soak_fixtures_v0.py tests\security\test_source_registry_v0.py tests\security\test_anti_poisoning_v0.py -q -p no:cacheprovider
+-> 59 passed
+python -m pytest tests\unit\test_coinfox_packet_demo.py tests\unit\test_coinfox_packet_intake_fixture.py -q -p no:cacheprovider
+-> 7 passed
+python tools\coinfox_packet_demo.py --fixture --intake tests\fixtures\coinfox_packet_soak\unknown_clean_two_corroborations.allowed.json --trust-metadata
+-> packet rendered with Packet Trust Metadata V0 label `new_source_corroborated`
+python tools\coinfox_packet_demo.py --fixture --intake tests\fixtures\coinfox_packet_soak\official_sec_prompt_injection.blocked.json --trust-metadata
+-> sanitized quarantine response with label `prompt_injection_blocked`
+python tools\coinfox_packet_demo.py --fixture --intake tests\fixtures\coinfox_packet_soak\polymarket_odds_move_with_corroboration.allowed.json --json --trust-metadata
+-> packet JSON plus Packet Trust Metadata V0 label `odds_move_watch`
+python tools\coinfox_packet_demo.py --fixture --intake tests\fixtures\coinfox_packet_intake\manual_market_pulse_intake.valid.json --trust-metadata
+-> packet rendered with `unverified_social_heat`, `odds_move_watch`, and `watch_source_corroborated`
+python tools\foxclaw_gym.py --json
+-> 6/10 demo-critical ready, 0 blocked, days_remaining 1
+python -m pytest -q -p no:cacheprovider
+-> 397 passed
+python tools\check_invariants.py
+-> green
+git diff --check
+-> green
+```
+
+June 27 live CoinFox route readback:
+
+```text
+https://coinfox.foxclaw.cloud/              -> 200
+https://coinfox.foxclaw.cloud/markets       -> 200
+https://coinfox.foxclaw.cloud/predictions   -> 200
+https://coinfox.foxclaw.cloud/thesis        -> 200
+https://coinfox.foxclaw.cloud/discussions   -> 200
+https://coinfox.foxclaw.cloud/fesc          -> 200
+https://coinfox.foxclaw.cloud/health        -> 404
+https://coinfox.foxclaw.cloud/api/health    -> 404
+https://coinfox.foxclaw.cloud/openapi.json  -> 404
+```
+
+Apollo 1 standalone intake continuity result:
+
+```text
+python -m pytest tests\unit\test_interaction_potential.py tests\unit\test_apollo1_intake.py tests\unit\test_source_discovery_inventory.py tests\security\test_packet_trust_metadata_v0.py tests\security\test_source_registry_v0.py -q -p no:cacheprovider
+-> 43 passed
+python tools\source_discovery_inventory.py --fixture --json --limit 20
+-> source_count 69; reddit_source_count 20; fast_manual_count 17
+python tools\interaction_potential.py --fixture --json
+-> WEN social spark 100 high_reaction_potential; prediction-market gap 93 high_reaction_potential; BTC macro delta 86 high_reaction_potential; boundary ranking_only_not_truth_not_evidence
+python tools\apollo1_intake.py --fixture --json
+-> readiness_status a1_continuity_ready; required ready 5/5; interaction_potential_scoring ready; blocked 0; deferred to A2 2
+python tools\coinfox_packet_demo.py --fixture --intake tests\fixtures\coinfox_packet_intake\manual_market_pulse_intake.valid.json --trust-metadata
+-> packet rendered with trust metadata labels and no live authority
+python -m pytest tests\unit\test_foxclaw_command_center.py -q -p no:cacheprovider
+-> 10 passed
+python tools\foxclaw_commands.py --list-ids
+-> 39 curated command ids emitted
+python tools\foxclaw_commands.py --all-tools --search interaction
+-> 30 actual tool scripts discovered; interaction commands shown
+python tools\foxclaw_commands.py --run interaction-potential
+-> WEN social spark 100 high_reaction_potential via command center
+python -m pytest -q -p no:cacheprovider
+-> 427 passed
+python tools\check_invariants.py
+-> green
+git diff --check
+-> green
+```
+
 ## Next Phase
 
 Next safe work:
 
 - Use `python tools\foxclaw_visitor_guide.py` as the first thing to show a non-trader.
+- Use `docs\foxclaw_commands.md`, `python tools\foxclaw_commands.py`, or
+  `.\tools\open_foxclaw_command_window.ps1` when you need the command list or a new
+  command window.
 - Run `python tools\foxclaw_gym.py` at the start of each work session and take the top
   `next_attention` item as the next smallest safe slice.
+- For CoinFox status, verify the live beta first: `https://coinfox.foxclaw.cloud/`.
+  On 2026-06-27 the public app routes `/`, `/markets`, `/predictions`, `/thesis`,
+  `/discussions`, and `/fesc` returned 200; `/health`, `/api/health`, and
+  `/openapi.json` returned 404 on that public domain.
 - Keep `docs/first_encounter_guide.md` understandable without a live explanation before
   adding more features.
 - Review `docs/security_public_demo_threat_model.md` before the first full dry run.
 - Create or map the GitHub project fields/issues for P17 so each repo owns its work.
 - Keep Phase 1 contract-first: CoinFox attention receipts are sanitized aggregates, not
   CoinFox internals inside this repo.
-- Current FoxClaw foundation stop line: do not keep expanding FoxClaw indefinitely before
-  CoinFox. After A2's Discord parser inventory is reviewed, either finish the parser parity
-  slice or explicitly mark it deferred, then move to the CoinFox repo.
+- Use `docs\foxclaw_coinfox_packet_contract.md` and
+  `python tools\coinfox_packet_demo.py --fixture` as the next FoxClaw-side bridge slice:
+  manual-first curated packets before source automation.
+- While Apollo 2 is away, use `docs\apollo1_standalone_intake.md` and
+  `python tools\apollo1_intake.py` as the A1 continuity checkpoint before packet/source
+  work.
+- Use `docs\source_discovery_inventory_v0.md` and
+  `python tools\source_discovery_inventory.py --limit 20` before each manual Market Pulse
+  pass to find candidate public sources quickly.
+- Use `docs\interaction_potential_v0.md` and
+  `python tools\interaction_potential.py --fixture` to rank which public-safe packet
+  observations are most likely to draw useful CoinFox discussion before choosing cards.
+- Use
+  `python tools\coinfox_packet_demo.py --fixture --intake tests\fixtures\coinfox_packet_soak\unknown_clean_two_corroborations.allowed.json --trust-metadata`
+  to show the public-safe unknown-source/corroboration label during demos.
+- Use `docs\coinfox_curated_packet_intake.md` before adding packet source automation.
+  Intake observations should remain public-link-only, operator-reviewed, and
+  review-priority-only.
+- Next security pass should be Anti-Poisoning V1 Source Reliability after one to two weeks
+  of real curated packet data. Do not add source score mutation before then.
+- Do not expand Packet Trust Metadata V0 into confidence labels, score mutation, or
+  CoinFox UI work from this repo. CoinFox owns presentation.
+- Current FoxClaw foundation stop line: do not keep expanding FoxClaw indefinitely around
+  CoinFox. CoinFox is already live in beta, so FoxClaw work should support it through
+  public contracts, leakage tests, receipt exports, and clear boundary docs rather than
+  building CoinFox internals here.
 - Do not run `tools\microscope_batch.py --write-staging` against the live Grove DB until the
   legacy Discord parser inventory and publication-promotion gate are reviewed.
-- A2's current isolated lane is the read-only legacy Discord parser inventory: active
-  listener, parser entrypoints, credential classes, DB/file writes, providers/models,
-  deduplication, watchdogs, obsolete-vs-active classification, and sanitized fixture
-  recommendations.
+- A2's current isolated lane remains the read-only legacy Discord parser inventory when A2
+  returns: active listener, parser entrypoints, credential classes, DB/file writes,
+  providers/models, deduplication, watchdogs, obsolete-vs-active classification, and
+  sanitized fixture recommendations. Do not block A1 manual/public packet intake on that
+  inventory.
 - Have A2 pull `0.4.16`, run the focused learning, public-contract, and Microscope tests, and send a `pulse` through the
   private Apollo exchange folder.
 - Add a private trusted-roster/auth boundary if this intake becomes multi-user instead of

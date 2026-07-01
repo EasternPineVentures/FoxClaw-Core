@@ -101,16 +101,16 @@
     },
     {
       "id": "coinfox_public_card_rehearsal",
-      "name": "CoinFox Social Feed And Card",
+      "name": "CoinFox Live Beta And Card",
       "lane": "coinfox",
       "status": "practice",
       "demo_critical": true,
       "attention_rank": 5,
       "due_date": "2026-06-22",
-      "purpose": "Keep CoinFox framed as an existing but clunky social trading product that must grow into a familiar open feed where public intelligence can also appear as context.",
+      "purpose": "Keep CoinFox framed as a rough live beta at https://coinfox.foxclaw.cloud/ where public-safe FoxClaw intelligence can appear as context.",
       "proof_command": "python tools\\public_intelligence_card_demo.py --fixture",
-      "demo_line": "CoinFox has the bones: traders can post ideas, comment, vote, and see FoxClaw context, but the final social feel still needs major work.",
-      "next_action": "Keep the existing-bones-but-clunky status explicit while practicing the readable card without opening raw JSON."
+      "demo_line": "CoinFox is live in rough beta: traders can explore markets, theses, discussions, prediction context, and FoxClaw-style receipts, but it is still beta, not a production launch.",
+      "next_action": "Verify the live beta routes before showing it, then practice the readable card without opening raw JSON."
     },
     {
       "id": "planifier_practice_rehearsal",
