@@ -1,5 +1,16 @@
 # FoxClaw Public Intelligence Contract Changelog
 
+## [1.0.0-additive] - 2026-07-01
+
+Added the FoxClaw-CoinFox Coordination Contract V0 as an additive public-contract shape.
+
+- `coinfox_coordination_packet.v0` supports `IntentPacket`,
+  `CoordinationDecision`, `ActionReceipt`, and `OutcomeReceipt`.
+- The contract records intent before action, explicit ack/block decisions, action/block
+  receipts, and public engagement outcomes.
+- The V0 demo is schema/fixture/tooling only and grants no production publish, trading,
+  custody, lending, advice, private-evidence export, or live API authority.
+
 ## [1.0.0-additive] - 2026-06-27
 
 Added the CoinFox curated packet schema as an additive public-contract shape.

@@ -18,14 +18,16 @@ from foxclaw.contract.public.export import validate_public_card
 
 REPO = Path(__file__).resolve().parents[2]
 FIXTURE_DIR = REPO / "tests" / "fixtures" / "public_contract"
+CONTRACT_FIXTURE_DIR = REPO / "tests" / "fixtures" / "contracts"
 
 SCHEMA_FIXTURES = {
-    "public_intelligence_card.schema.json": "public_intelligence_card.valid.json",
-    "public_scorecard.schema.json": "public_scorecard.valid.json",
-    "attention_receipt.schema.json": "attention_receipt.valid.json",
-    "coinfox_curated_packet.schema.json": "coinfox_curated_packet.valid.json",
-    "risk_classification.schema.json": "risk_classification.valid.json",
-    "verified_outcome.schema.json": "verified_outcome.valid.json",
+    "public_intelligence_card.schema.json": FIXTURE_DIR / "public_intelligence_card.valid.json",
+    "public_scorecard.schema.json": FIXTURE_DIR / "public_scorecard.valid.json",
+    "attention_receipt.schema.json": FIXTURE_DIR / "attention_receipt.valid.json",
+    "coinfox_curated_packet.schema.json": FIXTURE_DIR / "coinfox_curated_packet.valid.json",
+    "coinfox_coordination_packet.schema.json": CONTRACT_FIXTURE_DIR / "coinfox_intent.valid.json",
+    "risk_classification.schema.json": FIXTURE_DIR / "risk_classification.valid.json",
+    "verified_outcome.schema.json": FIXTURE_DIR / "verified_outcome.valid.json",
 }
 
 CARD_SCENARIO_FIXTURES = (
@@ -152,15 +154,16 @@ def test_public_contract_manifest_freezes_v1():
         "public_scorecard",
         "attention_receipt",
         "coinfox_curated_packet",
+        "coinfox_coordination_packet",
         "risk_classification",
         "verified_outcome",
     }
 
 
 def test_public_contract_fixtures_match_required_schema_shape():
-    for schema_name, fixture_name in SCHEMA_FIXTURES.items():
+    for schema_name, fixture_path in SCHEMA_FIXTURES.items():
         schema = _load(schema_path(schema_name))
-        fixture = _load(FIXTURE_DIR / fixture_name)
+        fixture = _load(fixture_path)
         _assert_required_shape(schema, fixture)
         _walk_public_values(fixture)
         assert fixture["contract_version"] == "1.0.0"

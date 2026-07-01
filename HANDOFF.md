@@ -222,6 +222,13 @@ Done in this pass:
   `foxclaw/contract/public/coinfox_curated_packet.schema.json`, the fixture is
   `tests/fixtures/public_contract/coinfox_curated_packet.valid.json`, and the review
   command is `python tools\coinfox_packet_demo.py --fixture`.
+- FoxClaw-CoinFox Coordination Contract V0 added as a docs/schema/fixtures/demo pass.
+  The schema is `foxclaw/contract/public/coinfox_coordination_packet.schema.json`,
+  the contract doc is `docs/contracts/foxclaw_coinfox_coordination_contract_v0.md`,
+  and the demo command is `python tools\coinfox_coordination_demo.py`. It models
+  IntentPacket -> CoordinationDecision -> ActionReceipt -> OutcomeReceipt through a local
+  FoxClaw Ledger JSON list only; no live APIs, production behavior, private evidence
+  export, auto-publishing, trading, custody, lending, or advice authority was added.
 - CoinFox curated packet intake doc and fixture added so manual public-source observations
   can be reviewed before becoming public packet cards:
   `docs/coinfox_curated_packet_intake.md` and
@@ -767,14 +774,18 @@ python tools\coinfox_packet_demo.py --fixture --intake tests\fixtures\coinfox_pa
 -> packet rendered with trust metadata labels and no live authority
 python -m pytest tests\unit\test_foxclaw_command_center.py -q -p no:cacheprovider
 -> 10 passed
+python -m pytest tests\unit\test_coinfox_coordination_contract.py tests\unit\test_public_contract_schemas.py tests\unit\test_foxclaw_command_center.py -q -p no:cacheprovider
+-> 30 passed
+python tools\coinfox_coordination_demo.py
+-> FoxClaw Ledger demo emitted 4 packets: IntentPacket, CoordinationDecision, ActionReceipt, OutcomeReceipt
 python tools\foxclaw_commands.py --list-ids
--> 39 curated command ids emitted
+-> 40 curated command ids emitted
 python tools\foxclaw_commands.py --all-tools --search interaction
--> 30 actual tool scripts discovered; interaction commands shown
+-> 31 actual tool scripts discovered; interaction commands shown
 python tools\foxclaw_commands.py --run interaction-potential
 -> WEN social spark 100 high_reaction_potential via command center
 python -m pytest -q -p no:cacheprovider
--> 427 passed
+-> 433 passed
 python tools\check_invariants.py
 -> green
 git diff --check

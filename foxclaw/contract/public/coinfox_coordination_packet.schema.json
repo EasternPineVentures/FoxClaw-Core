@@ -1,0 +1,294 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://easternpineventures.example/foxclaw/coinfox_coordination_packet.schema.json",
+  "title": "FoxClaw-CoinFox Coordination Packet V0",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contract_version",
+    "schema_version",
+    "packet_type",
+    "packet_id",
+    "packet_hash",
+    "correlation_id",
+    "sequence",
+    "created_at",
+    "source_system",
+    "target_system",
+    "previous_packet_hash",
+    "classification",
+    "authority_requested",
+    "authority_granted"
+  ],
+  "properties": {
+    "contract_version": {"type": "string", "const": "1.0.0"},
+    "schema_version": {"type": "string", "const": "coinfox_coordination_packet.v0"},
+    "packet_type": {
+      "type": "string",
+      "enum": ["IntentPacket", "CoordinationDecision", "ActionReceipt", "OutcomeReceipt"]
+    },
+    "packet_id": {"type": "string", "minLength": 1},
+    "packet_hash": {"type": "string", "minLength": 1},
+    "correlation_id": {"type": "string", "minLength": 1},
+    "sequence": {"type": "integer", "minimum": 1},
+    "created_at": {"type": "string", "format": "date-time"},
+    "source_system": {"type": "string", "enum": ["foxclaw", "coinfox"]},
+    "target_system": {"type": "string", "enum": ["foxclaw", "coinfox"]},
+    "previous_packet_hash": {"type": ["string", "null"]},
+    "classification": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "data_classification",
+        "public_safe",
+        "private_evidence_exported",
+        "paper_only",
+        "no_trading",
+        "no_custody",
+        "not_financial_advice",
+        "not_real_lending"
+      ],
+      "properties": {
+        "data_classification": {
+          "type": "string",
+          "enum": ["public_safe_coordination", "internal_reference_only"]
+        },
+        "public_safe": {"type": "boolean", "const": true},
+        "private_evidence_exported": {"type": "boolean", "const": false},
+        "paper_only": {"type": "boolean", "const": true},
+        "no_trading": {"type": "boolean", "const": true},
+        "no_custody": {"type": "boolean", "const": true},
+        "not_financial_advice": {"type": "boolean", "const": true},
+        "not_real_lending": {"type": "boolean", "const": true}
+      }
+    },
+    "authority_requested": {
+      "type": "array",
+      "maxItems": 10,
+      "items": {
+        "type": "string",
+        "enum": [
+          "draft_only",
+          "render_public_safe_cards",
+          "return_public_engagement_receipts",
+          "outcome_review",
+          "auto_publish",
+          "place_order",
+          "route_order",
+          "hold_funds",
+          "provide_financial_advice",
+          "real_lending"
+        ]
+      }
+    },
+    "authority_granted": {
+      "type": "array",
+      "maxItems": 10,
+      "items": {
+        "type": "string",
+        "enum": [
+          "draft_only",
+          "render_public_safe_cards",
+          "return_public_engagement_receipts",
+          "outcome_review",
+          "auto_publish",
+          "place_order",
+          "route_order",
+          "hold_funds",
+          "provide_financial_advice",
+          "real_lending"
+        ]
+      }
+    },
+    "intent": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "requested_action",
+        "why_now",
+        "expected_output",
+        "public_safe_summary",
+        "public_receipt_refs",
+        "private_evidence_refs",
+        "expires_at",
+        "risk_flags"
+      ],
+      "properties": {
+        "requested_action": {
+          "type": "string",
+          "enum": [
+            "prepare_draft_cards",
+            "export_sanitized_cards",
+            "auto_publish",
+            "place_order",
+            "route_order",
+            "hold_funds",
+            "provide_financial_advice",
+            "real_lending"
+          ]
+        },
+        "why_now": {"type": "string", "minLength": 1},
+        "expected_output": {
+          "type": "string",
+          "enum": ["draft_cards", "sanitized_packet", "no_action"]
+        },
+        "public_safe_summary": {"type": "string", "minLength": 1},
+        "public_receipt_refs": {
+          "type": "array",
+          "maxItems": 10,
+          "items": {"type": "string"}
+        },
+        "private_evidence_refs": {
+          "type": "array",
+          "maxItems": 0,
+          "items": {"type": "string"}
+        },
+        "expires_at": {"type": "string", "format": "date-time"},
+        "risk_flags": {
+          "type": "array",
+          "maxItems": 10,
+          "items": {"type": "string"}
+        }
+      }
+    },
+    "decision": {"type": "string", "enum": ["ack", "block"]},
+    "coordination_decision": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "decision_reason",
+        "allowed_next_action",
+        "blocked_authority",
+        "safe_next_step"
+      ],
+      "properties": {
+        "decision_reason": {"type": "string", "minLength": 1},
+        "allowed_next_action": {
+          "type": "string",
+          "enum": ["export_sanitized_cards", "stop"]
+        },
+        "blocked_authority": {
+          "type": "array",
+          "maxItems": 10,
+          "items": {"type": "string"}
+        },
+        "safe_next_step": {"type": "string", "minLength": 1}
+      }
+    },
+    "action_receipt": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "action_status",
+        "action_taken",
+        "matched_intent",
+        "summary",
+        "artifact_refs",
+        "block_reason"
+      ],
+      "properties": {
+        "action_status": {"type": "string", "enum": ["executed", "blocked"]},
+        "action_taken": {
+          "type": "string",
+          "enum": ["exported_sanitized_cards", "blocked_before_action"]
+        },
+        "matched_intent": {"type": "boolean"},
+        "summary": {"type": "string", "minLength": 1},
+        "artifact_refs": {
+          "type": "array",
+          "maxItems": 10,
+          "items": {"type": "string"}
+        },
+        "block_reason": {"type": "string"}
+      }
+    },
+    "outcome_receipt": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "outcome_status",
+        "public_engagement",
+        "public_links",
+        "outcome_summary",
+        "return_to_foxclaw"
+      ],
+      "properties": {
+        "outcome_status": {"type": "string", "enum": ["received", "deferred", "review_needed"]},
+        "public_engagement": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "comments_count",
+            "challenges_count",
+            "saves_count",
+            "votes_count"
+          ],
+          "properties": {
+            "comments_count": {"type": "integer", "minimum": 0},
+            "challenges_count": {"type": "integer", "minimum": 0},
+            "saves_count": {"type": "integer", "minimum": 0},
+            "votes_count": {"type": "integer", "minimum": 0}
+          }
+        },
+        "public_links": {
+          "type": "array",
+          "maxItems": 10,
+          "items": {"type": "string"}
+        },
+        "outcome_summary": {"type": "string", "minLength": 1},
+        "return_to_foxclaw": {
+          "type": "array",
+          "maxItems": 10,
+          "items": {
+            "type": "string",
+            "enum": [
+              "review_aging_thesis",
+              "compare_challenges",
+              "update_source_watch",
+              "no_memory_write_in_demo"
+            ]
+          }
+        }
+      }
+    }
+  },
+  "oneOf": [
+    {
+      "type": "object",
+      "required": ["intent"],
+      "properties": {
+        "packet_type": {"type": "string", "const": "IntentPacket"},
+        "source_system": {"type": "string", "const": "foxclaw"},
+        "target_system": {"type": "string", "const": "coinfox"},
+        "authority_granted": {"type": "array", "maxItems": 0}
+      }
+    },
+    {
+      "type": "object",
+      "required": ["decision", "coordination_decision"],
+      "properties": {
+        "packet_type": {"type": "string", "const": "CoordinationDecision"},
+        "source_system": {"type": "string", "const": "coinfox"},
+        "target_system": {"type": "string", "const": "foxclaw"}
+      }
+    },
+    {
+      "type": "object",
+      "required": ["action_receipt"],
+      "properties": {
+        "packet_type": {"type": "string", "const": "ActionReceipt"},
+        "source_system": {"type": "string", "const": "foxclaw"},
+        "target_system": {"type": "string", "const": "coinfox"}
+      }
+    },
+    {
+      "type": "object",
+      "required": ["outcome_receipt"],
+      "properties": {
+        "packet_type": {"type": "string", "const": "OutcomeReceipt"},
+        "source_system": {"type": "string", "const": "coinfox"},
+        "target_system": {"type": "string", "const": "foxclaw"}
+      }
+    }
+  ]
+}

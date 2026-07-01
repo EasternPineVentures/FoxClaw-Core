@@ -7,6 +7,7 @@
     "public_scorecard": "1.0.0",
     "attention_receipt": "1.0.0",
     "coinfox_curated_packet": "1.0.0",
+    "coinfox_coordination_packet": "0.1.0",
     "risk_classification": "1.0.0",
     "verified_outcome": "1.0.0"
   },

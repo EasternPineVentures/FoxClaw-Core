@@ -18,6 +18,7 @@ FoxClaw databases, mutate Grove receipts, or receive Apollo private data.
 | `public_scorecard.schema.json` | FROZEN | Public-safe separated measurements for one intelligence snapshot. |
 | `attention_receipt.schema.json` | FROZEN | Sanitized CoinFox attention aggregate. |
 | `coinfox_curated_packet.schema.json` | FROZEN | Public-safe FoxClaw-to-CoinFox packet for Market Pulse, Idea Board, and daily-delta cards. |
+| `coinfox_coordination_packet.schema.json` | V0 ADDITIVE | State-machine packets for FoxClaw/CoinFox intent, decision, action, and outcome receipts. |
 | `risk_classification.schema.json` | FROZEN | Risk taxonomy and presentation requirements. |
 | `verified_outcome.schema.json` | FROZEN | Public postmortem/outcome shape. |
 
@@ -41,6 +42,10 @@ authority = paper_only or review_priority_only
 - Major: breaking field or semantic change.
 
 CoinFox must refuse unsupported major versions rather than silently guessing.
+
+`coinfox_coordination_packet.v0` is a demo/contract artifact only. It does not wire
+FoxClaw into CoinFox production behavior, and it does not grant publication, trading,
+custody, lending, or advice authority.
 
 ## Resume Rule
 

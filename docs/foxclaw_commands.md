@@ -62,12 +62,14 @@ python tools\foxclaw_commands.py --run a1-intake
 python tools\foxclaw_commands.py --run source-discovery
 python tools\foxclaw_commands.py --run interaction-potential
 python tools\foxclaw_commands.py --run packet-demo-trust
+python tools\foxclaw_commands.py --run coinfox-coordination-demo
 ```
 
 Useful packet/security demos:
 
 ```powershell
 python tools\foxclaw_commands.py --run packet-demo
+python tools\foxclaw_commands.py --run coinfox-coordination-demo
 python tools\foxclaw_commands.py --run unknown-corroborated-packet
 python tools\foxclaw_commands.py --run prompt-injection-block
 python tools\foxclaw_commands.py --run odds-watch-packet
@@ -94,6 +96,7 @@ The command center discovers these directly from `tools/`:
 | `tools\apollo1_intake.py` | `python tools\apollo1_intake.py --help` |
 | `tools\check_invariants.py` | `python tools\check_invariants.py --help` |
 | `tools\coinfox_packet_demo.py` | `python tools\coinfox_packet_demo.py --help` |
+| `tools\coinfox_coordination_demo.py` | `python tools\coinfox_coordination_demo.py --help` |
 | `tools\export_public_intelligence.py` | `python tools\export_public_intelligence.py --help` |
 | `tools\export_public_scorecard.py` | `python tools\export_public_scorecard.py --help` |
 | `tools\forecast_desk_doctor.py` | `python tools\forecast_desk_doctor.py --help` |

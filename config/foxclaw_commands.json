@@ -177,6 +177,23 @@
           ]
         },
         {
+          "id": "coinfox-coordination-demo",
+          "title": "CoinFox Coordination Demo",
+          "command": "python tools\\coinfox_coordination_demo.py",
+          "purpose": "Print the four-packet FoxClaw-CoinFox coordination ledger demo.",
+          "when": "Use before wiring any FoxClaw/CoinFox coordination behavior.",
+          "safety": "demo_only_no_live_api_no_publish",
+          "runnable": true,
+          "docs": [
+            "docs/contracts/foxclaw_coinfox_coordination_contract_v0.md"
+          ],
+          "tags": [
+            "coinfox",
+            "coordination",
+            "ledger"
+          ]
+        },
+        {
           "id": "unknown-corroborated-packet",
           "title": "Unknown Source Corroborated Packet",
           "command": "python tools\\coinfox_packet_demo.py --fixture --intake tests\\fixtures\\coinfox_packet_soak\\unknown_clean_two_corroborations.allowed.json --trust-metadata",

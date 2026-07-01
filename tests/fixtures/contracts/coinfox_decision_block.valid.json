@@ -1,0 +1,32 @@
+{
+  "contract_version": "1.0.0",
+  "schema_version": "coinfox_coordination_packet.v0",
+  "packet_type": "CoordinationDecision",
+  "packet_id": "coord-decision-block-001",
+  "packet_hash": "sha256:fixture-decision-block-valid",
+  "correlation_id": "coord-demo-blocked-001",
+  "sequence": 2,
+  "created_at": "2026-07-01T16:01:00Z",
+  "source_system": "coinfox",
+  "target_system": "foxclaw",
+  "previous_packet_hash": "sha256:fixture-intent-blocked",
+  "classification": {
+    "data_classification": "public_safe_coordination",
+    "public_safe": true,
+    "private_evidence_exported": false,
+    "paper_only": true,
+    "no_trading": true,
+    "no_custody": true,
+    "not_financial_advice": true,
+    "not_real_lending": true
+  },
+  "authority_requested": ["auto_publish"],
+  "authority_granted": [],
+  "decision": "block",
+  "coordination_decision": {
+    "decision_reason": "CoinFox blocks auto_publish because publication requires product gates and review.",
+    "allowed_next_action": "stop",
+    "blocked_authority": ["auto_publish"],
+    "safe_next_step": "Return a blocked ActionReceipt and require a draft-only IntentPacket."
+  }
+}

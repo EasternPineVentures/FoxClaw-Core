@@ -1,0 +1,32 @@
+{
+  "contract_version": "1.0.0",
+  "schema_version": "coinfox_coordination_packet.v0",
+  "packet_type": "CoordinationDecision",
+  "packet_id": "coord-decision-ack-001",
+  "packet_hash": "sha256:fixture-decision-ack-valid",
+  "correlation_id": "coord-demo-001",
+  "sequence": 2,
+  "created_at": "2026-07-01T16:01:00Z",
+  "source_system": "coinfox",
+  "target_system": "foxclaw",
+  "previous_packet_hash": "sha256:fixture-intent-valid",
+  "classification": {
+    "data_classification": "public_safe_coordination",
+    "public_safe": true,
+    "private_evidence_exported": false,
+    "paper_only": true,
+    "no_trading": true,
+    "no_custody": true,
+    "not_financial_advice": true,
+    "not_real_lending": true
+  },
+  "authority_requested": ["draft_only"],
+  "authority_granted": ["draft_only"],
+  "decision": "ack",
+  "coordination_decision": {
+    "decision_reason": "CoinFox accepts draft-only sanitized card preparation.",
+    "allowed_next_action": "export_sanitized_cards",
+    "blocked_authority": [],
+    "safe_next_step": "FoxClaw may emit an ActionReceipt after exporting sanitized draft cards."
+  }
+}

@@ -83,6 +83,7 @@ location, and a GitHub issue or explicit issue placeholder.
 | First-encounter guide | EXISTS | `docs/first_encounter_guide.md`, `tools/foxclaw_visitor_guide.py` |
 | Public contract airlock | FROZEN v1 | `foxclaw/contract/`, `foxclaw/contract/public/`, `tools/export_public_intelligence.py` |
 | FoxClaw-to-CoinFox packet contract | EXISTS | `foxclaw/contract/public/coinfox_curated_packet.schema.json`, `docs/foxclaw_coinfox_packet_contract.md` |
+| FoxClaw-to-CoinFox coordination contract | V0 DOCS/DEMO | `foxclaw/contract/public/coinfox_coordination_packet.schema.json`, `docs/contracts/foxclaw_coinfox_coordination_contract_v0.md`, `tools/coinfox_coordination_demo.py` |
 | Curated packet intake fixture | EXISTS | `docs/coinfox_curated_packet_intake.md`, `tests/fixtures/coinfox_packet_intake/manual_market_pulse_intake.valid.json` |
 | Source Discovery Inventory V0 | EXISTS | `config/source_discovery_inventory.json`, `docs/source_discovery_inventory_v0.md`, `tools/source_discovery_inventory.py` |
 | Interaction Potential V0 | EXISTS | `config/interaction_potential_v0.json`, `docs/interaction_potential_v0.md`, `tools/interaction_potential.py` |
@@ -98,6 +99,7 @@ Allowed now:
 
 - FoxClaw Core architecture and doctrine.
 - Public-safe information contracts.
+- FoxClaw/CoinFox coordination packets as docs/schema/fixtures/demo only.
 - Fixture payloads, schema validation tests, and deterministic CoinFox export files.
 - Manual-first FoxClaw-to-CoinFox curated packets.
 - Minimum viable anti-poisoning checks before raw intake can influence packet rendering.

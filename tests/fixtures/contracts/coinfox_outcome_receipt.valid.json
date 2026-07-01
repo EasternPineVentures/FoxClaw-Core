@@ -1,0 +1,48 @@
+{
+  "contract_version": "1.0.0",
+  "schema_version": "coinfox_coordination_packet.v0",
+  "packet_type": "OutcomeReceipt",
+  "packet_id": "coord-outcome-receipt-001",
+  "packet_hash": "sha256:fixture-outcome-receipt-valid",
+  "correlation_id": "coord-demo-001",
+  "sequence": 4,
+  "created_at": "2026-07-01T17:30:00Z",
+  "source_system": "coinfox",
+  "target_system": "foxclaw",
+  "previous_packet_hash": "sha256:fixture-action-receipt-valid",
+  "classification": {
+    "data_classification": "public_safe_coordination",
+    "public_safe": true,
+    "private_evidence_exported": false,
+    "paper_only": true,
+    "no_trading": true,
+    "no_custody": true,
+    "not_financial_advice": true,
+    "not_real_lending": true
+  },
+  "authority_requested": [
+    "return_public_engagement_receipts",
+    "outcome_review"
+  ],
+  "authority_granted": [
+    "return_public_engagement_receipts"
+  ],
+  "outcome_receipt": {
+    "outcome_status": "review_needed",
+    "public_engagement": {
+      "comments_count": 14,
+      "challenges_count": 3,
+      "saves_count": 8,
+      "votes_count": 21
+    },
+    "public_links": [
+      "coinfox://draft/coinfox-draft-card-demo-001"
+    ],
+    "outcome_summary": "Draft cards produced useful public discussion and several challenges for later review.",
+    "return_to_foxclaw": [
+      "review_aging_thesis",
+      "compare_challenges",
+      "no_memory_write_in_demo"
+    ]
+  }
+}
