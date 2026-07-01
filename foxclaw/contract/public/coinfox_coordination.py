@@ -169,6 +169,8 @@ def build_demo_ledger() -> dict[str, Any]:
             "votes_count": 21,
         },
         "public_links": ["coinfox://draft/coinfox-draft-card-demo-001"],
+        "needs_review": True,
+        "review_after": "2026-07-03T17:30:00Z",
         "outcome_summary": (
             "Draft cards produced useful public discussion and several challenges for later review."
         ),

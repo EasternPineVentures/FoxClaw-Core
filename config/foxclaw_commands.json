@@ -247,6 +247,79 @@
       ]
     },
     {
+      "id": "foxclaw_ledger",
+      "title": "FoxClaw Ledger",
+      "purpose": "Local-only receipt storage, hash verification, and outcome review queue commands.",
+      "commands": [
+        {
+          "id": "ledger-record-demo",
+          "title": "Ledger Record Demo",
+          "command": "python tools\\ledger_record_demo.py",
+          "purpose": "Record the four coordination demo packets into the local FoxClaw Ledger JSONL store.",
+          "when": "Use to prove Ledger V0 can store coordination receipts locally.",
+          "safety": "local_jsonl_write_no_live_api_no_publish",
+          "runnable": true,
+          "docs": [
+            "docs/ledger/foxclaw_ledger_v0.md"
+          ],
+          "tags": [
+            "ledger",
+            "receipts",
+            "demo"
+          ]
+        },
+        {
+          "id": "ledger-list-receipts",
+          "title": "Ledger List Receipts",
+          "command": "python tools\\ledger_list_receipts.py",
+          "purpose": "List local FoxClaw Ledger receipts from the default JSONL store.",
+          "when": "Use after recording demo receipts or inspecting local Ledger state.",
+          "safety": "local_read_only_no_live_api",
+          "runnable": true,
+          "docs": [
+            "docs/ledger/foxclaw_ledger_v0.md"
+          ],
+          "tags": [
+            "ledger",
+            "receipts"
+          ]
+        },
+        {
+          "id": "ledger-verify-receipts",
+          "title": "Ledger Verify Receipts",
+          "command": "python tools\\ledger_verify_receipt.py",
+          "purpose": "Verify local FoxClaw Ledger receipt payload hashes.",
+          "when": "Use to detect tampering in local Ledger receipts.",
+          "safety": "local_read_only_no_live_api",
+          "runnable": true,
+          "docs": [
+            "docs/ledger/foxclaw_ledger_v0.md"
+          ],
+          "tags": [
+            "ledger",
+            "verify",
+            "hash"
+          ]
+        },
+        {
+          "id": "ledger-review-queue",
+          "title": "Ledger Review Queue",
+          "command": "python tools\\ledger_review_queue.py",
+          "purpose": "List local FoxClaw Ledger outcome review tasks.",
+          "when": "Use after OutcomeReceipts create follow-up review tasks.",
+          "safety": "local_read_only_no_live_api",
+          "runnable": true,
+          "docs": [
+            "docs/ledger/foxclaw_ledger_v0.md"
+          ],
+          "tags": [
+            "ledger",
+            "review"
+          ]
+        }
+      ]
+    },
+    {
       "id": "source_and_reaction",
       "title": "Source And Reaction",
       "purpose": "Commands for finding information fast and ranking what users may react to.",

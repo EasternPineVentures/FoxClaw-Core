@@ -30,6 +30,8 @@ python tools\foxclaw_commands.py --run gym
 python tools\foxclaw_commands.py --run a1-intake
 python tools\foxclaw_commands.py --run source-discovery
 python tools\foxclaw_commands.py --run interaction-potential
+python tools\foxclaw_commands.py --run ledger-record-demo
+python tools\foxclaw_commands.py --run ledger-verify-receipts
 ```
 
 ## Find Commands
@@ -70,6 +72,8 @@ Useful packet/security demos:
 ```powershell
 python tools\foxclaw_commands.py --run packet-demo
 python tools\foxclaw_commands.py --run coinfox-coordination-demo
+python tools\foxclaw_commands.py --run ledger-record-demo
+python tools\foxclaw_commands.py --run ledger-review-queue
 python tools\foxclaw_commands.py --run unknown-corroborated-packet
 python tools\foxclaw_commands.py --run prompt-injection-block
 python tools\foxclaw_commands.py --run odds-watch-packet
@@ -115,6 +119,10 @@ The command center discovers these directly from `tools/`:
 | `tools\freeze_forecast_db_schema.py` | `python tools\freeze_forecast_db_schema.py --help` |
 | `tools\interaction_potential.py` | `python tools\interaction_potential.py --help` |
 | `tools\kalshi_api_desk.py` | `python tools\kalshi_api_desk.py --help` |
+| `tools\ledger_list_receipts.py` | `python tools\ledger_list_receipts.py --help` |
+| `tools\ledger_record_demo.py` | `python tools\ledger_record_demo.py --help` |
+| `tools\ledger_review_queue.py` | `python tools\ledger_review_queue.py --help` |
+| `tools\ledger_verify_receipt.py` | `python tools\ledger_verify_receipt.py --help` |
 | `tools\microscope.py` | `python tools\microscope.py --help` |
 | `tools\microscope_batch.py` | `python tools\microscope_batch.py --help` |
 | `tools\public_intelligence_card_demo.py` | `python tools\public_intelligence_card_demo.py --help` |

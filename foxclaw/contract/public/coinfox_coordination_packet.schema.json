@@ -235,6 +235,8 @@
           "maxItems": 10,
           "items": {"type": "string"}
         },
+        "needs_review": {"type": "boolean"},
+        "review_after": {"type": "string", "format": "date-time"},
         "outcome_summary": {"type": "string", "minLength": 1},
         "return_to_foxclaw": {
           "type": "array",
